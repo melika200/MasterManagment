@@ -9,7 +9,7 @@ namespace MasterManagment.Application.Contracts.ProductCategory
 {
      public interface IProductCategoryApplication
     {
-        OperationResult Create(CreateProductCategory command);
+        OperationResult CreateAsync(CreateProductCategory command);
         OperationResult Edit(EditProductCategory command);
         EditProductCategory GetDetails(long id);
         List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel);

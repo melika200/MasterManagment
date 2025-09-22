@@ -11,40 +11,44 @@ namespace MasterManagment.Application
 {
     public class ProductCategoryApplication : IProductCategoryApplication
     {
-        private readonly IProductCategoryRepository _ProductCategoryRepository;
-        public ProductCategoryApplication(IProductCategoryRepository ProductCategoryRepository)
+        private readonly IProductCategoryRepository _productCategoryRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public ProductCategoryApplication(IProductCategoryRepository ProductCategoryRepository, IUnitOfWork unitOfWork)
         {
-            _ProductCategoryRepository = ProductCategoryRepository;
+            _productCategoryRepository = ProductCategoryRepository;
+            _unitOfWork = unitOfWork;
         }
-        public OperationResult Create(CreateProductCategory command)
+        public async Task<OperationResult> CreateAsync(CreateProductCategory command)
         {
             var operation = new OperationResult();
-            if (_ProductCategoryRepository.Exists(x=>x.Name == command.Name))
+            if (_productCategoryRepository.Exists(x=>x.Name == command.Name))
                 return operation.Failed("امکان ثبت رکورد تکراری وجود ندارد .لطفا مجدد تلاش کنید");
 
             var slug = command.Slug.Slugify();
 
-           
-          
 
             var productCategory = new ProductCategory(command.Name, command.Description,
                  command.Picture, command.PictureAlt, command.PictureTitle, command.Keywords,
                 command.MetaDescription, slug);
 
-            _ProductCategoryRepository.Create(productCategory);
-            _ProductCategoryRepository.SaveChanges();
+            _productCategoryRepository.Create(productCategory);
+
+            //_productCategoryRepository.SaveChanges();
+            await _unitOfWork.CommitAsync();
+
             return operation.Succedded();
         }
 
         public OperationResult Edit(EditProductCategory command)
         {
             var operation = new OperationResult();
-            var productCategory = _ProductCategoryRepository.Get(command.Id);
+            var productCategory = _productCategoryRepository.Get(command.Id);
 
             if (productCategory == null)
                 return operation.Failed("رکورد با اطلاعات درخواست شده یافت نشد .لطفا مجدد تلاش بفرمایید");
 
-            if (_ProductCategoryRepository.Exists(x => x.Name == command.Name && x.Id != command.Id))
+            if (_productCategoryRepository.Exists(x => x.Name == command.Name && x.Id != command.Id))
                 return operation.Failed("امکان ثبت رکورد تکراری وجود ندارد .لطفا مجدد تلاش کنید");
 
             var slug = command.Slug.Slugify();
@@ -55,18 +59,18 @@ namespace MasterManagment.Application
                 command.PictureAlt, command.PictureTitle, command.Keywords,
                 command.MetaDescription, slug);
 
-            _ProductCategoryRepository.SaveChanges();
+            _productCategoryRepository.SaveChanges();
             return operation.Succedded();
         }
 
         public EditProductCategory GetDetails(long id)
         {
-            return _ProductCategoryRepository.GetDetails(id);
+            return _productCategoryRepository.GetDetails(id);
         }
 
         public List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel)
         {
-            return _ProductCategoryRepository.Search(searchModel);
+            return _productCategoryRepository.Search(searchModel);
         }
     }
 }
