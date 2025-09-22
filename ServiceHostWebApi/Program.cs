@@ -5,12 +5,23 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 
 builder.Services.AddControllers();
+
+
 MasterManagementBootstrapper.Configure(builder.Services, connectionString);
+
+
 builder.Services.AddDbContext<MasterContext>(x => x.UseSqlServer(connectionString));
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    options.ReportApiVersions = true;
+});
 
 
 builder.Services.AddSwaggerGen(c =>
@@ -23,9 +34,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
 var app = builder.Build();
 
-// Å?ò—»‰œ? Middleware
 
 if (app.Environment.IsDevelopment())
 {
@@ -37,10 +48,14 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+
 app.UseHttpsRedirection();
+
 
 app.UseAuthorization();
 
+
 app.MapControllers();
+
 
 app.Run();

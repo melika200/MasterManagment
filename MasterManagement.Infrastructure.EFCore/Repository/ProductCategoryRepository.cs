@@ -25,9 +25,9 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
 
 
 
-        public EditProductCategory GetDetails(long id)
+        public EditProductCategoryCommand GetDetails(long id)
         {
-            return _context.ProductCategories.Select(x => new EditProductCategory()
+            return _context.ProductCategories.Select(x => new EditProductCategoryCommand()
             {
                 Id = x.Id,
                 Description = x.Description,

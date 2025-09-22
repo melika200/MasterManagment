@@ -13,7 +13,7 @@ namespace MasterManagement.Domain.ProductCategoryAgg
     {
 
         //List<ProductCategoryViewModel> GetProductCategories();
-        EditProductCategory GetDetails(long id);
+        EditProductCategoryCommand GetDetails(long id);
         List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel);
         //List<ProductCategory> GetAll();
       

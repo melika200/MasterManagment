@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MasterManagment.Application.Contracts.ProductCategory
 {
-    public class EditProductCategory:CreateProductCategory
+    public class EditProductCategoryCommand:CreateProductCategoryCommand
     {
         public long Id { get; set; }
     }

@@ -19,7 +19,7 @@ namespace MasterManagment.Application
             _productCategoryRepository = ProductCategoryRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<OperationResult> CreateAsync(CreateProductCategory command)
+        public async Task<OperationResult> CreateAsync(CreateProductCategoryCommand command)
         {
             var operation = new OperationResult();
             if (_productCategoryRepository.Exists(x=>x.Name == command.Name))
@@ -40,7 +40,7 @@ namespace MasterManagment.Application
             return operation.Succedded();
         }
 
-        public OperationResult Edit(EditProductCategory command)
+        public OperationResult Edit(EditProductCategoryCommand command)
         {
             var operation = new OperationResult();
             var productCategory = _productCategoryRepository.Get(command.Id);
@@ -63,7 +63,7 @@ namespace MasterManagment.Application
             return operation.Succedded();
         }
 
-        public EditProductCategory GetDetails(long id)
+        public EditProductCategoryCommand GetDetails(long id)
         {
             return _productCategoryRepository.GetDetails(id);
         }

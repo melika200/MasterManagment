@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MasterManagment.Application.Contracts.ProductCategory
 {
-    public class CreateProductCategory
+    public class EditProductCategoryViewModel
     {
         public string Name { get;  set; }
         public string Description { get;  set; }
