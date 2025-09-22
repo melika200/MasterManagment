@@ -1,25 +1,40 @@
 using MasterManagement.Infrastructure.Configuration;
 using MasterManagement.Infrastructure.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-MasterManagementBootstrapper.Configure( builder.Services, connectionString);
+MasterManagementBootstrapper.Configure(builder.Services, connectionString);
 builder.Services.AddDbContext<MasterContext>(x => x.UseSqlServer(connectionString));
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Master Management API",
+        Version = "v1",
+        Description = "API documentation for Master Management project"
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ?˜ÑÈäÏ? Middleware
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Master Management API V1");
+        c.RoutePrefix = string.Empty; 
+    });
 }
 
 app.UseHttpsRedirection();
