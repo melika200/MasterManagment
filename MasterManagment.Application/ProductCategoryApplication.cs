@@ -72,5 +72,6 @@ namespace MasterManagment.Application
         {
             return _productCategoryRepository.Search(searchModel);
         }
+
     }
 }

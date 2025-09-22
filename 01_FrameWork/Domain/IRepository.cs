@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
+
 
 namespace _01_FrameWork.Domain
 {
     public interface IRepository<TKey, T> where T : class
     {
         T Get(TKey id);
-        T GetAsync(TKey id);
+        Task<T> GetAsync(TKey id);
         List<T> Get();
-        List<T> GetAsync();
+        Task<List<T>> GetAsync();
         void Create(T entity);
-        void CreateAsync(T entity);
+        Task CreateAsync(T entity);
         bool Exists(Expression<Func<T, bool>> expression);
         void Add(T entity);
         Task AddAsync(T entity);
@@ -29,6 +25,6 @@ namespace _01_FrameWork.Domain
         Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> expression);
         Task<T?> GetAsync(Expression<Func<T, bool>> expression);
         void SaveChanges();
-        void SaveChangesAsync();
+        Task SaveChangesAsync();
     }
 }
