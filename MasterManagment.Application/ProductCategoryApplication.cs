@@ -12,11 +12,14 @@ namespace MasterManagment.Application
     public class ProductCategoryApplication : IProductCategoryApplication
     {
         private readonly IProductCategoryRepository _productCategoryRepository;
-        public ProductCategoryApplication(IProductCategoryRepository ProductCategoryRepository)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public ProductCategoryApplication(IProductCategoryRepository ProductCategoryRepository, IUnitOfWork unitOfWork)
         {
             _productCategoryRepository = ProductCategoryRepository;
+            _unitOfWork = unitOfWork;
         }
-        public OperationResult Create(CreateProductCategory command)
+        public async Task<OperationResult> CreateAsync(CreateProductCategory command)
         {
             var operation = new OperationResult();
             if (_productCategoryRepository.Exists(x=>x.Name == command.Name))
@@ -24,15 +27,16 @@ namespace MasterManagment.Application
 
             var slug = command.Slug.Slugify();
 
-           
-          
 
             var productCategory = new ProductCategory(command.Name, command.Description,
                  command.Picture, command.PictureAlt, command.PictureTitle, command.Keywords,
                 command.MetaDescription, slug);
 
             _productCategoryRepository.Create(productCategory);
-            _productCategoryRepository.SaveChanges();
+
+            //_productCategoryRepository.SaveChanges();
+            await _unitOfWork.CommitAsync();
+
             return operation.Succedded();
         }
 
