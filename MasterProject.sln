@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterManagment.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterManagment.Application", "MasterManagment.Application\MasterManagment.Application.csproj", "{70A562FE-2C36-4BC6-8410-E39B9A38BCD5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "M.Frastructure", "M.Frastructure", "{3D29278D-146F-43BA-AA74-46D74C4ECA3F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "M.Infrastructure", "M.Infrastructure", "{3D29278D-146F-43BA-AA74-46D74C4ECA3F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterManagement.Infrastructure.EFCore", "MasterManagement.Infrastructure.EFCore\MasterManagement.Infrastructure.EFCore.csproj", "{703E315D-5589-4428-AE5F-D4A644FC1449}"
 EndProject
