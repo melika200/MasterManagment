@@ -19,11 +19,11 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
         {
             _context = context;
         }
-      
 
-       
 
-    
+
+
+
 
         public EditProductCategory GetDetails(long id)
         {
@@ -40,9 +40,9 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
             }).FirstOrDefault(x => x.Id == id);
         }
 
-        
 
-      
+
+
 
         public List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel)
         {
