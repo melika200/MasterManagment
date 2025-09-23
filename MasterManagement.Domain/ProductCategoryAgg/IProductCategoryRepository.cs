@@ -15,7 +15,9 @@ namespace MasterManagement.Domain.ProductCategoryAgg
         //List<ProductCategoryViewModel> GetProductCategories();
         EditProductCategoryCommand GetDetails(long id);
         List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel);
+        Task<ProductCategory> GetById(long id);
+
         //List<ProductCategory> GetAll();
-      
+
     }
 }

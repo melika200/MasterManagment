@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using _01_FrameWork.Domain;
+using MasterManagement.Domain.ProductAgg;
 
 
 namespace MasterManagement.Domain.ProductCategoryAgg
@@ -18,6 +19,12 @@ namespace MasterManagement.Domain.ProductCategoryAgg
         public string Keywords { get; private set; }
         public string MetaDescription { get; private set; }
         public string Slug { get; private set; }
+        public List<Product> Products { get; private set; }
+
+        public ProductCategory()
+        {
+            Products = new List<Product>();
+        }
 
         public ProductCategory(string name, string description, string picture,
               string pictureAlt, string pictureTitle, string keywords, string metaDescription,
@@ -31,6 +38,7 @@ namespace MasterManagement.Domain.ProductCategoryAgg
             Keywords = keywords;
             MetaDescription = metaDescription;
             Slug = slug;
+            Products = new List<Product>();
         }
 
 
@@ -49,6 +57,7 @@ namespace MasterManagement.Domain.ProductCategoryAgg
             Keywords = keywords;
             MetaDescription = metaDescription;
             Slug = slug;
+           
         }
     }
 }

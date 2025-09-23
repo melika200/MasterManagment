@@ -20,6 +20,10 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
             _context = context;
         }
 
+        public async Task<ProductCategory> GetById(long id)
+        {
+            return await _context.ProductCategories.FindAsync(id);
+        }
 
 
 
