@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagement.Infrastructure.EFCore.Mapping;
@@ -16,6 +17,8 @@ namespace MasterManagement.Infrastructure.EFCore.Context
       
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
 
         public MasterContext(DbContextOptions<MasterContext> options) : base(options)
