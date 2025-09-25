@@ -55,7 +55,7 @@ namespace ServiceHostWebApi.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult Edit(long id, [FromBody] EditProductCategoryCommand command)
+        public async Task<IActionResult> Edit(long id, [FromBody] EditProductCategoryCommand command)
         {
             if (id != command.Id)
                 return BadRequest("آیدی ارسال شده با آیدی موجود در داده‌ها تطابق ندارد.");
@@ -63,7 +63,7 @@ namespace ServiceHostWebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = _productCategoryApplication.Edit(command);
+            var result =await _productCategoryApplication.EditAsync(command);
             if (!result.IsSuccedded)
                 return BadRequest(result.Message);
 

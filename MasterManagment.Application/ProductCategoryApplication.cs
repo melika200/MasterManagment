@@ -22,7 +22,7 @@ namespace MasterManagment.Application
         public async Task<OperationResult> CreateAsync(CreateProductCategoryCommand command)
         {
             var operation = new OperationResult();
-            if (_productCategoryRepository.Exists(x => x.Name == command.Name))
+            if (await _productCategoryRepository.ExistsAsync(x => x.Name == command.Name))
                 return operation.Failed("امکان ثبت رکورد تکراری وجود ندارد .لطفا مجدد تلاش کنید");
 
             var slug = command.Slug.Slugify();
@@ -32,23 +32,23 @@ namespace MasterManagment.Application
                  command.Picture, command.PictureAlt, command.PictureTitle, command.Keywords,
                 command.MetaDescription, slug);
 
-            _productCategoryRepository.Create(productCategory);
-
+            await _productCategoryRepository.CreateAsync(productCategory);
+            await _unitOfWork.CommitAsync();
             //_productCategoryRepository.SaveChanges();
             await _unitOfWork.CommitAsync();
 
             return operation.Succedded();
         }
 
-        public OperationResult Edit(EditProductCategoryCommand command)
+        public async Task<OperationResult> EditAsync(EditProductCategoryCommand command)
         {
             var operation = new OperationResult();
-            var productCategory = _productCategoryRepository.Get(command.Id);
+            var productCategory = await _productCategoryRepository.GetAsync(command.Id);
 
             if (productCategory == null)
                 return operation.Failed("رکورد با اطلاعات درخواست شده یافت نشد .لطفا مجدد تلاش بفرمایید");
 
-            if (_productCategoryRepository.Exists(x => x.Name == command.Name && x.Id != command.Id))
+            if (await _productCategoryRepository.ExistsAsync(x => x.Name == command.Name && x.Id != command.Id))
                 return operation.Failed("امکان ثبت رکورد تکراری وجود ندارد .لطفا مجدد تلاش کنید");
 
             var slug = command.Slug.Slugify();
@@ -58,8 +58,8 @@ namespace MasterManagment.Application
             productCategory.Edit(command.Name, command.Description, command.Picture,
                 command.PictureAlt, command.PictureTitle, command.Keywords,
                 command.MetaDescription, slug);
-
-            _productCategoryRepository.SaveChanges();
+            await _unitOfWork.CommitAsync();
+            //_productCategoryRepository.SaveChanges();
             return operation.Succedded();
         }
 

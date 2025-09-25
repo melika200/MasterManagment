@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MasterManagment.Application.Contracts.Order
 {
-    public class EditOrderViewModel
+
+    public class EditCartViewModel
     {
         public long Id { get; set; }
         public long AccountId { get; set; }
@@ -17,11 +18,13 @@ namespace MasterManagment.Application.Contracts.Order
         public bool IsPaid { get; set; }
         public bool IsCanceled { get; set; }
         public string IssueTrackingNo { get; set; }
-        public List<OrderItemViewModel> Items { get; set; }
+        public List<CartItemViewModel> Items { get; set; }
 
-        public EditOrderViewModel()
+        public EditCartViewModel()
         {
-            Items = new List<OrderItemViewModel>();
+            Items = new List<CartItemViewModel>();
         }
     }
 }
+
+

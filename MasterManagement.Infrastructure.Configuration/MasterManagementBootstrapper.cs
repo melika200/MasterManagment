@@ -1,10 +1,13 @@
 ﻿using _01_FrameWork.Application;
+using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagement.Infrastructure.EFCore;
 using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Infrastructure.EFCore.Repository;
 using MasterManagment.Application;
+using MasterManagment.Application.Contracts.Order;
+using MasterManagment.Application.Contracts.Payment;
 using MasterManagment.Application.Contracts.Product;
 using MasterManagment.Application.Contracts.ProductCategory;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +24,13 @@ namespace MasterManagement.Infrastructure.Configuration
             services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
             services.AddTransient<IProductApplication, ProductApplication>();
             services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<ICartApplication, CartApplication>();
+            services.AddTransient<ICartRepository,CartRepository>();
+            services.AddTransient<IOrderApplication,OrderApplication>();
+            services.AddTransient<IOrderRepository,OrderRepository>();
+            services.AddTransient<IPaymentApplication,PaymentApplication>();
+            services.AddTransient<IPaymentRepository,PaymentRepository>();
+
 
             services.AddTransient<IUnitOfWork, MasterUnitOfWork>();
 

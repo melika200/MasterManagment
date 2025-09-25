@@ -47,13 +47,13 @@ namespace ServiceHostWebApi.Controllers
         }
 
         [HttpPut("{id:long}")]
-        public IActionResult Edit(long id, [FromBody] EditProductCommand command)
+        public async Task<IActionResult> Edit(long id, [FromBody] EditProductCommand command)
         {
             command.Id = id;
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = _productApplication.Edit(command);
+            var result =await _productApplication.Edit(command);
             if (!result.IsSuccedded)
                 return BadRequest(new { message = result.Message });
 

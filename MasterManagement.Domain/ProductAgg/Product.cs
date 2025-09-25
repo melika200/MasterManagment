@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using _01_FrameWork.Domain;
+using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 
 namespace MasterManagement.Domain.ProductAgg
@@ -89,5 +90,16 @@ namespace MasterManagement.Domain.ProductAgg
         }
     }
 }
+
+
+
+
+
+
+
+   
+
+
+   
 
 

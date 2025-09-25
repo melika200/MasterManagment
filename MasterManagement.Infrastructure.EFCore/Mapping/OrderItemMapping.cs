@@ -9,20 +9,17 @@ namespace MasterManagement.Infrastructure.EFCore.Mapping
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
             builder.ToTable("OrderItems");
+            builder.HasKey(oi => oi.Id);
 
-            builder.HasKey(x => x.Id);
+            builder.Property(oi => oi.ProductId).IsRequired();
+            builder.Property(oi => oi.ProductName).HasMaxLength(255).IsRequired();
+            builder.Property(oi => oi.Count).IsRequired();
+            builder.Property(oi => oi.UnitPrice).IsRequired();
+            builder.Property(oi => oi.DiscountRate).IsRequired();
 
-            builder.Property(x => x.ProductId).IsRequired();
-            builder.Property(x => x.ProductName).HasMaxLength(500).IsRequired();
-            builder.Property(x => x.Count).IsRequired();
-            builder.Property(x => x.UnitPrice).IsRequired();
-            builder.Property(x => x.DiscountRate).IsRequired();
-
-         
-            builder.HasOne(x => x.Order)
+            builder.HasOne(oi => oi.Order)
                    .WithMany(o => o.Items)
-                   .HasForeignKey(x => x.OrderId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .HasForeignKey(oi => oi.OrderId);
         }
     }
 }

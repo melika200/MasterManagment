@@ -15,99 +15,9 @@ namespace _01_FrameWork.Infrastructure
             _dbSet = _context.Set<T>();
         }
 
-        public T Get(TKey id)
-        {
-            return _dbSet.Find(id);
-        }
-
-        public async Task<T> GetAsync(TKey id)
+        public async Task<T?> GetAsync(TKey id)
         {
             return await _dbSet.FindAsync(id);
-        }
-
-        public List<T> Get()
-        {
-            return _dbSet.ToList();
-        }
-
-        public async Task<List<T>> GetAsync()
-        {
-            return await _dbSet.ToListAsync();
-        }
-
-        public void Create(T entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            _dbSet.Add(entity);
-        }
-
-        public async Task CreateAsync(T entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            await _dbSet.AddAsync(entity);
-        }
-
-        public bool Exists(Expression<Func<T, bool>> expression)
-        {
-            return _dbSet.Any(expression);
-        }
-
-        public void Add(T entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            _dbSet.Add(entity);
-        }
-
-        public async Task AddAsync(T entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            await _dbSet.AddAsync(entity);
-        }
-
-        public void Update(T entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            _dbSet.Update(entity);
-        }
-
-        public void Delete(T entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            _dbSet.Remove(entity);
-        }
-
-        public void Delete(object id)
-        {
-            var entity = GetBy(id);
-            if (entity != null)
-                Delete(entity);
-        }
-
-        public void Delete(Expression<Func<T, bool>> expression)
-        {
-            var entities = GetMany(expression);
-            if (entities != null)
-            {
-                foreach (var item in entities)
-                {
-                    Delete(item);
-                }
-            }
-        }
-
-        public IEnumerable<T> GetAll()
-        {
-            return _dbSet.ToList();
-        }
-
-        public IEnumerable<T> GetMany(Expression<Func<T, bool>> expression)
-        {
-            return _dbSet.Where(expression).ToList();
-        }
-
-        public T? Get(Expression<Func<T, bool>> expression)
-        {
-            return _dbSet.FirstOrDefault(expression);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -120,24 +30,60 @@ namespace _01_FrameWork.Infrastructure
             return await _dbSet.Where(expression).ToListAsync();
         }
 
-        public async Task<T?> GetAsync(Expression<Func<T, bool>> expression)
+    
+
+        public async Task CreateAsync(T entity)
         {
-            return await _dbSet.FirstOrDefaultAsync(expression);
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            await _dbSet.AddAsync(entity);
         }
 
-        public T? GetBy(object id)
+        public async Task AddAsync(T entity)
         {
-            return _dbSet.Find(id);
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            await _dbSet.AddAsync(entity);
         }
 
-        public void SaveChanges()
+     
+
+        public async Task UpdateAsync(T entity)
         {
-            _context.SaveChanges();
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            _dbSet.Update(entity);
+            await Task.CompletedTask; 
         }
 
-        public async Task SaveChangesAsync()
+        public async Task DeleteAsync(T entity)
         {
-            await _context.SaveChangesAsync();
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            _dbSet.Remove(entity);
+            await Task.CompletedTask;
         }
+
+     
+
+        public async Task DeleteAsync(Expression<Func<T, bool>> expression)
+        {
+            var entities = _dbSet.Where(expression);
+            _dbSet.RemoveRange(entities);
+            await Task.CompletedTask;
+        }
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _dbSet.AnyAsync(expression);
+        }
+
+        public async Task DeleteAsync(object id)
+        {
+            var entity = await GetAsync((TKey)id);
+            if (entity != null)
+                await DeleteAsync(entity);
+        }
+
+        public Task<T?> GetAsync(Expression<Func<T, bool>> expression)
+        {
+            return _dbSet.FirstOrDefaultAsync(expression);
+        }
+
     }
 }

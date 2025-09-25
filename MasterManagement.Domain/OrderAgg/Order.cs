@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using _01_FrameWork.Domain;
+using MasterManagement.Domain.CartAgg;
 
 namespace MasterManagement.Domain.OrderAgg
 {
-    //نماینده یک سفارش کلی مشتری است که کالاها را به صورت یک مجموعه خریداری می‌کند.
-    //شامل شناسه حساب کاربری  مشتری، روش پرداخت، مبالغ کلی، وضعیت پرداخت(آیا پرداخت شده؟)، وضعیت لغو(کنسل شده؟)، شماره پیگیری ارسال کالا  و شناسه تراکنش پرداخت  است.
     public class Order : EntityBase
     {
         public long AccountId { get; private set; }
-        public int PaymentMethod { get; private set; }
+        public PaymentMethod PaymentMethod { get; private set; }
         public double TotalAmount { get; private set; }
         public double DiscountAmount { get; private set; }
         public double PayAmount { get; private set; }
@@ -20,21 +17,36 @@ namespace MasterManagement.Domain.OrderAgg
         public bool IsCanceled { get; private set; }
         public string IssueTrackingNo { get; private set; }
         public long RefId { get; private set; }
-        public List<OrderItem> Items { get; private set; }
 
-        public Order(long accountId, int paymentMethod, double totalAmount, double discountAmount, double payAmount)
+        public ICollection<OrderItem> Items { get; private set; } = new List<OrderItem>();
+
+        public Order(long accountId, PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
         {
             AccountId = accountId;
             PaymentMethod = paymentMethod;
             TotalAmount = totalAmount;
             DiscountAmount = discountAmount;
             PayAmount = payAmount;
-            IsPaid = false;
+            IsPaid = true;
             IsCanceled = false;
             RefId = 0;
-            Items = new List<OrderItem>();
+            IssueTrackingNo = string.Empty;
         }
-        public void Edit(int paymentMethod, double totalAmount, double discountAmount, double payAmount)
+
+        public void AddItem(OrderItem item)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            Items.Add(item);
+            RecalculateAmounts();
+        }
+
+        public void ClearItems()
+        {
+            Items.Clear();
+            RecalculateAmounts();
+        }
+
+        public void Edit(PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
         {
             PaymentMethod = paymentMethod;
             TotalAmount = totalAmount;
@@ -42,11 +54,11 @@ namespace MasterManagement.Domain.OrderAgg
             PayAmount = payAmount;
         }
 
-        public void PaymentSucceeded(long refId)
+        private void RecalculateAmounts()
         {
-            IsPaid = true;
-            if (refId != 0)
-                RefId = refId;
+            TotalAmount = Items.Sum(i => i.GetTotalPrice());
+            DiscountAmount = Items.Sum(i => i.GetDiscountAmount());
+            PayAmount = TotalAmount - DiscountAmount;
         }
 
         public void Cancel()
@@ -59,13 +71,9 @@ namespace MasterManagement.Domain.OrderAgg
             IssueTrackingNo = number;
         }
 
-        public void AddItem(OrderItem item)
+        public void SetRefId(long refId)
         {
-            Items.Add(item);
+            if (refId != 0) RefId = refId;
         }
     }
-
-
 }
-
-

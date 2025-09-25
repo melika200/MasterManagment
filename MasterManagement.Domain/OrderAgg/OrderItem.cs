@@ -13,14 +13,23 @@ namespace MasterManagement.Domain.OrderAgg
         public long OrderId { get; private set; }
         public Order Order { get; private set; }
 
-       
         public OrderItem(long productId, int count, double unitPrice, int discountRate, string productName)
         {
             ProductId = productId;
-            ProductName = productName;
             Count = count;
             UnitPrice = unitPrice;
             DiscountRate = discountRate;
+            ProductName = productName;
+        }
+
+        public double GetTotalPrice()
+        {
+            return UnitPrice * Count;
+        }
+
+        public double GetDiscountAmount()
+        {
+            return GetTotalPrice() * DiscountRate / 100.0;
         }
     }
 }

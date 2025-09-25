@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace MasterManagment.Application.Contracts.Order
 {
-    public class EditOrderCommand : CreateOrderCommand
+    public class CartSearchCriteria
     {
-        public long Id { get; set; }
+        public long AccountId { get; set; }
+        public bool? IsPaid { get; set; }
+        public bool? IsCanceled { get; set; }
     }
 }

@@ -10,8 +10,7 @@ namespace MasterManagement.Domain.OrderAgg
 {
     public interface IOrderRepository : IRepository<long, Order>
     {
-        double GetAmountBy(long id);
-        List<OrderItemViewModel> GetItems(long orderId);
-        List<OrderViewModel> Search(OrderSearchCriteria searchModel);
+        Task<Order?> GetOrderDetailsAsync(long orderId);
+        Task<List<Order>> SearchAsync(OrderSearchCriteria criteria);
     }
 }

@@ -49,6 +49,7 @@ namespace MasterManagement.Infrastructure.EFCore.Mapping
                 .HasForeignKey(x => x.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
+
         }
     }
 }

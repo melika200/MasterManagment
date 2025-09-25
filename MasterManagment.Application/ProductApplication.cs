@@ -28,7 +28,7 @@ namespace MasterManagment.Application
         {
             var operation = new OperationResult();
 
-            if (_productRepository.Exists(x => x.Name == command.Name))
+            if (await _productRepository.ExistsAsync(x => x.Name == command.Name))
                 return operation.Failed("امکان ثبت محصول تکراری وجود ندارد");
 
             var category = await _categoryRepository.GetById(command.CategoryId);
@@ -50,15 +50,15 @@ namespace MasterManagment.Application
             return operation.Succedded("محصول با موفقیت ثبت شد");
         }
 
-        public OperationResult Edit(EditProductCommand command)
+        public async Task<OperationResult> Edit(EditProductCommand command)
         {
             var operation = new OperationResult();
 
-            var product = _productRepository.Get(command.Id);
+            var product = await _productRepository.GetAsync(command.Id);
             if (product == null)
                 return operation.Failed("محصول یافت نشد");
 
-            if (_productRepository.Exists(x => x.Name == command.Name && x.Id != command.Id))
+            if (await _productRepository.ExistsAsync(x => x.Name == command.Name && x.Id != command.Id))
                 return operation.Failed("نام محصول تکراری است");
 
             var category = _categoryRepository.GetById(command.CategoryId).Result;
@@ -74,8 +74,8 @@ namespace MasterManagment.Application
                 command.CategoryId,
                 command.IsAvailable);
 
-            _productRepository.Update(product);
-            _unitOfWork.CommitAsync();
+           await _productRepository.UpdateAsync(product);
+           await _unitOfWork.CommitAsync();
 
             return operation.Succedded("ویرایش محصول با موفقیت انجام شد");
         }
@@ -141,10 +141,12 @@ namespace MasterManagment.Application
             if (product == null)
                 return operation.Failed("محصول یافت نشد");
 
-            _productRepository.Delete(product);
+            _productRepository.DeleteAsync(product);
             await _unitOfWork.CommitAsync();
 
             return operation.Succedded("محصول با موفقیت حذف شد");
         }
+
+      
     }
 }

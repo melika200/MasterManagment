@@ -8,11 +8,12 @@ namespace MasterManagment.Application.Contracts.Order
 {
     public interface IOrderApplication
     {
-        long PlaceOrder(CreateOrderCommand command);  // ثبت سفارش جدید
-        void Edit(EditOrderCommand command);          // ویرایش سفارش موجود
-        void Cancel(long id);                          // لغو سفارش
-        double GetAmountBy(long id);                   // دریافت مبلغ سفارش به ازای شناسه
-        List<OrderItemViewModel> GetItems(long orderId);  // دریافت آیتم‌های سفارش
-        List<OrderViewModel> Search(OrderSearchCriteria searchModel); // جستجوی سفارش‌ها
+        Task<long> CreateAsync(CreateOrderCommand command);
+        Task EditAsync(EditOrderCommand command);
+        Task CancelAsync(long id);
+        Task<double> GetAmountByAsync(long id);
+        Task<List<OrderItemViewModel>> GetItemsAsync(long orderId);
+        Task<List<OrderViewModel>> SearchAsync(OrderSearchCriteria searchModel);
+        Task<long> FinalizeFromCartAsync(long cartId, string transactionId);
     }
 }

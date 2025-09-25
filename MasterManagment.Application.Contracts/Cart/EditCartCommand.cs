@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MasterManagment.Application.Contracts.Order
 {
-    public class EditOrderCommand : CreateOrderCommand
+    public class EditCartCommand : CreateCartCommand
     {
         public long Id { get; set; }
     }
