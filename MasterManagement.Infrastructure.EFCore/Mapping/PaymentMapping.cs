@@ -16,7 +16,7 @@ namespace MasterManagement.Infrastructure.EFCore.Mapping
             builder.ToTable("Payments");
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.OrderId).IsRequired();
+            builder.Property(p => p.CartId).IsRequired();
             builder.Property(p => p.Amount).IsRequired();
             builder.Property(p => p.PaymentDate).IsRequired();
             builder.Property(p => p.TransactionId).HasMaxLength(500).IsRequired();

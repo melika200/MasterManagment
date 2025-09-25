@@ -19,7 +19,7 @@ namespace MasterManagment.Application
         public async Task<long> CreateAsync(CreatePaymentCommand command)
         {
             var payment = new Payment(
-                command.OrderId,
+                command.CartId,
                 command.Amount,
                 command.TransactionId,
                 command.IsSucceeded);
@@ -35,7 +35,7 @@ namespace MasterManagment.Application
             if (payment == null)
                 throw new Exception($"Payment with id {command.Id} not found.");
 
-            payment.Update(command.OrderId, command.Amount, command.TransactionId, command.IsSucceeded);
+            payment.Update(command.CartId, command.Amount, command.TransactionId, command.IsSucceeded);
             await _paymentRepository.UpdateAsync(payment);
             await _unitOfwork.CommitAsync();
         }
@@ -60,7 +60,7 @@ namespace MasterManagment.Application
             return new PaymentViewModel
             {
                 Id = payment.Id,
-                OrderId = payment.OrderId,
+                CartId = payment.CartId,
                 Amount = payment.Amount,
                 TransactionId = payment.TransactionId,
                 IsSucceeded = payment.IsSucceeded
@@ -73,7 +73,7 @@ namespace MasterManagment.Application
             return payments.Select(payment => new PaymentViewModel
             {
                 Id = payment.Id,
-                OrderId = payment.OrderId,
+                CartId = payment.CartId,
                 Amount = payment.Amount,
                 TransactionId = payment.TransactionId,
                 IsSucceeded = payment.IsSucceeded
@@ -84,14 +84,14 @@ namespace MasterManagment.Application
         public async Task<List<PaymentViewModel>> SearchAsync(PaymentSearchCriteria searchModel)
         {
             var payments = await _paymentRepository.GetManyAsync(p =>
-                (searchModel.OrderId == 0 || p.OrderId == searchModel.OrderId) &&
+                (searchModel.CartId == 0 || p.CartId == searchModel.CartId) &&
                 (!searchModel.IsSucceeded.HasValue || p.IsSucceeded == searchModel.IsSucceeded) &&
                 (string.IsNullOrEmpty(searchModel.TransactionId) || p.TransactionId == searchModel.TransactionId));
 
             return payments.Select(payment => new PaymentViewModel
             {
                 Id = payment.Id,
-                OrderId = payment.OrderId,
+                CartId = payment.CartId,
                 Amount = payment.Amount,
                 TransactionId = payment.TransactionId,
                 IsSucceeded = payment.IsSucceeded
