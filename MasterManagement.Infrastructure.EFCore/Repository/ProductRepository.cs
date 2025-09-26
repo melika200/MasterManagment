@@ -19,12 +19,12 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
             _context = context;
         }
 
-        public async Task<Product> GetById(long id)
+        public async Task<Product?> GetById(long id)
         {
             return await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<Product>> GetAll(Expression<Func<Product, bool>> where = null)
+        public async Task<IEnumerable<Product>> GetAll(Expression<Func<Product, bool>>? where = null)
         {
             IQueryable<Product> query = _context.Products;
             if (where != null)
@@ -33,7 +33,7 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
             return await query.ToListAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetAllWithCategory(Expression<Func<Product, bool>> where = null)
+        public async Task<IEnumerable<Product>> GetAllWithCategory(Expression<Func<Product, bool>>? where = null)
         {
             IQueryable<Product> query = _context.Products.Include(p => p.Category);
             if (where != null)

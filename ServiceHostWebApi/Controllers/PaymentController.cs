@@ -16,7 +16,7 @@ public class PaymentController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreatePaymentCommand command)
     {
-        // ورودی شامل شناسه Cart است، نه OrderId
+     
         try
         {
             var paymentId = await _paymentApplication.CreateAsync(command);
@@ -72,7 +72,7 @@ public class PaymentController : ControllerBase
         }
     }
 
-    // تغییر مسیر برای هماهنگی با منطق شما: دریافت پرداخت‌ها بر اساس CartId
+  
     [HttpGet("cart/{cartId}")]
     public async Task<IActionResult> GetByCartId(long cartId)
     {

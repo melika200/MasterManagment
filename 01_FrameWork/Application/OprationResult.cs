@@ -14,6 +14,7 @@ namespace _01_FrameWork.Application
         public OperationResult()
         {
             IsSuccedded = false;
+            Message = string.Empty;
         }
 
         public OperationResult Succedded(string message = "عملیات با موفقیت انجام شد")

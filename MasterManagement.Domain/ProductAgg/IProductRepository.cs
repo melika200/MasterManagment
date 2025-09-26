@@ -13,7 +13,7 @@ namespace MasterManagement.Domain.ProductAgg
     {
         Task<IEnumerable<Product>> GetAllWithCategory(Expression<Func<Product, bool>> where = null);
         Task<IEnumerable<Product>> GetProductsByCategoryId(long categoryId);
-        Task<Product> GetById(long id);
+        Task<Product?> GetById(long id);
 
     }
 }

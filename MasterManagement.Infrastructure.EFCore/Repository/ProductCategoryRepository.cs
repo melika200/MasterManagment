@@ -20,7 +20,7 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
             _context = context;
         }
 
-        public async Task<ProductCategory> GetById(long id)
+        public async Task<ProductCategory?> GetById(long id)
         {
             return await _context.ProductCategories.FindAsync(id);
         }
@@ -29,7 +29,7 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
 
 
 
-        public EditProductCategoryCommand GetDetails(long id)
+        public EditProductCategoryCommand? GetDetails(long id)
         {
             return _context.ProductCategories.Select(x => new EditProductCategoryCommand()
             {
