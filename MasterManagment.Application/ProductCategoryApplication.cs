@@ -78,12 +78,12 @@ namespace MasterManagment.Application
 
             var product = await _productCategoryRepository.GetById(id);
             if (product == null)
-                return operation.Failed("محصول یافت نشد");
+                return operation.Failed("دسته بندی یافت نشد");
 
            await _productCategoryRepository.DeleteAsync(product);
             await _unitOfWork.CommitAsync();
 
-            return operation.Succedded("محصول با موفقیت حذف شد");
+            return operation.Succedded("دسته بندی با موفقیت حذف شد");
         }
 
     }

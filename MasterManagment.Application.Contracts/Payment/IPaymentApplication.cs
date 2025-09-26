@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using _01_FrameWork.Application;
 
 namespace MasterManagment.Application.Contracts.Payment
 {
     public interface IPaymentApplication
     {
-        Task<long> CreateAsync(CreatePaymentCommand command);
-        Task UpdateAsync(EditPaymentCommand command);
+        Task<OperationResult> CreateAsync(CreatePaymentCommand command);
+        Task<OperationResult> UpdateAsync(EditPaymentCommand command);
         Task CancelAsync(long id);
         Task<PaymentViewModel?> GetByIdAsync(long id);
         Task<List<PaymentViewModel>> GetByCartIdAsync(long cartId);

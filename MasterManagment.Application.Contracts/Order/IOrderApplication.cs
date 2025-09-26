@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using _01_FrameWork.Application;
 
 namespace MasterManagment.Application.Contracts.Order
 {
     public interface IOrderApplication
     {
-        Task<long> CreateAsync(CreateOrderCommand command);
-        Task EditAsync(EditOrderCommand command);
+        Task<OperationResult> CreateAsync(CreateOrderCommand command);
+        Task<OperationResult> EditAsync(EditOrderCommand command);
         Task CancelAsync(long id);
         Task<double> GetAmountByAsync(long id);
         Task<List<OrderItemViewModel>> GetItemsAsync(long orderId);

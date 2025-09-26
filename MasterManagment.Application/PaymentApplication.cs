@@ -1,125 +1,130 @@
-﻿
-using MasterManagment.Application.Contracts.Payment;
+﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.OrderAgg;
-using _01_FrameWork.Application;
+using MasterManagment.Application.Contracts.Payment;
 
-namespace MasterManagment.Application
+public class PaymentApplication : IPaymentApplication
 {
-    public class PaymentApplication : IPaymentApplication
+    private readonly IPaymentRepository _paymentRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICartRepository _cartRepository;
+
+    public PaymentApplication(IPaymentRepository paymentRepository, IUnitOfWork unitOfWork, ICartRepository cartRepository = null)
     {
-        private readonly IPaymentRepository _paymentRepository;
-        private readonly IUnitOfWork _unitOfwork;
-        private readonly ICartRepository _cartRepository;
-        public PaymentApplication(IPaymentRepository paymentRepository, IUnitOfWork unitOfWork, ICartRepository cartRepository = null)
+        _paymentRepository = paymentRepository;
+        _unitOfWork = unitOfWork;
+        _cartRepository = cartRepository;
+    }
+
+    public async Task<OperationResult> CreateAsync(CreatePaymentCommand command)
+    {
+        var operation = new OperationResult();
+
+        var payments = await _paymentRepository.GetManyAsync(p => p.CartId == command.CartId && p.IsSucceeded);
+        double totalPaid = payments.Sum(p => p.Amount);
+        double orderAmount;
+
+        try
         {
-            _paymentRepository = paymentRepository;
-            _unitOfwork = unitOfWork;
-            _cartRepository = cartRepository;
+            orderAmount = await GetOrderPayAmountByCartId(command.CartId);
+        }
+        catch (Exception ex)
+        {
+            return operation.Failed(ex.Message);
         }
 
-        public async Task<long> CreateAsync(CreatePaymentCommand command)
+        if (totalPaid + command.Amount > orderAmount)
+            return operation.Failed("شما قبلاً تمام مبلغ سفارش را پرداخت کرده‌اید. پرداخت بیشتر امکان‌پذیر نیست.");
+
+        var payment = new Payment(
+            command.CartId,
+            command.Amount,
+            command.TransactionId,
+            command.IsSucceeded);
+
+        await _paymentRepository.CreateAsync(payment);
+        await _unitOfWork.CommitAsync();
+
+        return operation.Succedded("پرداخت با موفقیت ثبت شد");
+    }
+
+    public async Task<OperationResult> UpdateAsync(EditPaymentCommand command)
+    {
+        var operation = new OperationResult();
+
+        var payment = await _paymentRepository.GetAsync(command.Id);
+        if (payment == null)
+            return operation.Failed($"پرداخت با شناسه {command.Id} یافت نشد.");
+
+        payment.Update(command.CartId, command.Amount, command.TransactionId, command.IsSucceeded);
+        await _paymentRepository.UpdateAsync(payment);
+        await _unitOfWork.CommitAsync();
+
+        return operation.Succedded("ویرایش پرداخت با موفقیت انجام شد");
+    }
+
+    public async Task CancelAsync(long id)
+    {
+        var payment = await _paymentRepository.GetAsync(id);
+        if (payment == null)
+            throw new Exception($"پرداخت با شناسه {id} یافت نشد.");
+
+        payment.Cancel();
+        await _paymentRepository.UpdateAsync(payment);
+        await _unitOfWork.CommitAsync();
+    }
+
+    public async Task<PaymentViewModel?> GetByIdAsync(long id)
+    {
+        var payment = await _paymentRepository.GetAsync(id);
+        if (payment == null)
+            return null;
+
+        return new PaymentViewModel
         {
-            
-            var payments = await _paymentRepository.GetManyAsync(p => p.CartId == command.CartId && p.IsSucceeded);
-            double totalPaid = payments.Sum(p => p.Amount);
+            Id = payment.Id,
+            CartId = payment.CartId,
+            Amount = payment.Amount,
+            TransactionId = payment.TransactionId,
+            IsSucceeded = payment.IsSucceeded
+        };
+    }
 
-           
-            double orderAmount = await GetOrderPayAmountByCartId(command.CartId);
-
-            if (totalPaid + command.Amount > orderAmount)
-            {
-                throw new Exception("شما قبلاً تمام مبلغ سفارش را پرداخت کرده‌اید. پرداخت بیشتر امکان‌پذیر نیست.");
-            }
-
-            var payment = new Payment(
-                command.CartId,
-                command.Amount,
-                command.TransactionId,
-                command.IsSucceeded);
-
-            await _paymentRepository.CreateAsync(payment);
-            await _unitOfwork.CommitAsync();
-            return payment.Id;
-        }
-
-        
-
-        public async Task<double> GetOrderPayAmountByCartId(long cartId)
+    public async Task<List<PaymentViewModel>> GetByCartIdAsync(long cartId)
+    {
+        var payments = await _paymentRepository.GetManyAsync(p => p.CartId == cartId);
+        return payments.Select(payment => new PaymentViewModel
         {
-            var cart = await _cartRepository.GetCartDetailsAsync(cartId);
-            if (cart == null)
-                throw new Exception("سبد خرید یافت نشد.");
+            Id = payment.Id,
+            CartId = payment.CartId,
+            Amount = payment.Amount,
+            TransactionId = payment.TransactionId,
+            IsSucceeded = payment.IsSucceeded
+        }).ToList();
+    }
 
-            return cart.PayAmount; 
-        }
+    public async Task<List<PaymentViewModel>> SearchAsync(PaymentSearchCriteria searchModel)
+    {
+        var payments = await _paymentRepository.GetManyAsync(p =>
+            (searchModel.CartId == 0 || p.CartId == searchModel.CartId) &&
+            (!searchModel.IsSucceeded.HasValue || p.IsSucceeded == searchModel.IsSucceeded) &&
+            (string.IsNullOrEmpty(searchModel.TransactionId) || p.TransactionId == searchModel.TransactionId));
 
-        public async Task UpdateAsync(EditPaymentCommand command)
+        return payments.Select(payment => new PaymentViewModel
         {
-            var payment = await _paymentRepository.GetAsync(command.Id);
-            if (payment == null)
-                throw new Exception($"Payment with id {command.Id} not found.");
+            Id = payment.Id,
+            CartId = payment.CartId,
+            Amount = payment.Amount,
+            TransactionId = payment.TransactionId,
+            IsSucceeded = payment.IsSucceeded
+        }).ToList();
+    }
 
-            payment.Update(command.CartId, command.Amount, command.TransactionId, command.IsSucceeded);
-            await _paymentRepository.UpdateAsync(payment);
-            await _unitOfwork.CommitAsync();
-        }
+    public async Task<double> GetOrderPayAmountByCartId(long cartId)
+    {
+        var cart = await _cartRepository.GetCartDetailsAsync(cartId);
+        if (cart == null)
+            throw new Exception("سبد خرید یافت نشد.");
 
-        public async Task CancelAsync(long id)
-        {
-            var payment = await _paymentRepository.GetAsync(id);
-            if (payment == null)
-                throw new Exception($"Payment with id {id} not found.");
-
-            payment.Cancel();
-            await _paymentRepository.UpdateAsync(payment);
-            await _unitOfwork.CommitAsync();
-        }
-
-        public async Task<PaymentViewModel?> GetByIdAsync(long id)
-        {
-            var payment = await _paymentRepository.GetAsync(id);
-            if (payment == null)
-                return null;
-
-            return new PaymentViewModel
-            {
-                Id = payment.Id,
-                CartId = payment.CartId,
-                Amount = payment.Amount,
-                TransactionId = payment.TransactionId,
-                IsSucceeded = payment.IsSucceeded
-            };
-        }
-
-        public async Task<List<PaymentViewModel>> GetByCartIdAsync(long cartId)
-        {
-            var payments = await _paymentRepository.GetManyAsync(p => p.CartId == cartId);
-            return payments.Select(payment => new PaymentViewModel
-            {
-                Id = payment.Id,
-                CartId = payment.CartId,
-                Amount = payment.Amount,
-                TransactionId = payment.TransactionId,
-                IsSucceeded = payment.IsSucceeded
-            }).ToList();
-        }
-
-
-        public async Task<List<PaymentViewModel>> SearchAsync(PaymentSearchCriteria searchModel)
-        {
-            var payments = await _paymentRepository.GetManyAsync(p =>
-                (searchModel.CartId == 0 || p.CartId == searchModel.CartId) &&
-                (!searchModel.IsSucceeded.HasValue || p.IsSucceeded == searchModel.IsSucceeded) &&
-                (string.IsNullOrEmpty(searchModel.TransactionId) || p.TransactionId == searchModel.TransactionId));
-
-            return payments.Select(payment => new PaymentViewModel
-            {
-                Id = payment.Id,
-                CartId = payment.CartId,
-                Amount = payment.Amount,
-                TransactionId = payment.TransactionId,
-                IsSucceeded = payment.IsSucceeded
-            }).ToList();
-        }
+        return cart.PayAmount;
     }
 }

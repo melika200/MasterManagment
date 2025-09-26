@@ -104,7 +104,7 @@ namespace MasterManagment.Application
 
         public async Task<List<ProductViewModel>> Search(ProductSearchCriteria searchModel)
         {
-            var query = await _productRepository.GetAllAsync();
+            var query = await _productRepository.GetAllWithCategory();
 
             if (!string.IsNullOrWhiteSpace(searchModel.Name))
                 query = query.Where(x => x.Name.Contains(searchModel.Name));

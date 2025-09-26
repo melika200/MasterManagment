@@ -22,8 +22,25 @@ namespace MasterManagment.Application
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<long> CreateAsync(CreateCartCommand command)
+        public async Task<OperationResult> CreateAsync(CreateCartCommand command)
         {
+            var operation = new OperationResult();
+
+            var existingCart = await _cartRepository.ExistsAsync(c => c.AccountId == command.AccountId && !c.IsCanceled && !c.IsPaid);
+            if (existingCart)
+                return operation.Failed("برای این حساب کاربری سبد خرید فعالی وجود دارد");
+
+            foreach (var item in command.Items)
+            {
+                var product = await _productRepository.GetAsync(item.ProductId);
+                if (product == null)
+                    return operation.Failed($"محصول با شناسه {item.ProductId} یافت نشد");
+                if (!product.IsAvailable)
+                    return operation.Failed($"محصول {product.Name} در دسترس نیست");
+                if (item.Count <= 0)
+                    return operation.Failed($"تعداد محصول {product.Name} باید بیشتر از صفر باشد");
+            }
+
             var cart = new Cart(
                 command.AccountId,
                 (PaymentMethod)command.PaymentMethod,
@@ -32,9 +49,6 @@ namespace MasterManagment.Application
             foreach (var item in command.Items)
             {
                 var product = await _productRepository.GetAsync(item.ProductId);
-                if (product == null)
-                    throw new Exception($"Product with id {item.ProductId} not found.");
-
                 var cartItem = new CartItem(
                     product.Id,
                     product.Name,
@@ -47,29 +61,35 @@ namespace MasterManagment.Application
 
             await _cartRepository.CreateAsync(cart);
             await _unitOfWork.CommitAsync();
-            return cart.Id;
+
+            return operation.Succedded("سبد خرید با موفقیت ایجاد شد");
         }
 
-        public async Task EditAsync(EditCartCommand command)
+        public async Task<OperationResult> EditAsync(EditCartCommand command)
         {
+            var operation = new OperationResult();
+
             var cart = await _cartRepository.GetAsync(command.Id);
             if (cart == null)
-                throw new Exception($"Cart with id {command.Id} not found.");
-
-            cart.Edit(
-                (PaymentMethod)command.PaymentMethod,
-                0,
-                0,
-                0);
-
-            cart.ClearItems();
+                return operation.Failed($"سبد خرید با شناسه {command.Id} یافت نشد");
 
             foreach (var item in command.Items)
             {
                 var product = await _productRepository.GetAsync(item.ProductId);
                 if (product == null)
-                    throw new Exception($"Product with id {item.ProductId} not found.");
+                    return operation.Failed($"محصول با شناسه {item.ProductId} یافت نشد");
+                if (!product.IsAvailable)
+                    return operation.Failed($"محصول {product.Name} در دسترس نیست");
+                if (item.Count <= 0)
+                    return operation.Failed($"تعداد محصول {product.Name} باید بیشتر از صفر باشد");
+            }
 
+            cart.Edit((PaymentMethod)command.PaymentMethod, 0, 0, 0);
+            cart.ClearItems();
+
+            foreach (var item in command.Items)
+            {
+                var product = await _productRepository.GetAsync(item.ProductId);
                 var cartItem = new CartItem(
                     product.Id,
                     product.Name,
@@ -82,16 +102,17 @@ namespace MasterManagment.Application
 
             await _cartRepository.UpdateAsync(cart);
             await _unitOfWork.CommitAsync();
+
+            return operation.Succedded("سبد خرید با موفقیت ویرایش شد");
         }
+
 
         //public async Task<long> CreateAsync(CreateCartCommand command)
         //{
         //    var cart = new Cart(
         //        command.AccountId,
-        //        (PaymentMethod)command.PaymentMethod, 
-        //        command.TotalAmount,
-        //        command.DiscountAmount,
-        //        command.PayAmount);
+        //        (PaymentMethod)command.PaymentMethod,
+        //        0, 0, 0);
 
         //    foreach (var item in command.Items)
         //    {
@@ -100,7 +121,9 @@ namespace MasterManagment.Application
         //            throw new Exception($"Product with id {item.ProductId} not found.");
 
         //        var cartItem = new CartItem(
-        //            product,
+        //            product.Id,
+        //            product.Name,
+        //            (double)product.Price,
         //            item.Count,
         //            item.DiscountRate);
 
@@ -108,6 +131,7 @@ namespace MasterManagment.Application
         //    }
 
         //    await _cartRepository.CreateAsync(cart);
+        //    await _unitOfWork.CommitAsync();
         //    return cart.Id;
         //}
 
@@ -119,9 +143,9 @@ namespace MasterManagment.Application
 
         //    cart.Edit(
         //        (PaymentMethod)command.PaymentMethod,
-        //        command.TotalAmount,
-        //        command.DiscountAmount,
-        //        command.PayAmount);
+        //        0,
+        //        0,
+        //        0);
 
         //    cart.ClearItems();
 
@@ -131,12 +155,21 @@ namespace MasterManagment.Application
         //        if (product == null)
         //            throw new Exception($"Product with id {item.ProductId} not found.");
 
-        //        var cartItem = new CartItem(product, item.Count, item.DiscountRate);
+        //        var cartItem = new CartItem(
+        //            product.Id,
+        //            product.Name,
+        //            (double)product.Price,
+        //            item.Count,
+        //            item.DiscountRate);
+
         //        cart.AddItem(cartItem);
         //    }
 
         //    await _cartRepository.UpdateAsync(cart);
+        //    await _unitOfWork.CommitAsync();
         //}
+
+
 
         public async Task CancelAsync(long id)
         {
