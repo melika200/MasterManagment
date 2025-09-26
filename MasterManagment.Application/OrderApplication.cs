@@ -143,7 +143,7 @@ namespace MasterManagment.Application
             return query.Select(o => new OrderViewModel
             {
                 Id = o.Id,
-                AccountName = "", // می‌توانید از سرویس دیگر بارگذاری شود
+                AccountName = "",
                 PaymentMethod = (int)o.PaymentMethod,
                 TotalAmount = o.TotalAmount,
                 IsPaid = o.IsPaid,
@@ -158,8 +158,13 @@ namespace MasterManagment.Application
             if (cart == null)
                 throw new Exception("سبد خرید یافت نشد.");
 
-            if (!cart.IsPaid)
-                throw new Exception("پرداخت برای این سبد ثبت نشده است.");
+            
+            var payments = await _paymentRepository.GetManyAsync(p => p.CartId == cartId && p.IsSucceeded);
+            double totalPaidAmount = payments.Sum(p => p.Amount);
+
+          
+            if (totalPaidAmount < cart.PayAmount)
+                throw new Exception("پرداخت کامل برای این سبد ثبت نشده است.");
 
             var payment = await _paymentRepository.GetByTransactionIdAsync(transactionId);
             if (payment == null || !payment.IsSucceeded)
@@ -183,7 +188,6 @@ namespace MasterManagment.Application
 
             await _orderRepository.CreateAsync(order);
 
-            // لغو سبد خرید برای جلوگیری از استفاده مجدد
             cart.Cancel();
             await _cartRepository.UpdateAsync(cart);
 
@@ -191,5 +195,6 @@ namespace MasterManagment.Application
 
             return order.Id;
         }
+
     }
 }

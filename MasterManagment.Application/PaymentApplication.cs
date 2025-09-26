@@ -9,15 +9,28 @@ namespace MasterManagment.Application
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly IUnitOfWork _unitOfwork;
-
-        public PaymentApplication(IPaymentRepository paymentRepository,IUnitOfWork unitOfWork)
+        private readonly ICartRepository _cartRepository;
+        public PaymentApplication(IPaymentRepository paymentRepository, IUnitOfWork unitOfWork, ICartRepository cartRepository = null)
         {
             _paymentRepository = paymentRepository;
             _unitOfwork = unitOfWork;
+            _cartRepository = cartRepository;
         }
 
         public async Task<long> CreateAsync(CreatePaymentCommand command)
         {
+            
+            var payments = await _paymentRepository.GetManyAsync(p => p.CartId == command.CartId && p.IsSucceeded);
+            double totalPaid = payments.Sum(p => p.Amount);
+
+           
+            double orderAmount = await GetOrderPayAmountByCartId(command.CartId);
+
+            if (totalPaid + command.Amount > orderAmount)
+            {
+                throw new Exception("شما قبلاً تمام مبلغ سفارش را پرداخت کرده‌اید. پرداخت بیشتر امکان‌پذیر نیست.");
+            }
+
             var payment = new Payment(
                 command.CartId,
                 command.Amount,
@@ -27,6 +40,17 @@ namespace MasterManagment.Application
             await _paymentRepository.CreateAsync(payment);
             await _unitOfwork.CommitAsync();
             return payment.Id;
+        }
+
+        
+
+        public async Task<double> GetOrderPayAmountByCartId(long cartId)
+        {
+            var cart = await _cartRepository.GetCartDetailsAsync(cartId);
+            if (cart == null)
+                throw new Exception("سبد خرید یافت نشد.");
+
+            return cart.PayAmount; 
         }
 
         public async Task UpdateAsync(EditPaymentCommand command)

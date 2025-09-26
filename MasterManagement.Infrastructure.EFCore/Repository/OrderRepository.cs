@@ -44,7 +44,11 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
             return await query.ToListAsync();
         }
 
-        public async Task<Order?> GetAsync(long id) => await _dbSet.FindAsync(id);
+        public async Task<Order?> GetAsync(long id)
+        {
+            return await _dbSet.Include(o => o.Items).FirstOrDefaultAsync(o => o.Id == id);
+        }
+
 
         public async Task CreateAsync(Order entity)
         {

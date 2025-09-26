@@ -31,5 +31,10 @@ namespace MasterManagement.Domain.OrderAgg
         {
             return GetTotalPrice() * DiscountRate / 100.0;
         }
+        public void SetOrderId(long orderId)
+        {
+            OrderId = orderId;
+        }
+
     }
 }

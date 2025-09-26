@@ -72,6 +72,19 @@ namespace MasterManagment.Application
         {
             return _productCategoryRepository.Search(searchModel);
         }
+        public async Task<OperationResult> DeleteAsync(long id)
+        {
+            var operation = new OperationResult();
+
+            var product = await _productCategoryRepository.GetById(id);
+            if (product == null)
+                return operation.Failed("محصول یافت نشد");
+
+           await _productCategoryRepository.DeleteAsync(product);
+            await _unitOfWork.CommitAsync();
+
+            return operation.Succedded("محصول با موفقیت حذف شد");
+        }
 
     }
 }

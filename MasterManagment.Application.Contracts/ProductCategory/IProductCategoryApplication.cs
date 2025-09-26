@@ -13,5 +13,6 @@ namespace MasterManagment.Application.Contracts.ProductCategory
         Task<OperationResult> EditAsync(EditProductCategoryCommand command);
         EditProductCategoryCommand GetDetails(long id);
         List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel);
+        Task<OperationResult> DeleteAsync(long id);
     }
 }

@@ -57,8 +57,9 @@ namespace ServiceHostWebApi.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> Edit(long id, [FromBody] EditProductCategoryCommand command)
         {
-            if (id != command.Id)
-                return BadRequest("آیدی ارسال شده با آیدی موجود در داده‌ها تطابق ندارد.");
+            command.Id = id;
+            //if (id != command.Id)
+            //    return BadRequest("آیدی ارسال شده با آیدی موجود در داده‌ها تطابق ندارد.");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -68,6 +69,15 @@ namespace ServiceHostWebApi.Controllers
                 return BadRequest(result.Message);
 
             return Ok(result.Message);
+        }
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> Delete(long id)
+        {
+            var result = await _productCategoryApplication.DeleteAsync(id);
+            if (!result.IsSuccedded)
+                return BadRequest(new { message = result.Message });
+
+            return Ok(new { message = result.Message });
         }
     }
 

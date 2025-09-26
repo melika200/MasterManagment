@@ -13,9 +13,6 @@ public class OrderController : ControllerBase
         _orderApplication = orderApplication;
     }
 
-    // حذف مسیر Create مستقیم، چون سفارش فقط پس از پرداخت ساخته می‌شود.
-
-    // متدی برای ساخت سفارش از روی Cart پس از موفقیت پرداخت
     [HttpPost("createFromCart")]
     public async Task<IActionResult> CreateFromCart([FromBody] CreateOrderFromCartCommand command)
     {
