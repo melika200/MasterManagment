@@ -1,115 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using _01_FrameWork.Domain;
-using MasterManagement.Domain.ProductAgg;
+﻿using _01_FrameWork.Domain;
 
-namespace MasterManagement.Domain.CartAgg
+namespace MasterManagement.Domain.CartAgg;
+
+public enum PaymentMethod
 {
-    public enum PaymentMethod
+    Online = 1,
+    CashOnDelivery = 2,
+    CardToCard = 3,
+    Wallet = 4,
+    Installment = 5
+}
+
+//نماینده یک سفارش کلی مشتری است که کالاها را به صورت یک مجموعه خریداری می‌کند.
+//شامل شناسه حساب کاربری مشتری، روش پرداخت، مبالغ کلی، وضعیت پرداخت(آیا پرداخت شده؟)، وضعیت لغو(کنسل شده؟)، شماره پیگیری ارسال کالا  و شناسه تراکنش پرداخت است.
+public class Cart : EntityBase,ISoftDelete
+{
+    public long AccountId { get; private set; }
+    public bool IsDeleted { get; set; } = false;
+    public PaymentMethod PaymentMethod { get; private set; }
+    public double TotalAmount { get; private set; }
+    public double DiscountAmount { get; private set; }
+    public double PayAmount { get; private set; }
+    public bool IsPaid { get; private set; }
+    public bool IsCanceled { get; private set; }
+    public string IssueTrackingNo { get; private set; }
+    public string RefId { get; private set; }
+
+    public List<CartItem> Items { get; private set; }
+
+    public Cart(long accountId, PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
     {
-        Online = 1,
-        CashOnDelivery = 2,
-        CardToCard = 3,
-        Wallet = 4,
-        Installment = 5
+        AccountId = accountId;
+        PaymentMethod = paymentMethod;
+        TotalAmount = totalAmount;
+        DiscountAmount = discountAmount;
+        PayAmount = payAmount;
+        IssueTrackingNo = string.Empty;
+        IsPaid = false;
+        IsCanceled = false;
+        RefId = string.Empty;
+        Items = new List<CartItem>();
     }
 
-    //نماینده یک سفارش کلی مشتری است که کالاها را به صورت یک مجموعه خریداری می‌کند.
-    //شامل شناسه حساب کاربری مشتری، روش پرداخت، مبالغ کلی، وضعیت پرداخت(آیا پرداخت شده؟)، وضعیت لغو(کنسل شده؟)، شماره پیگیری ارسال کالا  و شناسه تراکنش پرداخت است.
-    public class Cart : EntityBase
+    public void AddItem(CartItem item)
     {
-        public long AccountId { get; private set; }
-        public PaymentMethod PaymentMethod { get; private set; }
-        public double TotalAmount { get; private set; }
-        public double DiscountAmount { get; private set; }
-        public double PayAmount { get; private set; }
-        public bool IsPaid { get; private set; }
-        public bool IsCanceled { get; private set; }
-        public string IssueTrackingNo { get; private set; }
-        public long RefId { get; private set; }
-
-        public List<CartItem> Items { get; private set; }
-
-        public Cart(long accountId, PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
+        if (item == null) throw new ArgumentNullException(nameof(item));
+        item.SetCart(this);
+        var existing = Items.FirstOrDefault(i => i.ProductId == item.ProductId);
+        if (existing != null)
         {
-            AccountId = accountId;
-            PaymentMethod = paymentMethod;
-            TotalAmount = totalAmount;
-            DiscountAmount = discountAmount;
-            PayAmount = payAmount;
-            IssueTrackingNo = string.Empty;
-            IsPaid = false;
-            IsCanceled = false;
-            RefId = 0;
-            Items = new List<CartItem>();
+            existing.IncreaseCount(item.Count);
         }
-
-        public void AddItem(CartItem item)
+        else
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
-            item.SetCart(this);
-            var existing = Items.FirstOrDefault(i => i.ProductId == item.ProductId);
-            if (existing != null)
-            {
-                existing.IncreaseCount(item.Count);
-            }
-            else
-            {
-                Items.Add(item);
-            }
+            Items.Add(item);
+        }
+        RecalculateAmounts();
+    }
+
+    public void RemoveItem(long productId)
+    {
+        var item = Items.FirstOrDefault(i => i.ProductId == productId);
+        if (item != null)
+        {
+            Items.Remove(item);
             RecalculateAmounts();
         }
+    }
 
-        public void RemoveItem(long productId)
-        {
-            var item = Items.FirstOrDefault(i => i.ProductId == productId);
-            if (item != null)
-            {
-                Items.Remove(item);
-                RecalculateAmounts();
-            }
-        }
+    public void SoftDelete()
+    {
+        IsDeleted = true;
+    }
+    public void Edit(PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
+    {
+        PaymentMethod = paymentMethod;
+        TotalAmount = totalAmount;
+        DiscountAmount = discountAmount;
+        PayAmount = payAmount;
+    }
 
-        public void Edit(PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
-        {
-            PaymentMethod = paymentMethod;
-            TotalAmount = totalAmount;
-            DiscountAmount = discountAmount;
-            PayAmount = payAmount;
-        }
+    public void PaymentSucceeded(string refId)
+    {
+        IsPaid = true;
+        if (refId != null) RefId = refId;
+    }
 
-        public void PaymentSucceeded(long refId)
-        {
-            IsPaid = true;
-            if (refId != 0) RefId = refId;
-        }
+    public void Cancel()
+    {
+        IsCanceled = true;
+    }
 
-        public void Cancel()
-        {
-            IsCanceled = true;
-        }
+    public void SetIssueTrackingNo(string number)
+    {
+        IssueTrackingNo = number;
+    }
 
-        public void SetIssueTrackingNo(string number)
-        {
-            IssueTrackingNo = number;
-        }
+    private void RecalculateAmounts()
+    {
+        TotalAmount = Items.Sum(i => i.GetTotalPrice());
+        DiscountAmount = Items.Sum(i => i.GetDiscountAmount());
+        PayAmount = TotalAmount - DiscountAmount;
+    }
 
-        private void RecalculateAmounts()
+    public void ClearItems()
+    {
+        foreach (var item in Items.ToList())
         {
-            TotalAmount = Items.Sum(i => i.GetTotalPrice());
-            DiscountAmount = Items.Sum(i => i.GetDiscountAmount());
-            PayAmount = TotalAmount - DiscountAmount;
+            Items.Remove(item);
         }
-
-        public void ClearItems()
-        {
-            foreach (var item in Items.ToList())
-            {
-                Items.Remove(item);
-            }
-            RecalculateAmounts();
-        }
+        RecalculateAmounts();
     }
 }
 

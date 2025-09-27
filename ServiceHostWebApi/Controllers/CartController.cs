@@ -106,6 +106,16 @@ namespace ServiceHostWebApi.Controllers
                     return BadRequest(ex.Message);
                 }
             }
+
+            [HttpDelete("{id:long}")]
+            public async Task<IActionResult> Delete(long id)
+            {
+                var result = await _cartApplication.DeleteAsync(id);
+                if (!result.IsSuccedded)
+                    return BadRequest(new { message = result.Message });
+
+                return Ok(new { message = result.Message });
+            }
         }
     }
 

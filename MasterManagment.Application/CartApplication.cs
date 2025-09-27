@@ -232,5 +232,19 @@ namespace MasterManagment.Application
                 IssueTrackingNo = c.IssueTrackingNo
             }).ToList();
         }
+
+        public async Task<OperationResult> DeleteAsync(long cartid)
+        {
+            var operation = new OperationResult();
+
+            var product = await _cartRepository.GetAsync(cartid);
+            if (product == null)
+                return operation.Failed("سبدی  یافت نشد");
+            product.SoftDelete();
+            //_productRepository.DeleteAsync(product);
+            await _unitOfWork.CommitAsync();
+
+            return operation.Succedded("سبد خرید با موفقیت حذف شد");
+        }
     }
 }

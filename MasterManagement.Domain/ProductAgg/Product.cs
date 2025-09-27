@@ -10,9 +10,10 @@ using MasterManagement.Domain.ProductCategoryAgg;
 namespace MasterManagement.Domain.ProductAgg
 {
 
-    public class Product : EntityBase
+    public class Product : EntityBase,ISoftDelete
     {
         public string Name { get; private set; }
+        public bool IsDeleted { get; set; } = false;
         public string ImagePath { get; private set; }
         public decimal Price { get; private set; }
         public string Description { get; private set; }
@@ -78,6 +79,10 @@ namespace MasterManagement.Domain.ProductAgg
             IsAvailable = isAvailable;
         }
 
+        public void SoftDelete()
+        {
+            IsDeleted = true;
+        }
         public void UpdateRatings(int totalRatings, double averageRating)
         {
             if (totalRatings < 0)

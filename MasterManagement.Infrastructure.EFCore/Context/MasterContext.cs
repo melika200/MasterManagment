@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using _01_FrameWork.Domain;
 using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.ProductAgg;
@@ -28,9 +30,27 @@ namespace MasterManagement.Infrastructure.EFCore.Context
         public MasterContext(DbContextOptions<MasterContext> options) : base(options)
         {
         }
+        private static LambdaExpression GetIsDeletedFilter(Type type)
+        {
+            var parameter = Expression.Parameter(type, "e");
+            var property = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
+            var condition = Expression.Equal(property, Expression.Constant(false));
+            return Expression.Lambda(condition, parameter);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            var softDeleteEntities = modelBuilder.Model.GetEntityTypes()
+        .Where(e => typeof(ISoftDelete).IsAssignableFrom(e.ClrType));
+
+            foreach (var entityType in softDeleteEntities)
+            {
+                var entityBuilder = modelBuilder.Entity(entityType.ClrType);
+                entityBuilder.HasQueryFilter(GetIsDeletedFilter(entityType.ClrType));
+            }
+
+
             var assembly = typeof(ProductCategoryMapping).Assembly;
             modelBuilder.ApplyConfigurationsFromAssembly(assembly);
             base.OnModelCreating(modelBuilder);

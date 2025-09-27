@@ -80,11 +80,13 @@ namespace MasterManagment.Application
             if (product == null)
                 return operation.Failed("دسته بندی یافت نشد");
 
-           await _productCategoryRepository.DeleteAsync(product);
+            //await _productCategoryRepository.DeleteAsync(product);
+            product.SoftDelete();
             await _unitOfWork.CommitAsync();
 
             return operation.Succedded("دسته بندی با موفقیت حذف شد");
         }
+     
 
     }
 }

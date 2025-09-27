@@ -9,9 +9,10 @@ using MasterManagement.Domain.ProductAgg;
 
 namespace MasterManagement.Domain.ProductCategoryAgg
 {
-    public class ProductCategory:EntityBase
+    public class ProductCategory:EntityBase,ISoftDelete
     {
         public string Name { get; private set; } = string.Empty;
+        public bool IsDeleted { get; set; } = false;
         public string Description { get; private set; } = string.Empty;
         public string Picture { get; private set; } = string.Empty;
         public string PictureAlt { get; private set; } =string.Empty;
@@ -20,6 +21,10 @@ namespace MasterManagement.Domain.ProductCategoryAgg
         public string MetaDescription { get; private set; } =string.Empty;
         public string Slug { get; private set; } = string.Empty;
         public List<Product> Products { get; private set; }
+        public void SoftDelete()
+        {
+            IsDeleted = true;
+        }
 
         public ProductCategory()
         {

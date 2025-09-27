@@ -15,6 +15,7 @@ namespace MasterManagment.Application.Contracts.Order
         Task<double> GetAmountByAsync(long id);
         Task<List<CartItemViewModel>> GetItemsAsync(long cartId);
         Task<List<CartViewModel>> SearchAsync(CartSearchCriteria searchModel);
+        Task<OperationResult> DeleteAsync(long id);
     }
 }
 

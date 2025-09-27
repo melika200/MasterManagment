@@ -140,8 +140,8 @@ namespace MasterManagment.Application
             var product = await _productRepository.GetById(id);
             if (product == null)
                 return operation.Failed("محصول یافت نشد");
-
-            _productRepository.DeleteAsync(product);
+            product.SoftDelete();
+            //_productRepository.DeleteAsync(product);
             await _unitOfWork.CommitAsync();
 
             return operation.Succedded("محصول با موفقیت حذف شد");
