@@ -11,14 +11,14 @@ namespace MasterManagement.Domain.ProductCategoryAgg
 {
     public class ProductCategory:EntityBase
     {
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public string Picture { get; private set; }
-        public string PictureAlt { get; private set; }
-        public string PictureTitle { get; private set; }
-        public string Keywords { get; private set; }
-        public string MetaDescription { get; private set; }
-        public string Slug { get; private set; }
+        public string Name { get; private set; } = string.Empty;
+        public string Description { get; private set; } = string.Empty;
+        public string Picture { get; private set; } = string.Empty;
+        public string PictureAlt { get; private set; } =string.Empty;
+        public string PictureTitle { get; private set; } =string.Empty;
+        public string Keywords { get; private set; } =string.Empty;
+        public string MetaDescription { get; private set; } =string.Empty;
+        public string Slug { get; private set; } = string.Empty;
         public List<Product> Products { get; private set; }
 
         public ProductCategory()

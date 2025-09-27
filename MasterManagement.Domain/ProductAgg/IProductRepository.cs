@@ -11,7 +11,7 @@ namespace MasterManagement.Domain.ProductAgg
 
     public interface IProductRepository : IRepository<long, Product>
     {
-        Task<IEnumerable<Product>> GetAllWithCategory(Expression<Func<Product, bool>> where = null);
+        Task<IEnumerable<Product>> GetAllWithCategory(Expression<Func<Product, bool>>? where = null);
         Task<IEnumerable<Product>> GetProductsByCategoryId(long categoryId);
         Task<Product?> GetById(long id);
 

@@ -18,7 +18,7 @@ namespace MasterManagement.Domain.ProductAgg
         public string Description { get; private set; }
         public int Stock { get; private set; }
         public long CategoryId { get; private set; }
-        public ProductCategory Category { get; private set; }
+        public ProductCategory? Category { get; private set; }
         public bool IsAvailable { get; private set; }
         public int TotalRatings { get; private set; }
         public double AverageRating { get; private set; }

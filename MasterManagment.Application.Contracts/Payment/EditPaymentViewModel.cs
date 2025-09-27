@@ -11,7 +11,7 @@ namespace MasterManagment.Application.Contracts.Payment
         public long Id { get; set; }
         //public long OrderId { get; set; }
         public double Amount { get; set; }
-        public string TransactionId { get; set; }
+        public string? TransactionId { get; set; }
         public bool IsSucceeded { get; set; }
     }
 }

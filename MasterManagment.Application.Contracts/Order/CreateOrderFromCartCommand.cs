@@ -11,7 +11,7 @@ namespace MasterManagment.Application.Contracts.Order
         public class CreateOrderFromCartCommand
         {
             public long CartId { get; set; }
-            public string TransactionId { get; set; }
+            public string? TransactionId { get; set; }
         }
     
 

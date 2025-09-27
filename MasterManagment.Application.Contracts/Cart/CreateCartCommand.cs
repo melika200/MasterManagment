@@ -10,7 +10,7 @@ namespace MasterManagment.Application.Contracts.Order
     {
         public long AccountId { get; set; }
         public int PaymentMethod { get; set; }
-        public List<CartItemDto> Items { get; set; }
+        public List<CartItemDto>? Items { get; set; }
         //public double DiscountAmount { get; set; }
         //public double PayAmount { get; set; }
         //public double TotalAmount { get; set; }

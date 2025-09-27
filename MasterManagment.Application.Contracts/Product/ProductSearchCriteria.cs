@@ -10,7 +10,7 @@ namespace MasterManagment.Application.Contracts.Product
     {
 
        
-            public string Name { get; set; }
+            public string? Name { get; set; }
             public long? CategoryId { get; set; }
             public bool? IsAvailable { get; set; }
 

@@ -16,7 +16,7 @@ namespace MasterManagment.Application.Contracts.Order
         public double PayAmount { get; set; }
         public bool IsPaid { get; set; }
         public bool IsCanceled { get; set; }
-        public string IssueTrackingNo { get; set; }
+        public string? IssueTrackingNo { get; set; }
         public List<OrderItemViewModel> Items { get; set; }
 
         public EditOrderViewModel()

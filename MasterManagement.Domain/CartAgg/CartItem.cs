@@ -6,10 +6,10 @@ using System;
 public class CartItem : EntityBase
 {
     public long ProductId { get; private set; }
-    public Product Product { get; private set; }
+    public Product? Product { get; private set; } 
     public long CartId { get; private set; }
-    public Cart Cart { get; private set; }
-    public string ProductName { get; private set; }
+    public Cart? Cart { get; private set; } 
+    public string ProductName { get; private set; } = string.Empty;
     public int Count { get; private set; }
     public double UnitPrice { get; private set; }
     public int DiscountRate { get; private set; }

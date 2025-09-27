@@ -16,15 +16,15 @@ namespace MasterManagment.Application.Contracts.Product
 
             [Required(ErrorMessage = "نام محصول الزامی است")]
             [StringLength(150, ErrorMessage = "طول نام محصول نمی‌تواند بیش از 150 کاراکتر باشد")]
-            public string Name { get; set; }
+            public string? Name { get; set; }
 
             [Url(ErrorMessage = "آدرس تصویر معتبر نیست")]
-            public string ImagePath { get; set; }
+            public string? ImagePath { get; set; }
 
             [Range(0, double.MaxValue, ErrorMessage = "قیمت نمی‌تواند منفی باشد")]
             public decimal Price { get; set; }
 
-            public string Description { get; set; }
+            public string? Description { get; set; }
 
             [Range(0, int.MaxValue, ErrorMessage = "موجودی نمی‌تواند منفی باشد")]
             public int Stock { get; set; }
