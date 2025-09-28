@@ -68,7 +68,7 @@ namespace _01_FrameWork.Infrastructure
             _dbSet.RemoveRange(entities);
             await Task.CompletedTask;
         }
-        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        public async Task<bool> IsExistsAsync(Expression<Func<T, bool>> expression)
         {
             return await _dbSet.AnyAsync(expression);
         }

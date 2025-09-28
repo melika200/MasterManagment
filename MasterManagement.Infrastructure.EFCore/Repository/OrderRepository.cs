@@ -92,7 +92,7 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
         public Task<Order?> GetAsync(Expression<Func<Order, bool>> expression) =>
             _dbSet.FirstOrDefaultAsync(expression);
 
-        public async Task<bool> ExistsAsync(Expression<Func<Order, bool>> expression)
+        public async Task<bool> IsExistsAsync(Expression<Func<Order, bool>> expression)
         {
             return await _dbSet.AnyAsync(expression);
         }

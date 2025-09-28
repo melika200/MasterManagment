@@ -107,7 +107,7 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
             return _dbSet.Include(c => c.Items).FirstOrDefaultAsync(expression);
         }
 
-        public async Task<bool> ExistsAsync(Expression<Func<Cart, bool>> expression)
+        public async Task<bool> IsExistsAsync(Expression<Func<Cart, bool>> expression)
         {
             return await _dbSet.AnyAsync(expression);
         }

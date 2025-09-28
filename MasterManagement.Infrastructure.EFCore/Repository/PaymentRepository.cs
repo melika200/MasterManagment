@@ -73,7 +73,7 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
         public Task<Payment?> GetAsync(Expression<Func<Payment, bool>> expression) =>
             _dbSet.FirstOrDefaultAsync(expression);
 
-        public async Task<bool> ExistsAsync(Expression<Func<Payment, bool>> expression)
+        public async Task<bool> IsExistsAsync(Expression<Func<Payment, bool>> expression)
         {
             return await _dbSet.AnyAsync(expression);
         }

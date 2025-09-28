@@ -26,7 +26,7 @@ namespace MasterManagment.Application
         {
             var operation = new OperationResult();
 
-            var existingCart = await _cartRepository.ExistsAsync(c => c.AccountId == command.AccountId && !c.IsCanceled && !c.IsPaid);
+            var existingCart = await _cartRepository.IsExistsAsync(c => c.AccountId == command.AccountId && !c.IsCanceled && !c.IsPaid);
             if (existingCart)
                 return operation.Failed("برای این حساب کاربری سبد خرید فعالی وجود دارد");
 

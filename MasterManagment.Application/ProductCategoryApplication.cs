@@ -22,7 +22,7 @@ namespace MasterManagment.Application
         public async Task<OperationResult> CreateAsync(CreateProductCategoryCommand command)
         {
             var operation = new OperationResult();
-            if (await _productCategoryRepository.ExistsAsync(x => x.Name == command.Name))
+            if (await _productCategoryRepository.IsExistsAsync(x => x.Name == command.Name))
                 return operation.Failed("امکان ثبت رکورد تکراری وجود ندارد .لطفا مجدد تلاش کنید");
 
             var slug = command.Slug.Slugify();
@@ -48,7 +48,7 @@ namespace MasterManagment.Application
             if (productCategory == null)
                 return operation.Failed("رکورد با اطلاعات درخواست شده یافت نشد .لطفا مجدد تلاش بفرمایید");
 
-            if (await _productCategoryRepository.ExistsAsync(x => x.Name == command.Name && x.Id != command.Id))
+            if (await _productCategoryRepository.IsExistsAsync(x => x.Name == command.Name && x.Id != command.Id))
                 return operation.Failed("امکان ثبت رکورد تکراری وجود ندارد .لطفا مجدد تلاش کنید");
 
             var slug = command.Slug.Slugify();
