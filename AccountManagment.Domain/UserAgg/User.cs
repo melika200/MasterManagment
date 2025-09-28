@@ -15,15 +15,15 @@ public class User:EntityBase,ISoftDelete
     public RoleAgg.Role Role { get; private set; }
 
 
-    public User(string? fullname, string username, string? password, string? mobile, RoleAgg.Role role)
+    public User(string? fullname, string username, string? password, string? mobile, int roleId)
     {
-        if (role == null) throw new ArgumentNullException(nameof(role), "Role cannot be null in User constructor.");
+        //if (role == null) throw new ArgumentNullException(nameof(role), "Role cannot be null in User constructor.");
         Fullname = fullname;
         Username = username;
         Password = password;
         Mobile = mobile;
-        Role = role;
-        RoleId = role.Id;
+        //Role = role;
+        RoleId = roleId;
     }
 
 

@@ -65,7 +65,7 @@ public class UserApplication : IUserApplication
             command.Username,
             AccountUtils.HashPassword(command.Password),
             command.Mobile?.Normalize_PersianNumbers(),
-            role);
+            role.Id);
         await _userRepository.AddAsync(user);
         await _uniteOfWork.CommitAsync();
         return operationResult.Succedded();
@@ -100,4 +100,5 @@ public class UserApplication : IUserApplication
     {
         throw new NotImplementedException();
     }
+   
 }

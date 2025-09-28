@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\01_FrameWork\01_FrameWork.csproj" />
+    <ProjectReference Include="..\AccountManagment.Domain\AccountManagment.Domain.csproj" />
   </ItemGroup>
 
 </Project>

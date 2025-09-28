@@ -14,6 +14,8 @@ public class AccountManagementBootstrapper
     {
         services.AddTransient<IUserApplication, UserApplication>();
         services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<IJwtTokenGenerator, JwtTokenGenerator>();
+
 
         services.AddAutoMapper(cfg =>
         {
