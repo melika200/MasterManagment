@@ -13,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+builder.Services.AddMemoryCache();
+
 
 builder.Services.AddDbContext<MasterContext>(x => x.UseSqlServer(connectionString));
 builder.Services.AddDbContext<AccountContext>(x => x.UseSqlServer(connectionString));

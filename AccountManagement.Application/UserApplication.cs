@@ -4,6 +4,7 @@ using AccountManagment.Contracts;
 using AccountManagment.Domain.RolesTypesAgg;
 using AccountManagment.Domain.UserAgg;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace AccountManagement.Application;
 
@@ -12,11 +13,14 @@ public class UserApplication : IUserApplication
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _uniteOfWork;
-    public UserApplication(IUserRepository userRepository, IMapper mapper, IUnitOfWork uniteOfWork)
+    private readonly ILogger<UserApplication> _logger;
+
+    public UserApplication(IUserRepository userRepository, IMapper mapper, IUnitOfWork uniteOfWork,ILogger<UserApplication> logger)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _uniteOfWork = uniteOfWork;
+        _logger = logger;
     }
 
     public async Task<OperationResult> ChangePassword(ChangePasswordCommand command)
@@ -46,7 +50,46 @@ public class UserApplication : IUserApplication
 
     }
 
-   
+    //public async Task<OperationResult> Create(CreateUserCommand command)
+    //{
+    //    var operationResult = new OperationResult();
+
+    //    try
+    //    {
+    //        if (string.IsNullOrEmpty(command.Username))
+    //            return operationResult.Failed("نام کاربری نمی‌تواند خالی باشد.");
+
+    //        if (await _userRepository.IsExistsAsync(x => x.Username == command.Username))
+    //            return operationResult.Failed(ApplicationMessages.DuplicatedRecord);
+
+    //        var roleIdToUse = command.RoleId > 0 ? command.RoleId : RolesType.User.Id;
+
+    //        var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == roleIdToUse);
+    //        if (role == null)
+    //            return operationResult.Failed("نقش مورد نظر یافت نشد.");
+
+    //        var user = new User(
+    //            command.Fullname?.Normalize_FullPersianTextAndNumbers(),
+    //            command.Username,
+    //            AccountUtils.HashPassword(command.Password),
+    //            command.Mobile?.Normalize_PersianNumbers(),
+    //            role.Id);
+
+    //        await _userRepository.AddAsync(user);
+
+    //        await _uniteOfWork.CommitAsync();
+
+    //        _logger.LogInformation("ایجاد کاربر با نام کاربری {Username} موفقیت‌آمیز بود.", command.Username);
+
+    //        return operationResult.Succedded();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "خطا در ایجاد کاربر با نام کاربری {Username}.", command.Username);
+    //        return operationResult.Failed("خطا در ایجاد کاربر.");
+    //    }
+    //}
+
     public async Task<OperationResult> Create(CreateUserCommand command)
     {
         var operationResult = new OperationResult();
@@ -57,7 +100,7 @@ public class UserApplication : IUserApplication
         if (await _userRepository.IsExistsAsync(x => x.Username == command.Username))
             return operationResult.Failed(ApplicationMessages.DuplicatedRecord);
 
-        
+
         var roleIdToUse = command.RoleId > 0 ? command.RoleId : RolesType.User.Id;
 
         var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == roleIdToUse);

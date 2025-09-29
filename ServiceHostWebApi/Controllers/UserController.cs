@@ -55,6 +55,66 @@ public class AuthController : ControllerBase
         });
 
     }
+    //[HttpPost("verify")]
+    //public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+    //{
+    //    try
+    //    {
+    //        if (string.IsNullOrWhiteSpace(request.Mobile) || string.IsNullOrWhiteSpace(request.OtpCode))
+    //            return BadRequest(new { Error = "شماره موبایل و کد تایید را وارد کنید." });
+
+    //        var mobileNormalized = request.Mobile.Normalize_PersianNumbers();
+
+    //        if (!_memoryCache.TryGetValue<OTPModel>(mobileNormalized, out var otpModel) || !otpModel.IsValid(request.OtpCode))
+    //        {
+    //            return BadRequest(new { Error = "کد تایید معتبر نیست یا اشتباه است." });
+    //        }
+
+    //        var user = await _userApplication.GetByUsernameAsync(mobileNormalized);
+
+    //        if (user == null)
+    //        {
+    //            var createResult = await _userApplication.Create(new CreateUserCommand
+    //            {
+    //                Username = mobileNormalized,
+    //                Mobile = mobileNormalized,
+    //                Fullname = "کاربر جدید",
+    //                Password = null
+    //            });
+
+    //            if (!createResult.IsSuccedded)
+    //            {
+    //                _logger.LogWarning("خطا در ساخت کاربر جدید با موبایل {Mobile}: {Message}", mobileNormalized, createResult.Message);
+    //                return BadRequest(new { Error = createResult.Message });
+    //            }
+    //            await Task.Delay(100);
+
+    //            user = await _userApplication.GetByUsernameAsync(mobileNormalized);
+    //            if (user == null)
+    //            {
+    //                _logger.LogError("کاربر بلافاصله پس از ایجاد، پیدا نشد (خطا احتمالی).");
+    //                return StatusCode(500, new { Error = "خطا در پردازش کاربر." });
+    //            }
+    //        }
+
+    //        _memoryCache.Remove(mobileNormalized);
+
+    //        var generatedToken = _jwtTokenGenerator.GenerateToken(user);
+
+    //        return Ok(new
+    //        {
+    //            Message = "ورود موفقیت‌آمیز بود.",
+    //            Token = generatedToken,
+    //            ReturnUrl = request.ReturnUrl ?? "/"
+    //        });
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "Exception in VerifyOtp.");
+    //        return StatusCode(500, new { Error = "خطایی هنگام پردازش درخواست رخ داده است." });
+    //    }
+    //}
+
 
     [HttpPost("verify")]
     public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
@@ -70,8 +130,10 @@ public class AuthController : ControllerBase
         }
 
         var user = await _userApplication.GetByUsernameAsync(mobileNormalized);
+
         if (user == null)
         {
+
             var createResult = await _userApplication.Create(new CreateUserCommand
             {
                 Username = mobileNormalized,
