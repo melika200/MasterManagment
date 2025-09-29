@@ -1,4 +1,5 @@
 using System.Text;
+using _01_FrameWork.Infrastructure.Configuration;
 using AccountManagement.Infrastructure.Configuration;
 using AccountManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Infrastructure.Configuration;
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<AccountContext>(x => x.UseSqlServer(connectionStri
 
 MasterManagementBootstrapper.Configure(builder.Services, connectionString);
 AccountManagementBootstrapper.Configure(builder.Services, connectionString);
+FrameworkBootstrapper.Configure(builder.Services, connectionString);
 
 
 builder.Services.AddControllers();

@@ -46,6 +46,7 @@ public class UserApplication : IUserApplication
 
     }
 
+   
     public async Task<OperationResult> Create(CreateUserCommand command)
     {
         var operationResult = new OperationResult();
@@ -56,7 +57,10 @@ public class UserApplication : IUserApplication
         if (await _userRepository.IsExistsAsync(x => x.Username == command.Username))
             return operationResult.Failed(ApplicationMessages.DuplicatedRecord);
 
-        var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == command.RoleId);
+        
+        var roleIdToUse = command.RoleId > 0 ? command.RoleId : RolesType.User.Id;
+
+        var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == roleIdToUse);
         if (role == null)
             return operationResult.Failed("نقش مورد نظر یافت نشد.");
 
@@ -69,6 +73,11 @@ public class UserApplication : IUserApplication
         await _userRepository.AddAsync(user);
         await _uniteOfWork.CommitAsync();
         return operationResult.Succedded();
+    }
+
+    public async Task<User?> GetByUsernameAsync(string username)
+    {
+        return await _userRepository.GetSingleAsync(u => u.Username == username && !u.IsDeleted);
     }
 
     public async Task<OperationResult> Edit(EditUserCommand command)
