@@ -25,9 +25,6 @@ public class UserMapping : IEntityTypeConfiguration<User>
         builder.Property(x => x.Password)
             .HasMaxLength(1000);
 
-        builder.Property(x => x.Mobile)
-            .HasMaxLength(20);
-
         builder.Property(x => x.RoleId)
             .IsRequired();
 

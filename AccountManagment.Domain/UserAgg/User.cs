@@ -1,4 +1,6 @@
 ﻿using _01_FrameWork.Domain;
+using AccountManagment.Domain.RoleAgg;
+using AccountManagment.Domain.RolesTypesAgg;
 
 namespace AccountManagment.Domain.UserAgg;
 
@@ -9,20 +11,14 @@ public class User:EntityBase,ISoftDelete
     public string Username { get; private set; }
     public string? Fullname { get; private set; }
     public string? Password { get; private set; }
-    public string? Mobile { get; private set; }
     public int RoleId { get; private set; }
 
-    public RoleAgg.Role Role { get; private set; }
+    public RoleAgg.Role? Role { get; private set; }
 
 
-    public User(string? fullname, string username, string? password, string? mobile, int roleId)
+    public User(string username, int roleId)
     {
-        //if (role == null) throw new ArgumentNullException(nameof(role), "Role cannot be null in User constructor.");
-        Fullname = fullname;
         Username = username;
-        Password = password;
-        Mobile = mobile;
-        //Role = role;
         RoleId = roleId;
     }
 
@@ -39,8 +35,6 @@ public class User:EntityBase,ISoftDelete
     {
         Fullname = fullname;
         Username = username;
-        Mobile = mobile;
-      
     }
   
 

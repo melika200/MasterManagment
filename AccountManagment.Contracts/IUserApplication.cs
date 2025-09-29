@@ -6,7 +6,7 @@ namespace AccountManagment.Contracts;
 public interface IUserApplication
 {
     Task<OperationResult> Create(CreateUserCommand command);
-    Task<User?> GetByUsernameAsync(string username);
+    Task<User?> GetUserWithRoleByUsernameAsync(string username);
      //
     Task<OperationResult> Edit(EditUserCommand command);
     Task<OperationResult> ChangePassword(ChangePasswordCommand command);

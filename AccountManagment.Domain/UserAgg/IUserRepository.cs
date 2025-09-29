@@ -9,13 +9,12 @@ using _01_FrameWork.Domain;
 
 namespace AccountManagment.Domain.UserAgg
 {
-    public interface IUserRepository : IRepository<long,User>
+    public interface IUserRepository : IRepository<long, User>
     {
-        Task<User?> GetSingleAsync(Expression<Func<User, bool>> predicate);
-
         //IQueryable<User> GetAccountsByIds(List<long> accountIds);
 
         //EditUserViewModel? GetForEdit(long id);
         //List<UserViewModel>? Search(UserSearchCriteria criteria);
+        Task<User?> GetWithRoleAsync(string username);
     }
 }

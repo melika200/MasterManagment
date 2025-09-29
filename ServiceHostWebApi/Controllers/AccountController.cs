@@ -8,17 +8,17 @@ namespace ServiceHostWebApi.Controllers;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/auth/[controller]")]
-public class AuthController : ControllerBase
+[Route("api/v{version:apiVersion}/auth")]
+public class AccountController : ControllerBase
 {
     private readonly IUserApplication _userApplication;
     private readonly ISMSService _smsService;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IMemoryCache _memoryCache;
-    private readonly ILogger<AuthController> _logger;
+    private readonly ILogger<AccountController> _logger;
 
-    public AuthController(IUserApplication userApplication, ISMSService smsService, IJwtTokenGenerator jwtTokenGenerator,
-        IMemoryCache memoryCache, ILogger<AuthController> logger)
+    public AccountController(IUserApplication userApplication, ISMSService smsService, IJwtTokenGenerator jwtTokenGenerator,
+        IMemoryCache memoryCache, ILogger<AccountController> logger)
     {
         _userApplication = userApplication;
         _smsService = smsService;
@@ -29,18 +29,16 @@ public class AuthController : ControllerBase
 
   
 
- 
-
+    // TODO: ReturnUrl from query string
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, [FromQuery] string? ReturnUrl)
     {
         if (string.IsNullOrWhiteSpace(request.Mobile))
             return BadRequest(new { Error = "شماره موبایل را وارد کنید." });
 
         var mobileNormalized = request.Mobile.Normalize_PersianNumbers();
 
-       
-        var smsResult = await _smsService.SendOTPAsync(mobileNormalized);
+        var smsResult = await _smsService.SendOTPAsync(mobileNormalized!);
         if (!smsResult.IsSuccedded)
         {
             _logger.LogWarning("خطا در ارسال پیامک OTP به موبایل {Mobile}: {Message}", mobileNormalized, smsResult.Message);
@@ -50,8 +48,7 @@ public class AuthController : ControllerBase
         return Ok(new
         {
             Message = "کد تایید پیامک شد.",
-            VerifyUrl = $"api/v1/auth/auth/verify"
-           
+            VerifyUrl = $"api/v1/auth/verify?ReturnUrl={ReturnUrl}"
         });
 
     }
@@ -116,8 +113,10 @@ public class AuthController : ControllerBase
     //}
 
 
+    // TODO: ReturnUrl from query string
+
     [HttpPost("verify")]
-    public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+    public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request, [FromQuery] string? ReturnUrl)
     {
         if (string.IsNullOrWhiteSpace(request.Mobile) || string.IsNullOrWhiteSpace(request.OtpCode))
             return BadRequest(new { Error = "شماره موبایل و کد تایید را وارد کنید." });
@@ -129,26 +128,22 @@ public class AuthController : ControllerBase
             return BadRequest(new { Error = "کد تایید معتبر نیست یا اشتباه است." });
         }
 
-        var user = await _userApplication.GetByUsernameAsync(mobileNormalized);
+        var user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized);
 
         if (user == null)
         {
-
-            var createResult = await _userApplication.Create(new CreateUserCommand
+            var opResult = await _userApplication.Create(new CreateUserCommand
             {
-                Username = mobileNormalized,
-                Mobile = mobileNormalized,
-                Fullname = "کاربر جدید",
-                Password = null
+                Username = mobileNormalized
             });
 
-            if (!createResult.IsSuccedded)
+            if (!opResult.IsSuccedded)
             {
-                _logger.LogWarning("خطا در ساخت کاربر جدید با موبایل {Mobile}: {Message}", mobileNormalized, createResult.Message);
-                return BadRequest(new { Error = createResult.Message });
+                _logger.LogWarning($"خطا در ساخت کاربر جدید با موبایل {mobileNormalized}: {opResult.Message}");
+                return BadRequest(new { Error = opResult.Message });
             }
 
-            user = await _userApplication.GetByUsernameAsync(mobileNormalized);
+            user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized);
             if (user == null)
             {
                 _logger.LogError("کاربر بلافاصله پس از ایجاد، پیدا نشد (خطا احتمالی).");
@@ -164,7 +159,7 @@ public class AuthController : ControllerBase
         {
             Message = "ورود موفقیت‌آمیز بود.",
             Token = generatedToken,
-            ReturnUrl = request.ReturnUrl ?? "/"
+            ReturnUrl = ReturnUrl ?? "/"
         });
     }
 }

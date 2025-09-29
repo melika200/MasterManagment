@@ -15,8 +15,10 @@ public class UserRepository : RepositoryBase<long, User>, IUserRepository
         _context = context;
     }
 
-    public async Task<User?> GetSingleAsync(Expression<Func<User, bool>> predicate)
+    public Task<User?> GetWithRoleAsync(string username)
     {
-        return await _context.Users.SingleOrDefaultAsync(predicate);
+        return _context.Users.Where(x => x.Username == username)
+            .Include(x => x.Role)
+            .FirstOrDefaultAsync();
     }
 }

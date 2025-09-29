@@ -29,6 +29,14 @@ builder.Services.AddControllers();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/auth/login";
+        options.AccessDeniedPath = "/Error";
+        options.LogoutPath = "/auth/logout";
+        options.ExpireTimeSpan = TimeSpan.FromDays(90);
+        options.SlidingExpiration = true;
+    })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters

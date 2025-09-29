@@ -15,7 +15,7 @@ public class UserApplication : IUserApplication
     private readonly IUnitOfWork _uniteOfWork;
     private readonly ILogger<UserApplication> _logger;
 
-    public UserApplication(IUserRepository userRepository, IMapper mapper, IUnitOfWork uniteOfWork,ILogger<UserApplication> logger)
+    public UserApplication(IUserRepository userRepository, IMapper mapper, IUnitOfWork uniteOfWork, ILogger<UserApplication> logger)
     {
         _userRepository = userRepository;
         _mapper = mapper;
@@ -100,27 +100,22 @@ public class UserApplication : IUserApplication
         if (await _userRepository.IsExistsAsync(x => x.Username == command.Username))
             return operationResult.Failed(ApplicationMessages.DuplicatedRecord);
 
-
         var roleIdToUse = command.RoleId > 0 ? command.RoleId : RolesType.User.Id;
 
         var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == roleIdToUse);
         if (role == null)
             return operationResult.Failed("نقش مورد نظر یافت نشد.");
 
-        var user = new User(
-            command.Fullname?.Normalize_FullPersianTextAndNumbers(),
-            command.Username,
-            AccountUtils.HashPassword(command.Password),
-            command.Mobile?.Normalize_PersianNumbers(),
-            role.Id);
+        var user = new User(command.Username, role.Id);
         await _userRepository.AddAsync(user);
         await _uniteOfWork.CommitAsync();
         return operationResult.Succedded();
     }
 
-    public async Task<User?> GetByUsernameAsync(string username)
+    public async Task<User?> GetUserWithRoleByUsernameAsync(string username)
     {
-        return await _userRepository.GetSingleAsync(u => u.Username == username && !u.IsDeleted);
+        //return await _userRepository.GetAsync(u => u.Username == username);
+        return await _userRepository.GetWithRoleAsync(username);
     }
 
     public async Task<OperationResult> Edit(EditUserCommand command)
@@ -152,5 +147,5 @@ public class UserApplication : IUserApplication
     {
         throw new NotImplementedException();
     }
-   
+
 }
