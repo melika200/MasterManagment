@@ -45,11 +45,19 @@ public class AccountController : ControllerBase
             return StatusCode(500, new { Error = "ارسال پیامک تایید انجام نشد." });
         }
 
+        var verifyUrl = "api/v1/auth/verify";
+
+        if (!string.IsNullOrEmpty(ReturnUrl))
+        {
+            verifyUrl += $"?ReturnUrl={Uri.EscapeDataString(ReturnUrl)}";
+        }
+
         return Ok(new
         {
             Message = "کد تایید پیامک شد.",
-            VerifyUrl = $"api/v1/auth/verify?ReturnUrl={ReturnUrl}"
+            VerifyUrl = verifyUrl
         });
+
 
     }
     //[HttpPost("verify")]
@@ -153,7 +161,7 @@ public class AccountController : ControllerBase
 
         _memoryCache.Remove(mobileNormalized);
 
-        var generatedToken = _jwtTokenGenerator.GenerateToken(user);
+        var generatedToken = _jwtTokenGenerator.GenerateTokensAsync(user);
 
         return Ok(new
         {

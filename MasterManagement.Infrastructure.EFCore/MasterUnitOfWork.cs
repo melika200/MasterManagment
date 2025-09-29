@@ -23,7 +23,7 @@ public class MasterUnitOfWork : IUnitOfWork
             await transaction.CommitAsync(cancellationToken);
             return result;
         }
-        catch
+        catch(Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
             throw;

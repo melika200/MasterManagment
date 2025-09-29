@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.AppService.ApiApps.Service" Version="0.9.64" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\01_FrameWork\01_FrameWork.csproj" />
     <ProjectReference Include="..\AccountManagment.Domain\AccountManagment.Domain.csproj" />
   </ItemGroup>

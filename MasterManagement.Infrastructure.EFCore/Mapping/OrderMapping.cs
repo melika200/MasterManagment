@@ -23,8 +23,8 @@ namespace MasterManagement.Infrastructure.EFCore.Mapping
 
             builder.HasMany(o => o.Items)
                    .WithOne(i => i.Order)
-                   .HasForeignKey(i => i.OrderId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .HasForeignKey(i => i.OrderId);
+                  
         }
     }
 }

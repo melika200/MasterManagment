@@ -1,6 +1,5 @@
 ﻿using _01_FrameWork.Domain;
-using AccountManagment.Domain.RoleAgg;
-using AccountManagment.Domain.RolesTypesAgg;
+using AccountManagment.Domain.RefreshTokenAgg;
 
 namespace AccountManagment.Domain.UserAgg;
 
@@ -14,6 +13,7 @@ public class User:EntityBase,ISoftDelete
     public int RoleId { get; private set; }
 
     public RoleAgg.Role? Role { get; private set; }
+    public ICollection<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
 
 
     public User(string username, int roleId)

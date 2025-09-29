@@ -4,6 +4,6 @@ namespace AccountManagment.Contracts;
 
 public interface IJwtTokenGenerator
 {
-    string GenerateToken(User user);
-
+    Task<TokenResult> GenerateTokensAsync(User user);
 }
+

@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AccountManagement.Infrastructure.EFCore\AccountManagement.Infrastructure.EFCore.csproj" />
     <ProjectReference Include="..\AccountManagment.Contracts\AccountManagment.Contracts.csproj" />
     <ProjectReference Include="..\AccountManagment.Domain\AccountManagment.Domain.csproj" />
   </ItemGroup>
