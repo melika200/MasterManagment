@@ -1,4 +1,5 @@
 ﻿using _01_FrameWork.Application;
+using AccountManagment.Contracts.UnitOfWork;
 using AccountManagment.Contracts.UserContracts;
 using AccountManagment.Domain.RolesTypesAgg;
 using AccountManagment.Domain.UserAgg;
@@ -11,10 +12,10 @@ public class UserApplication : IUserApplication
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
-    private readonly IUnitOfWork _uniteOfWork;
+    private readonly IAccountUnitOfWork _uniteOfWork;
     private readonly ILogger<UserApplication> _logger;
 
-    public UserApplication(IUserRepository userRepository, IMapper mapper, IUnitOfWork uniteOfWork, ILogger<UserApplication> logger)
+    public UserApplication(IUserRepository userRepository, IMapper mapper, IAccountUnitOfWork uniteOfWork, ILogger<UserApplication> logger)
     {
         _userRepository = userRepository;
         _mapper = mapper;

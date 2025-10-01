@@ -6,6 +6,7 @@ using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagment.Application.Contracts.Order;
 using MasterManagment.Application.Contracts.OrderItem;
+using MasterManagment.Application.Contracts.UnitOfWork;
 
 public class OrderApplication : IOrderApplication
 {
@@ -13,14 +14,14 @@ public class OrderApplication : IOrderApplication
     private readonly IProductRepository _productRepository;
     private readonly ICartRepository _cartRepository;
     private readonly IPaymentRepository _paymentRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMasterUnitOfWork _unitOfWork;
 
     public OrderApplication(
         IOrderRepository orderRepository,
         IProductRepository productRepository,
         ICartRepository cartRepository,
         IPaymentRepository paymentRepository,
-        IUnitOfWork unitOfWork)
+        IMasterUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;

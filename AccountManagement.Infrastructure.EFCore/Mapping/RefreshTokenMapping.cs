@@ -20,13 +20,13 @@ public class RefreshTokenMapping
             .IsRequired();
 
         builder.Property(rt => rt.UserId)
-            .IsRequired()
-            .HasMaxLength(128);
-
+        .IsRequired();
 
         builder.HasOne(rt => rt.User)
                .WithMany(u => u.RefreshTokens)
-               .HasForeignKey(rt => rt.UserId);
+               .HasForeignKey(rt => rt.UserId)
+               .IsRequired();
+
 
     }
 

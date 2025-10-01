@@ -10,10 +10,10 @@ public class RefreshToken:ISoftDelete
     public DateTime ExpiryDate { get; private set; }
     public bool IsRevoked { get; private set; }
     public bool IsDeleted { get; set; } = false;
-    public string UserId { get; private set; }
+    public long UserId { get; private set; }
     public User? User { get; private set; }
 
-    public RefreshToken(string token, DateTime expiryDate, string userId)
+    public RefreshToken(string token, DateTime expiryDate, long userId)
     {
         Id = Guid.NewGuid();
         Token = token;

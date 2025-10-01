@@ -21,7 +21,7 @@ public class SMSService : ISMSService
         OTPNumber = "00000";
         _memoryCache.Set<OTPModel>(phone, new() { Number = OTPNumber, Date = DateTime.Now.AddMinutes(5) });
         string smsText = "پایا سیستم،\nکد تایید: " + OTPNumber;
-        opResult = await SendSMSAsync(phone, smsText);
+        //opResult = await SendSMSAsync(phone, smsText);
         return opResult.Succedded();
     }
 

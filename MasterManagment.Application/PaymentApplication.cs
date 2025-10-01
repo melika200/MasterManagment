@@ -2,14 +2,15 @@
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.PaymentAgg;
 using MasterManagment.Application.Contracts.Payment;
+using MasterManagment.Application.Contracts.UnitOfWork;
 
 public class PaymentApplication : IPaymentApplication
 {
     private readonly IPaymentRepository _paymentRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMasterUnitOfWork _unitOfWork;
     private readonly ICartRepository _cartRepository;
 
-    public PaymentApplication(IPaymentRepository paymentRepository, IUnitOfWork unitOfWork, ICartRepository cartRepository)
+    public PaymentApplication(IPaymentRepository paymentRepository, IMasterUnitOfWork unitOfWork, ICartRepository cartRepository)
     {
         _paymentRepository = paymentRepository;
         _unitOfWork = unitOfWork;

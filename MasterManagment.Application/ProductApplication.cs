@@ -2,6 +2,7 @@
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagment.Application.Contracts.Product;
+using MasterManagment.Application.Contracts.UnitOfWork;
 
 namespace MasterManagment.Application
 {
@@ -9,12 +10,12 @@ namespace MasterManagment.Application
     {
         private readonly IProductRepository _productRepository;
         private readonly IProductCategoryRepository _categoryRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMasterUnitOfWork _unitOfWork;
 
         public ProductApplication(
             IProductRepository productRepository,
             IProductCategoryRepository categoryRepository,
-            IUnitOfWork unitOfWork)
+            IMasterUnitOfWork unitOfWork)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;

@@ -1,6 +1,6 @@
-﻿namespace _01_FrameWork.Application;
+﻿namespace AccountManagment.Contracts.UnitOfWork;
 
-public interface IUnitOfWork
+public interface IAccountUnitOfWork
 {
     Task<int> CommitAsync(CancellationToken cancellationToken = default);
     //TRepository GetRepository<TRepository>() where TRepository : class;

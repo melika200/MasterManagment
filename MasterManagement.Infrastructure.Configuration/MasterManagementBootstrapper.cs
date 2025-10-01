@@ -1,5 +1,4 @@
-﻿using _01_FrameWork.Application;
-using MasterManagement.Domain.OrderAgg;
+﻿using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
@@ -11,32 +10,33 @@ using MasterManagment.Application.Contracts.Order;
 using MasterManagment.Application.Contracts.Payment;
 using MasterManagment.Application.Contracts.Product;
 using MasterManagment.Application.Contracts.ProductCategory;
+using MasterManagment.Application.Contracts.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace MasterManagement.Infrastructure.Configuration
+namespace MasterManagement.Infrastructure.Configuration;
+
+public class MasterManagementBootstrapper
 {
-    public class MasterManagementBootstrapper
+    public static void Configure(IServiceCollection services, string connectionString)
     {
-        public static void Configure(IServiceCollection services, string connectionString)
-        {
-            services.AddTransient<IProductCategoryApplication, ProductCategoryApplication>();
-            services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
-            services.AddTransient<IProductApplication, ProductApplication>();
-            services.AddTransient<IProductRepository, ProductRepository>();
-            services.AddTransient<ICartApplication, CartApplication>();
-            services.AddTransient<ICartRepository,CartRepository>();
-            services.AddTransient<IOrderApplication,OrderApplication>();
-            services.AddTransient<IOrderRepository,OrderRepository>();
-            services.AddTransient<IPaymentApplication,PaymentApplication>();
-            services.AddTransient<IPaymentRepository,PaymentRepository>();
+        services.AddTransient<IProductCategoryApplication, ProductCategoryApplication>();
+        services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
+        services.AddTransient<IProductApplication, ProductApplication>();
+        services.AddTransient<IProductRepository, ProductRepository>();
+        services.AddTransient<ICartApplication, CartApplication>();
+        services.AddTransient<ICartRepository,CartRepository>();
+        services.AddTransient<IOrderApplication,OrderApplication>();
+        services.AddTransient<IOrderRepository,OrderRepository>();
+        services.AddTransient<IPaymentApplication,PaymentApplication>();
+        services.AddTransient<IPaymentRepository,PaymentRepository>();
 
 
-            services.AddTransient<IUnitOfWork, MasterUnitOfWork>();
+        services.AddTransient<IMasterUnitOfWork, MasterUnitOfWork>();
 
 
-            services.AddDbContext<MasterContext>(x => x.UseSqlServer(connectionString));
-        }
+        services.AddDbContext<MasterContext>(x => x.UseSqlServer(connectionString));
     }
- }  
+}
+

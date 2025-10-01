@@ -1,6 +1,8 @@
 ﻿using AccountManagement.Application;
+using AccountManagement.Infrastructure.EFCore;
 using AccountManagement.Infrastructure.EFCore.Context;
 using AccountManagement.Infrastructure.EFCore.Repository;
+using AccountManagment.Contracts.UnitOfWork;
 using AccountManagment.Contracts.UserContracts;
 using AccountManagment.Domain.UserAgg;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +17,8 @@ public class AccountManagementBootstrapper
         services.AddTransient<IUserApplication, UserApplication>();
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IJwtTokenGenerator, JwtTokenGenerator>();
-        
 
+        services.AddTransient<IAccountUnitOfWork, AccountUnitOfWork>();
 
         services.AddAutoMapper(cfg =>
         {

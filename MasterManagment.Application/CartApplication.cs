@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.CartAgg;
-using MasterManagment.Application.Contracts.Order;
-using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.OrderAgg;
-using _01_FrameWork.Application;
+using MasterManagement.Domain.ProductAgg;
 using MasterManagment.Application.Contracts.CartItem;
+using MasterManagment.Application.Contracts.Order;
+using MasterManagment.Application.Contracts.UnitOfWork;
 
 namespace MasterManagment.Application
 {
@@ -15,9 +12,9 @@ namespace MasterManagment.Application
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMasterUnitOfWork _unitOfWork;
 
-        public CartApplication(ICartRepository cartRepository, IProductRepository productRepository,IUnitOfWork unitOfWork)
+        public CartApplication(ICartRepository cartRepository, IProductRepository productRepository,IMasterUnitOfWork unitOfWork)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;

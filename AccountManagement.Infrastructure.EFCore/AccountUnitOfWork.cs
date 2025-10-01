@@ -1,14 +1,14 @@
-﻿using MasterManagement.Infrastructure.EFCore.Context;
-using MasterManagment.Application.Contracts.UnitOfWork;
+﻿using AccountManagement.Infrastructure.EFCore.Context;
+using AccountManagment.Contracts.UnitOfWork;
 
-namespace MasterManagement.Infrastructure.EFCore;
+namespace AccountManagement.Infrastructure.EFCore;
 
-public class MasterUnitOfWork : IMasterUnitOfWork
+public class AccountUnitOfWork : IAccountUnitOfWork
 {
-    private readonly MasterContext _context;
+    private readonly AccountContext _context;
     //private readonly IServiceProvider _serviceProvider;
 
-    public MasterUnitOfWork(MasterContext context)
+    public AccountUnitOfWork(AccountContext context)
     {
         _context = context;
     }
@@ -22,7 +22,7 @@ public class MasterUnitOfWork : IMasterUnitOfWork
             await transaction.CommitAsync(cancellationToken);
             return result;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
             throw;

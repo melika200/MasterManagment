@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using _01_FrameWork.Application;
 using AccountManagement.Infrastructure.EFCore.Context;
+using AccountManagment.Contracts.UnitOfWork;
 using AccountManagment.Contracts.UserContracts;
 using AccountManagment.Domain.RefreshTokenAgg;
 using AccountManagment.Domain.UserAgg;
@@ -17,9 +17,9 @@ public class JwtTokenGenerator : IJwtTokenGenerator
     private readonly string _secretKey;
     private readonly int _expiryMinutes;
     private readonly AccountContext _accountContext;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IAccountUnitOfWork _unitOfWork;
 
-    public JwtTokenGenerator(IConfiguration configuration, AccountContext accountContext,IUnitOfWork unitOfWork)
+    public JwtTokenGenerator(IConfiguration configuration, AccountContext accountContext,IAccountUnitOfWork unitOfWork)
     {
         _issuer = configuration["Jwt:Issuer"] ?? throw new ArgumentNullException("Jwt:Issuer");
         _audience = configuration["Jwt:Audience"] ?? throw new ArgumentNullException("Jwt:Audience");
@@ -59,7 +59,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
       
         string refreshTokenString = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
-        var refreshToken = new RefreshToken(refreshTokenString, DateTime.UtcNow.AddDays(30), user.Id.ToString());
+        var refreshToken = new RefreshToken(refreshTokenString, DateTime.UtcNow.AddDays(30), user.Id);
 
         
         _accountContext.RefreshTokens.Add(refreshToken);

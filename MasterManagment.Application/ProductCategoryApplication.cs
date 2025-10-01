@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using _01_FrameWork.Application;
+﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagment.Application.Contracts.ProductCategory;
+using MasterManagment.Application.Contracts.UnitOfWork;
 
 namespace MasterManagment.Application
 {
     public class ProductCategoryApplication : IProductCategoryApplication
     {
         private readonly IProductCategoryRepository _productCategoryRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMasterUnitOfWork _unitOfWork;
 
-        public ProductCategoryApplication(IProductCategoryRepository ProductCategoryRepository, IUnitOfWork unitOfWork)
+        public ProductCategoryApplication(IProductCategoryRepository ProductCategoryRepository, IMasterUnitOfWork unitOfWork)
         {
             _productCategoryRepository = ProductCategoryRepository;
             _unitOfWork = unitOfWork;
