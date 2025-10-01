@@ -1,35 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using _01_FrameWork.Infrastructure;
 using MasterManagement.Domain.CartAgg;
-using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Domain.OrderAgg;
+using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagment.Application.Contracts.Order;
+using Microsoft.EntityFrameworkCore;
 
 namespace MasterManagement.Infrastructure.EFCore.Repository
 {
-    public class CartRepository : ICartRepository
+    public class CartRepository : RepositoryBase<long, Cart>,ICartRepository
     {
         private readonly MasterContext _context;
         private readonly DbSet<Cart> _dbSet;
 
-        public CartRepository(MasterContext context)
+        public CartRepository(MasterContext context):base(context)
         {
             _context = context;
             _dbSet = _context.Set<Cart>();
         }
 
        
-        public async Task<Cart?> GetAsync(long id)
-        {
-            return await _dbSet.Include(c => c.Items)
-                               .FirstOrDefaultAsync(c => c.Id == id);
-        }
+       
 
-        public async Task<Cart?> GetCartDetailsAsync(long cartId)
+        public async Task<Cart?> GetCartWithItemAsync(long cartId)
         {
             return await _dbSet.Include(c => c.Items)
                                .FirstOrDefaultAsync(c => c.Id == cartId);
@@ -51,65 +44,6 @@ namespace MasterManagement.Infrastructure.EFCore.Repository
             return await query.ToListAsync();
         }
 
-        public async Task CreateAsync(Cart entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-
-            await _dbSet.AddAsync(entity);
-        }
-
-        public Task AddAsync(Cart entity)
-        {
-            return CreateAsync(entity);
-        }
-
-        public async Task UpdateAsync(Cart entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-
-            _dbSet.Update(entity);
-            await Task.CompletedTask;
-        }
-
-        public async Task DeleteAsync(Cart entity)
-        {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            _dbSet.Remove(entity);
-            await Task.CompletedTask;
-        }
-
-        public async Task DeleteAsync(object id)
-        {
-            var entity = await GetAsync((long)id);
-            if (entity != null)
-                await DeleteAsync(entity);
-        }
-
-        public async Task DeleteAsync(Expression<Func<Cart, bool>> expression)
-        {
-            var entities = await _dbSet.Where(expression).ToListAsync();
-            _dbSet.RemoveRange(entities);
-            await Task.CompletedTask;
-        }
-
-        public async Task<IEnumerable<Cart>> GetAllAsync()
-        {
-            return await _dbSet.Include(c => c.Items).ToListAsync();
-        }
-
-        public Task<IEnumerable<Cart>> GetManyAsync(Expression<Func<Cart, bool>> expression)
-        {
-            return Task.FromResult(_dbSet.Where(expression).AsEnumerable());
-        }
-
-        public Task<Cart?> GetAsync(Expression<Func<Cart, bool>> expression)
-        {
-            return _dbSet.Include(c => c.Items).FirstOrDefaultAsync(expression);
-        }
-
-        public async Task<bool> IsExistsAsync(Expression<Func<Cart, bool>> expression)
-        {
-            return await _dbSet.AnyAsync(expression);
-        }
+        
     }
 }

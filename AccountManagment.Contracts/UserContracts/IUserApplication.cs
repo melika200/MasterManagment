@@ -1,12 +1,11 @@
 ﻿using _01_FrameWork.Application;
-using AccountManagment.Domain.UserAgg;
 
-namespace AccountManagment.Contracts;
+namespace AccountManagment.Contracts.UserContracts;
 
 public interface IUserApplication
 {
     Task<OperationResult> Create(CreateUserCommand command);
-    Task<User?> GetUserWithRoleByUsernameAsync(string username);
+    Task<Domain.UserAgg.User?> GetUserWithRoleByUsernameAsync(string username);
      //
     Task<OperationResult> Edit(EditUserCommand command);
     Task<OperationResult> ChangePassword(ChangePasswordCommand command);

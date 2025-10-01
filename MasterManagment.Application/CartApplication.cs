@@ -7,6 +7,7 @@ using MasterManagment.Application.Contracts.Order;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.OrderAgg;
 using _01_FrameWork.Application;
+using MasterManagment.Application.Contracts.CartItem;
 
 namespace MasterManagment.Application
 {
@@ -30,7 +31,7 @@ namespace MasterManagment.Application
             if (existingCart)
                 return operation.Failed("برای این حساب کاربری سبد خرید فعالی وجود دارد");
 
-            foreach (var item in command.Items)
+            foreach (var item in command.Items!)
             {
                 var product = await _productRepository.GetAsync(item.ProductId);
                 if (product == null)
@@ -50,7 +51,7 @@ namespace MasterManagment.Application
             {
                 var product = await _productRepository.GetAsync(item.ProductId);
                 var cartItem = new CartItem(
-                    product.Id,
+                    product!.Id,
                     product.Name,
                     (double)product.Price,
                     item.Count,
@@ -73,7 +74,7 @@ namespace MasterManagment.Application
             if (cart == null)
                 return operation.Failed($"سبد خرید با شناسه {command.Id} یافت نشد");
 
-            foreach (var item in command.Items)
+            foreach (var item in command.Items!)
             {
                 var product = await _productRepository.GetAsync(item.ProductId);
                 if (product == null)
@@ -91,7 +92,7 @@ namespace MasterManagment.Application
             {
                 var product = await _productRepository.GetAsync(item.ProductId);
                 var cartItem = new CartItem(
-                    product.Id,
+                    product!.Id,
                     product.Name,
                     (double)product.Price,
                     item.Count,

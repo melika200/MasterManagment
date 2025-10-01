@@ -1,6 +1,5 @@
 ﻿using _01_FrameWork.Application;
-using _01_FrameWork.Infrastructure;
-using AccountManagment.Contracts;
+using AccountManagment.Contracts.UserContracts;
 using AccountManagment.Domain.RolesTypesAgg;
 using AccountManagment.Domain.UserAgg;
 using AutoMapper;
@@ -34,7 +33,7 @@ public class UserApplication : IUserApplication
             return operationResult.Failed(ApplicationMessages.RecordNotFound);
 
 
-        if (!command.Password.Equals(command.PasswordConfirm))
+        if (command.Password!.Equals(command.PasswordConfirm))
             return operationResult.Failed(ApplicationMessages.PasswordConfirmNotMatch);
         var hashedPassword = AccountUtils.HashPassword(command.Password);
         if (hashedPassword == null)
@@ -107,7 +106,7 @@ public class UserApplication : IUserApplication
             return operationResult.Failed("نقش مورد نظر یافت نشد.");
 
         var user = new User(command.Username, role.Id);
-        await _userRepository.AddAsync(user);
+        await _userRepository.CreateAsync(user);
         await _uniteOfWork.CommitAsync();
         return operationResult.Succedded();
     }
@@ -120,7 +119,7 @@ public class UserApplication : IUserApplication
 
     public async Task<OperationResult> Edit(EditUserCommand command)
     {
-        throw new NotImplementedException();
+         throw new NotImplementedException();
     }
 
     public long GetUserId(string? name)

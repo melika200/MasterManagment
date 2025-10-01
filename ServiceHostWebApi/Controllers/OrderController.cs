@@ -18,7 +18,7 @@ public class OrderController : ControllerBase
     {
         try
         {
-            var orderId = await _orderApplication.FinalizeFromCartAsync(command.CartId, command.TransactionId);
+            var orderId = await _orderApplication.FinalizeFromCartAsync(command.CartId, command.TransactionId!);
             return Ok(new { OrderId = orderId });
         }
         catch (Exception ex)

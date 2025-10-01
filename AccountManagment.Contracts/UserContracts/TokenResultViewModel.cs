@@ -1,6 +1,6 @@
-﻿namespace AccountManagment.Contracts;
+﻿namespace AccountManagment.Contracts.UserContracts;
 
-public class TokenResult
+public class TokenResultViewModel
 {
     public string AccessToken { get; set; } = string.Empty;
     public string RefreshToken { get; set; } = string.Empty;

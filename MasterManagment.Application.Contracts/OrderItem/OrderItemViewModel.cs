@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MasterManagment.Application.Contracts.Order
+namespace MasterManagment.Application.Contracts.OrderItem
 {
-    public class OrderItemDto
+    public class OrderItemViewModel
     {
         public long ProductId { get; set; }
         public string? ProductName { get; set; }

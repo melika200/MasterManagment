@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using _01_FrameWork.Application;
+﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagment.Application.Contracts.Product;
@@ -36,10 +33,10 @@ namespace MasterManagment.Application
                 return operation.Failed("دسته‌بندی انتخاب شده معتبر نیست");
 
             var product = new Product(
-                command.Name,
-                command.ImagePath,
+                command.Name!,
+                command.ImagePath!,
                 command.Price,
-                command.Description,
+                command.Description!,
                 command.Stock,
                 command.CategoryId,
                 command.IsAvailable);
@@ -66,10 +63,10 @@ namespace MasterManagment.Application
                 return operation.Failed("دسته‌بندی انتخاب شده معتبر نیست");
 
             product.Edit(
-                command.Name,
-                command.ImagePath,
+                command.Name!,
+                command.ImagePath!,
                 command.Price,
-                command.Description,
+                command.Description!,
                 command.Stock,
                 command.CategoryId,
                 command.IsAvailable);
@@ -84,7 +81,7 @@ namespace MasterManagment.Application
         {
             var product = await _productRepository.GetAsync(id);
             if (product == null)
-                return null;
+                return null!;
 
             return new ProductViewModel
             {

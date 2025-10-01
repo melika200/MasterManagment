@@ -1,5 +1,6 @@
 ﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.OrderAgg;
+using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagement.Infrastructure.EFCore;

@@ -11,7 +11,7 @@ public class RefreshToken:ISoftDelete
     public bool IsRevoked { get; private set; }
     public bool IsDeleted { get; set; } = false;
     public string UserId { get; private set; }
-    public User User { get; private set; }
+    public User? User { get; private set; }
 
     public RefreshToken(string token, DateTime expiryDate, string userId)
     {

@@ -1,7 +1,7 @@
 ﻿using AccountManagement.Application;
 using AccountManagement.Infrastructure.EFCore.Context;
 using AccountManagement.Infrastructure.EFCore.Repository;
-using AccountManagment.Contracts;
+using AccountManagment.Contracts.UserContracts;
 using AccountManagment.Domain.UserAgg;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MasterManagement.Domain.OrderAgg;
+using MasterManagement.Domain.OrderItemAgg;
 
 namespace MasterManagement.Infrastructure.EFCore.Mapping
 {

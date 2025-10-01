@@ -1,5 +1,6 @@
 ﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.OrderAgg;
+using MasterManagement.Domain.PaymentAgg;
 using MasterManagment.Application.Contracts.Payment;
 
 public class PaymentApplication : IPaymentApplication
@@ -8,7 +9,7 @@ public class PaymentApplication : IPaymentApplication
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICartRepository _cartRepository;
 
-    public PaymentApplication(IPaymentRepository paymentRepository, IUnitOfWork unitOfWork, ICartRepository cartRepository = null)
+    public PaymentApplication(IPaymentRepository paymentRepository, IUnitOfWork unitOfWork, ICartRepository cartRepository)
     {
         _paymentRepository = paymentRepository;
         _unitOfWork = unitOfWork;
@@ -38,7 +39,7 @@ public class PaymentApplication : IPaymentApplication
         var payment = new Payment(
             command.CartId,
             command.Amount,
-            command.TransactionId,
+            command.TransactionId!,
             command.IsSucceeded);
 
         await _paymentRepository.CreateAsync(payment);
@@ -55,7 +56,7 @@ public class PaymentApplication : IPaymentApplication
         if (payment == null)
             return operation.Failed($"پرداخت با شناسه {command.Id} یافت نشد.");
 
-        payment.Update(command.CartId, command.Amount, command.TransactionId, command.IsSucceeded);
+        payment.Update(command.CartId, command.Amount, command.TransactionId!, command.IsSucceeded);
         await _paymentRepository.UpdateAsync(payment);
         await _unitOfWork.CommitAsync();
 
@@ -121,7 +122,7 @@ public class PaymentApplication : IPaymentApplication
 
     public async Task<double> GetOrderPayAmountByCartId(long cartId)
     {
-        var cart = await _cartRepository.GetCartDetailsAsync(cartId);
+        var cart = await _cartRepository.GetCartWithItemAsync(cartId);
         if (cart == null)
             throw new Exception("سبد خرید یافت نشد.");
 

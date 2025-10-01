@@ -1,4 +1,4 @@
-﻿namespace AccountManagment.Contracts;
+﻿namespace AccountManagment.Contracts.UserContracts;
 
 public class EditUserCommand:CreateUserCommand
 {

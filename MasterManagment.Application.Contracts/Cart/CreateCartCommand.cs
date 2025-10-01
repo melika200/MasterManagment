@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MasterManagment.Application.Contracts.CartItem;
 
 namespace MasterManagment.Application.Contracts.Order
 {
@@ -10,7 +11,7 @@ namespace MasterManagment.Application.Contracts.Order
     {
         public long AccountId { get; set; }
         public int PaymentMethod { get; set; }
-        public List<CartItemDto>? Items { get; set; }
+        public List<CartItemViewModel>? Items { get; set; }
         //public double DiscountAmount { get; set; }
         //public double PayAmount { get; set; }
         //public double TotalAmount { get; set; }

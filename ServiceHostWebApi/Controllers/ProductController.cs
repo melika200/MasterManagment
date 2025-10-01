@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MasterManagment.Application.Contracts.Product;
-using System.Threading.Tasks;
+﻿using MasterManagment.Application.Contracts.Product;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostWebApi.Controllers
 {

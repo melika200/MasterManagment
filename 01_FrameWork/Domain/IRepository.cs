@@ -11,7 +11,7 @@ public interface IRepository<TKey, T> where T : class
     Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> expression);
     Task<T?> GetAsync(Expression<Func<T, bool>> expression);
     Task CreateAsync(T entity);
-    Task AddAsync(T entity);
+    //Task AddAsync(T entity);
     Task UpdateAsync(T entity);
     Task DeleteAsync(T entity);
     Task DeleteAsync(object id);

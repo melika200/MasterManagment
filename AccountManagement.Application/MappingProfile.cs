@@ -1,4 +1,4 @@
-﻿using AccountManagment.Contracts;
+﻿using AccountManagment.Contracts.UserContracts;
 using AccountManagment.Domain.UserAgg;
 using AutoMapper;
 

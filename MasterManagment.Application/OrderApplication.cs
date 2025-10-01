@@ -1,8 +1,11 @@
 ﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderAgg;
+using MasterManagement.Domain.OrderItemAgg;
+using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagment.Application.Contracts.Order;
+using MasterManagment.Application.Contracts.OrderItem;
 
 public class OrderApplication : IOrderApplication
 {
@@ -30,7 +33,7 @@ public class OrderApplication : IOrderApplication
     {
         var operation = new OperationResult();
 
-        foreach (var item in command.Items)
+        foreach (var item in command.Items!)
         {
             var product = await _productRepository.GetAsync(item.ProductId);
             if (product == null)
@@ -46,7 +49,7 @@ public class OrderApplication : IOrderApplication
         foreach (var item in command.Items)
         {
             var product = await _productRepository.GetAsync(item.ProductId);
-            var orderItem = new OrderItem(product.Id,
+            var orderItem = new OrderItem(product!.Id,
                                           item.Count,
                                           (double)product.Price,
                                           item.DiscountRate,
@@ -69,7 +72,7 @@ public class OrderApplication : IOrderApplication
         if (order == null)
             return operation.Failed($"سفارش با شناسه {command.Id} یافت نشد");
 
-        foreach (var item in command.Items)
+        foreach (var item in command.Items!)
         {
             var product = await _productRepository.GetAsync(item.ProductId);
             if (product == null)
@@ -86,7 +89,7 @@ public class OrderApplication : IOrderApplication
         foreach (var item in command.Items)
         {
             var product = await _productRepository.GetAsync(item.ProductId);
-            var orderItem = new OrderItem(product.Id,
+            var orderItem = new OrderItem(product!.Id,
                                           item.Count,
                                           (double)product.Price,
                                           item.DiscountRate,
@@ -165,7 +168,7 @@ public class OrderApplication : IOrderApplication
 
     public async Task<long> FinalizeFromCartAsync(long cartId, string transactionId)
     {
-        var cart = await _cartRepository.GetCartDetailsAsync(cartId);
+        var cart = await _cartRepository.GetCartWithItemAsync(cartId);
         if (cart == null)
             throw new Exception("سبد خرید یافت نشد.");
 

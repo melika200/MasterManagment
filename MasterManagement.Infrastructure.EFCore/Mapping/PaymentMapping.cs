@@ -1,30 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MasterManagement.Domain.OrderAgg;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using MasterManagement.Domain.PaymentAgg;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace MasterManagement.Infrastructure.EFCore.Mapping
+namespace MasterManagement.Infrastructure.EFCore.Mapping;
+
+public class PaymentMapping : IEntityTypeConfiguration<Payment>
 {
-    public class PaymentMapping : IEntityTypeConfiguration<Payment>
+    public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        public void Configure(EntityTypeBuilder<Payment> builder)
-        {
-            builder.ToTable("Payments");
-            builder.HasKey(p => p.Id);
+        builder.ToTable("Payments");
+        builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.CartId).IsRequired();
-            builder.Property(p => p.Amount).IsRequired();
-            builder.Property(p => p.PaymentDate).IsRequired();
-            builder.Property(p => p.TransactionId).HasMaxLength(500).IsRequired();
-            builder.Property(p => p.IsSucceeded).IsRequired();
-            builder.Property(p => p.IsCanceled).IsRequired();
-        }
+        builder.Property(p => p.CartId).IsRequired();
+        builder.Property(p => p.Amount).IsRequired();
+        builder.Property(p => p.PaymentDate).IsRequired();
+        builder.Property(p => p.TransactionId).HasMaxLength(500).IsRequired();
+        builder.Property(p => p.IsSucceeded).IsRequired();
+        builder.Property(p => p.IsCanceled).IsRequired();
     }
 }
 
-   
+
 

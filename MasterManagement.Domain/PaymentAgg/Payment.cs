@@ -1,6 +1,6 @@
 ﻿using _01_FrameWork.Domain;
 
-namespace MasterManagement.Domain.OrderAgg;
+namespace MasterManagement.Domain.PaymentAgg;
 
 public class Payment : EntityBase
 {

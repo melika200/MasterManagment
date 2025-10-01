@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using _01_FrameWork.Application;
 using AccountManagement.Infrastructure.EFCore.Context;
-using AccountManagment.Contracts;
+using AccountManagment.Contracts.UserContracts;
 using AccountManagment.Domain.RefreshTokenAgg;
 using AccountManagment.Domain.UserAgg;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +31,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public async Task<TokenResult> GenerateTokensAsync(User user)
+    public async Task<TokenResultViewModel> GenerateTokensAsync(User user)
     {
         if (user == null) throw new ArgumentNullException(nameof(user));
 
@@ -65,7 +65,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _accountContext.RefreshTokens.Add(refreshToken);
         await _unitOfWork.CommitAsync();
 
-        return new TokenResult
+        return new TokenResultViewModel
         {
             AccessToken = accessTokenString,
             RefreshToken = refreshTokenString

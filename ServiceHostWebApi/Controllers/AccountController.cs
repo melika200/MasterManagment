@@ -1,6 +1,6 @@
 ﻿using _01_FrameWork.Infrastructure;
 using _01_FrameWork.Infrastructure.Models;
-using AccountManagment.Contracts;
+using AccountManagment.Contracts.UserContracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -31,12 +31,12 @@ public class AccountController : ControllerBase
 
     // TODO: ReturnUrl from query string
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request, [FromQuery] string? ReturnUrl)
+    public async Task<IActionResult> Login([FromBody] LoginRequestCommand request, [FromQuery] string? ReturnUrl)
     {
-        if (string.IsNullOrWhiteSpace(request.Mobile))
+        if (string.IsNullOrWhiteSpace(request.Username))
             return BadRequest(new { Error = "شماره موبایل را وارد کنید." });
 
-        var mobileNormalized = request.Mobile.Normalize_PersianNumbers();
+        var mobileNormalized = request.Username.Normalize_PersianNumbers();
 
         var smsResult = await _smsService.SendOTPAsync(mobileNormalized!);
         if (!smsResult.IsSuccedded)
@@ -124,19 +124,19 @@ public class AccountController : ControllerBase
     // TODO: ReturnUrl from query string
 
     [HttpPost("verify")]
-    public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request, [FromQuery] string? ReturnUrl)
+    public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequestCommand request, [FromQuery] string? ReturnUrl)
     {
         if (string.IsNullOrWhiteSpace(request.Mobile) || string.IsNullOrWhiteSpace(request.OtpCode))
             return BadRequest(new { Error = "شماره موبایل و کد تایید را وارد کنید." });
 
         var mobileNormalized = request.Mobile.Normalize_PersianNumbers();
 
-        if (!_memoryCache.TryGetValue<OTPModel>(mobileNormalized, out var otpModel) || !otpModel.IsValid(request.OtpCode))
+        if (!_memoryCache.TryGetValue<OTPModel>(mobileNormalized!, out var otpModel) || otpModel!.IsValid(request.OtpCode))
         {
             return BadRequest(new { Error = "کد تایید معتبر نیست یا اشتباه است." });
         }
 
-        var user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized);
+        var user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized!);
 
         if (user == null)
         {
@@ -151,7 +151,7 @@ public class AccountController : ControllerBase
                 return BadRequest(new { Error = opResult.Message });
             }
 
-            user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized);
+            user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized!);
             if (user == null)
             {
                 _logger.LogError("کاربر بلافاصله پس از ایجاد، پیدا نشد (خطا احتمالی).");
@@ -159,7 +159,7 @@ public class AccountController : ControllerBase
             }
         }
 
-        _memoryCache.Remove(mobileNormalized);
+        _memoryCache.Remove(mobileNormalized!);
 
         var generatedToken = _jwtTokenGenerator.GenerateTokensAsync(user);
 

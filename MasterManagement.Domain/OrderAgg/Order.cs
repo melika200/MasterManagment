@@ -1,5 +1,6 @@
 ﻿using _01_FrameWork.Domain;
 using MasterManagement.Domain.CartAgg;
+using MasterManagement.Domain.OrderItemAgg;
 
 namespace MasterManagement.Domain.OrderAgg;
 

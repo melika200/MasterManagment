@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AccountManagment.Contracts;
+namespace AccountManagment.Contracts.UserContracts;
 
 public class CreateUserCommand
 {

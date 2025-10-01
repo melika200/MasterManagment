@@ -2,6 +2,8 @@
 using _01_FrameWork.Domain;
 using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderAgg;
+using MasterManagement.Domain.OrderItemAgg;
+using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagement.Infrastructure.EFCore.Mapping;

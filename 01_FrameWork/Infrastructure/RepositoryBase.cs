@@ -40,15 +40,10 @@ namespace _01_FrameWork.Infrastructure
 
         public async Task AddAsync(T entity)
         {
-            try
-            {
+            
                 if (entity == null) throw new ArgumentNullException(nameof(entity));
                 await _dbSet.AddAsync(entity);
-            }
-            catch(Exception ex)
-            {
-                throw;
-            }
+           
            
         }
 

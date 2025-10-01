@@ -1,6 +1,5 @@
 ﻿using _01_FrameWork.Application;
 using MasterManagement.Infrastructure.EFCore.Context;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MasterManagement.Infrastructure.EFCore;
 

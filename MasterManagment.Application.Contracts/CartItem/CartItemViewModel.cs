@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MasterManagment.Application.Contracts.Order
+namespace MasterManagment.Application.Contracts.CartItem
 {
-    public class OrderItemViewModel
+    public class CartItemViewModel
     {
         public long ProductId { get; set; }
-        public string? ProductName { get; set; }
+        public string ProductName { get; set; } = string.Empty;
         public int Count { get; set; }
         public double UnitPrice { get; set; }
         public int DiscountRate { get; set; }
