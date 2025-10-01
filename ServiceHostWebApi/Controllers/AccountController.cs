@@ -27,10 +27,11 @@ public class AccountController : ControllerBase
         _logger = logger;
     }
 
-  
-
-    // TODO: ReturnUrl from query string
+    
     [HttpPost("login")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     public async Task<IActionResult> Login([FromBody] LoginRequestCommand request, [FromQuery] string? ReturnUrl)
     {
         if (string.IsNullOrWhiteSpace(request.Username))
@@ -38,15 +39,22 @@ public class AccountController : ControllerBase
 
         var mobileNormalized = request.Username.Normalize_PersianNumbers();
 
-        var smsResult = await _smsService.SendOTPAsync(mobileNormalized!);
-        if (!smsResult.IsSuccedded)
+        try
         {
-            _logger.LogWarning("خطا در ارسال پیامک OTP به موبایل {Mobile}: {Message}", mobileNormalized, smsResult.Message);
-            return StatusCode(500, new { Error = "ارسال پیامک تایید انجام نشد." });
+            var smsResult = await _smsService.SendOTPAsync(mobileNormalized!);
+            if (!smsResult.IsSuccedded)
+            {
+                _logger.LogWarning("خطا در ارسال پیامک OTP به موبایل {Mobile}: {Message}", mobileNormalized, smsResult.Message);
+                return StatusCode(500, new { Error = "ارسال پیامک تایید انجام نشد." });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در ارسال پیامک OTP");
+            return StatusCode(500, new { Error = "خطای داخلی رخ داده است." });
         }
 
         var verifyUrl = "api/v1/auth/verify";
-
         if (!string.IsNullOrEmpty(ReturnUrl))
         {
             verifyUrl += $"?ReturnUrl={Uri.EscapeDataString(ReturnUrl)}";
@@ -57,12 +65,13 @@ public class AccountController : ControllerBase
             Message = "کد تایید پیامک شد.",
             VerifyUrl = verifyUrl
         });
-
-
     }
-  
+
 
     [HttpPost("verify")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequestCommand request, [FromQuery] string? ReturnUrl)
     {
         if (string.IsNullOrWhiteSpace(request.Mobile) || string.IsNullOrWhiteSpace(request.OtpCode))
@@ -75,39 +84,42 @@ public class AccountController : ControllerBase
             return BadRequest(new { Error = "کد تایید معتبر نیست یا اشتباه است." });
         }
 
-
-        var user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized!);
-
-        if (user == null)
+        try
         {
-            var opResult = await _userApplication.Create(new CreateUserCommand
-            {
-                Username = mobileNormalized
-            });
+            var user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized!);
 
-            if (!opResult.IsSuccedded)
-            {
-                _logger.LogWarning($"خطا در ساخت کاربر جدید با موبایل {mobileNormalized}: {opResult.Message}");
-                return BadRequest(new { Error = opResult.Message });
-            }
-
-            user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized!);
             if (user == null)
             {
-                _logger.LogError("کاربر بلافاصله پس از ایجاد، پیدا نشد (خطا احتمالی).");
-                return StatusCode(500, new { Error = "خطا در پردازش کاربر." });
+                var opResult = await _userApplication.Create(new CreateUserCommand { Username = mobileNormalized });
+                if (!opResult.IsSuccedded)
+                {
+                    _logger.LogWarning("خطا در ساخت کاربر جدید با موبایل {Mobile}: {Message}", mobileNormalized, opResult.Message);
+                    return BadRequest(new { Error = opResult.Message });
+                }
+
+                user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized!);
+                if (user == null)
+                {
+                    _logger.LogError("کاربر بلافاصله پس از ایجاد، پیدا نشد (خطا احتمالی).");
+                    return StatusCode(500, new { Error = "خطا در پردازش کاربر." });
+                }
             }
+
+            _memoryCache.Remove(mobileNormalized!);
+
+            var generatedToken = await _jwtTokenGenerator.GenerateTokensAsync(user);
+
+            return Ok(new
+            {
+                Message = "ورود موفقیت‌آمیز بود.",
+                Token = generatedToken,
+                ReturnUrl = ReturnUrl ?? "/"
+            });
         }
-
-        _memoryCache.Remove(mobileNormalized!);
-
-        var generatedToken = _jwtTokenGenerator.GenerateTokensAsync(user);
-
-        return Ok(new
+        catch (Exception ex)
         {
-            Message = "ورود موفقیت‌آمیز بود.",
-            Token = generatedToken,
-            ReturnUrl = ReturnUrl ?? "/"
-        });
+            _logger.LogError(ex, "خطا در تایید کد OTP یا تولید توکن");
+            return StatusCode(500, new { Error = "خطای داخلی رخ داده است." });
+        }
     }
 }

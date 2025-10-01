@@ -1,5 +1,8 @@
 ﻿using MasterManagment.Application.Contracts.Order;
+using MasterManagment.Application.Contracts.OrderItem;
 using Microsoft.AspNetCore.Mvc;
+
+namespace ServiceHostWebApi.Controllers;
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -13,9 +16,15 @@ public class OrderController : ControllerBase
         _orderApplication = orderApplication;
     }
 
+
     [HttpPost("createFromCart")]
+    [ProducesResponseType(200, Type = typeof(long))]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> CreateFromCart([FromBody] CreateOrderFromCartCommand command)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             var orderId = await _orderApplication.FinalizeFromCartAsync(command.CartId, command.TransactionId!);
@@ -27,13 +36,19 @@ public class OrderController : ControllerBase
         }
     }
 
+  
     [HttpPut("edit")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Edit([FromBody] EditOrderCommand command)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             await _orderApplication.EditAsync(command);
-            return Ok();
+            return NoContent();
         }
         catch (Exception ex)
         {
@@ -41,13 +56,16 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpPut("cancel/{id}")]
+    
+    [HttpPut("cancel/{id:long}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Cancel(long id)
     {
         try
         {
             await _orderApplication.CancelAsync(id);
-            return Ok();
+            return NoContent();
         }
         catch (Exception ex)
         {
@@ -55,7 +73,10 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpGet("{id}/amount")]
+   
+    [HttpGet("{id:long}/amount")]
+    [ProducesResponseType(200, Type = typeof(decimal))]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> GetAmount(long id)
     {
         try
@@ -68,8 +89,15 @@ public class OrderController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+    /// <summary>
+    /// // دریافت اقلام سفارش بر اساس شناسه
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
 
-    [HttpGet("{id}/items")]
+    [HttpGet("{id:long}/items")]
+    [ProducesResponseType(200, Type = typeof(List<OrderItemViewModel>))]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> GetItems(long id)
     {
         try
@@ -83,7 +111,10 @@ public class OrderController : ControllerBase
         }
     }
 
+    
     [HttpPost("search")]
+    [ProducesResponseType(200, Type = typeof(List<OrderViewModel>))]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Search([FromBody] OrderSearchCriteria criteria)
     {
         try
