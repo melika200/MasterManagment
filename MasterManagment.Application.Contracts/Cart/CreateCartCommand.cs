@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MasterManagment.Application.Contracts.CartItem;
+﻿using MasterManagment.Application.Contracts.CartItem;
 
 namespace MasterManagment.Application.Contracts.Order
 {

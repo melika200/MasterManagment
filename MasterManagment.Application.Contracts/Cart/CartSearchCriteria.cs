@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MasterManagment.Application.Contracts.Order;
 
-namespace MasterManagment.Application.Contracts.Order
+public class CartSearchCriteria
 {
-    public class CartSearchCriteria
-    {
-        public long AccountId { get; set; }
-        public bool? IsPaid { get; set; }
-        public bool? IsCanceled { get; set; }
-    }
+    public long AccountId { get; set; }
+    public bool? IsPaid { get; set; }
+    public bool? IsCanceled { get; set; }
 }

@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MasterManagment.Application.Contracts.Order;
 
-namespace MasterManagment.Application.Contracts.Order
+public class EditCartCommand : CreateCartCommand
 {
-    public class EditCartCommand : CreateCartCommand
-    {
-        public long Id { get; set; }
-    }
+    public long Id { get; set; }
 }

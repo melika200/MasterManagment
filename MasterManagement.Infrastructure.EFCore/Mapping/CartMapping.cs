@@ -1,32 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MasterManagement.Domain.CartAgg;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MasterManagement.Domain.OrderAgg;
-using MasterManagement.Domain.CartAgg;
 
-namespace MasterManagement.Infrastructure.EFCore.Mapping
+namespace MasterManagement.Infrastructure.EFCore.Mapping;
+
+public class CartMapping : IEntityTypeConfiguration<Cart>
 {
-    public class CartMapping : IEntityTypeConfiguration<Cart>
+    public void Configure(EntityTypeBuilder<Cart> builder)
     {
-        public void Configure(EntityTypeBuilder<Cart> builder)
-        {
-            builder.ToTable("Carts");
-            builder.HasKey(c => c.Id);
+        builder.ToTable("Carts");
+        builder.HasKey(c => c.Id);
 
-            builder.Property(c => c.AccountId).IsRequired();
-            builder.Property(c => c.PaymentMethod).IsRequired();
-            builder.Property(c => c.TotalAmount).IsRequired();
-            builder.Property(c => c.DiscountAmount).IsRequired();
-            builder.Property(c => c.PayAmount).IsRequired();
-            builder.Property(c => c.IsPaid).IsRequired();
-            builder.Property(c => c.IsCanceled).IsRequired();
-            builder.Property(c => c.IssueTrackingNo).HasMaxLength(500);
-            builder.Property(c => c.RefId).IsRequired();
+        builder.Property(c => c.AccountId).IsRequired();
+        builder.Property(c => c.PaymentMethod).IsRequired();
+        builder.Property(c => c.TotalAmount).IsRequired();
+        builder.Property(c => c.DiscountAmount).IsRequired();
+        builder.Property(c => c.PayAmount).IsRequired();
+        builder.Property(c => c.IsPaid).IsRequired();
+        builder.Property(c => c.IsCanceled).IsRequired();
+        builder.Property(c => c.IssueTrackingNo).HasMaxLength(500);
+        builder.Property(c => c.RefId).IsRequired();
 
-            builder.HasMany(c => c.Items)
-                   .WithOne(i => i.Cart)
-                   .HasForeignKey(i => i.CartId)
-                   .OnDelete(DeleteBehavior.Cascade);
-        }
+        builder.HasMany(c => c.Items)
+               .WithOne(i => i.Cart)
+               .HasForeignKey(i => i.CartId);
+               
     }
 }
 

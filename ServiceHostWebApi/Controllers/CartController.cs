@@ -36,7 +36,7 @@ public class CartController : ControllerBase
         }
     }
 
-  
+
     [HttpPut("edit")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -56,7 +56,7 @@ public class CartController : ControllerBase
         }
     }
 
-    
+
     [HttpPut("cancel/{id:long}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -72,14 +72,10 @@ public class CartController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-    /// <summary>
-    ///   // دریافت مبلغ کارت بر اساس شناسه
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+
 
     [HttpGet("{id:long}/amount")]
-    [ProducesResponseType(200, Type = typeof(decimal))]
+    [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> GetAmount(long id)
     {
@@ -94,7 +90,7 @@ public class CartController : ControllerBase
         }
     }
 
-   
+
     [HttpGet("{id:long}/items")]
     [ProducesResponseType(200, Type = typeof(List<CartItemViewModel>))]
     [ProducesResponseType(400)]
@@ -111,7 +107,7 @@ public class CartController : ControllerBase
         }
     }
 
-   
+
     [HttpPost("search")]
     [ProducesResponseType(200, Type = typeof(List<CartViewModel>))]
     [ProducesResponseType(400)]
@@ -128,7 +124,7 @@ public class CartController : ControllerBase
         }
     }
 
-  
+
     [HttpDelete("{id:long}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
