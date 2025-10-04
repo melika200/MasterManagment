@@ -15,6 +15,6 @@ namespace AccountManagment.Domain.UserAgg
 
         //EditUserViewModel? GetForEdit(long id);
         //List<UserViewModel>? Search(UserSearchCriteria criteria);
-        Task<User?> GetWithRoleAsync(string username);
+        Task<User?> GetUserWithRoleAsync(string username);
     }
 }

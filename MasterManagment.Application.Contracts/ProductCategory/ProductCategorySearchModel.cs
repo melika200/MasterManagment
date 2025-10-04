@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MasterManagment.Application.Contracts.ProductCategory;
 
-namespace MasterManagment.Application.Contracts.ProductCategory
+public class ProductCategorySearchModel
 {
-    public class ProductCategorySearchModel
-    {
-        public string? Name { get; set; }
-    }
+    public string? Name { get; set; }
 }

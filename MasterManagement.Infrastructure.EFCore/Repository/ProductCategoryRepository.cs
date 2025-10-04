@@ -2,6 +2,7 @@
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagment.Application.Contracts.ProductCategory;
+using Microsoft.EntityFrameworkCore;
 
 namespace MasterManagement.Infrastructure.EFCore.Repository;
 
@@ -12,6 +13,18 @@ public class ProductCategoryRepository : RepositoryBase<long, ProductCategory>, 
     public ProductCategoryRepository(MasterContext context) : base(context)
     {
         _context = context;
+    }
+
+    public Task<List<ProductCategoryViewModel>> GetAllCategories()
+    {   return _context.ProductCategories
+                       .Select(pc => new ProductCategoryViewModel
+                       {
+                           Id = pc.Id,
+                           Name = pc.Name,
+                           Picture=pc.Picture,
+                           CreationDate=pc.CreationDate.ToString() 
+                          
+                       }).ToListAsync();
     }
 
     public async Task<ProductCategory?> GetById(long id)

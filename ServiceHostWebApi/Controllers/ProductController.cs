@@ -1,4 +1,5 @@
 ﻿using MasterManagment.Application.Contracts.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostWebApi.Controllers;
@@ -15,8 +16,8 @@ public class ProductController : ControllerBase
         _productApplication = productApplication;
     }
 
-   
     [HttpGet]
+    [Authorize(Roles = "Admin,User,Programmer")]
     [ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
     public async Task<ActionResult<List<ProductViewModel>>> GetAll([FromQuery] ProductSearchCriteria searchModel)
     {
@@ -24,8 +25,8 @@ public class ProductController : ControllerBase
         return Ok(products ?? new List<ProductViewModel>());
     }
 
- 
     [HttpGet("{id:long}")]
+    [Authorize(Roles = "Admin,User,Programmer")]
     [ProducesResponseType(200, Type = typeof(ProductViewModel))]
     [ProducesResponseType(404)]
     public async Task<ActionResult<ProductViewModel>> GetById(long id)
@@ -37,8 +38,8 @@ public class ProductController : ControllerBase
         return Ok(product);
     }
 
-   
     [HttpPost]
+    [Authorize(Roles = "Admin,Programmer")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
@@ -53,8 +54,8 @@ public class ProductController : ControllerBase
         return Ok(new { message = result.Message });
     }
 
-   
     [HttpPut("{id:long}")]
+    [Authorize(Roles = "Admin,Programmer")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Edit(long id, [FromBody] EditProductCommand command)
@@ -68,12 +69,11 @@ public class ProductController : ControllerBase
         if (!result.IsSuccedded)
             return BadRequest(new { message = result.Message });
 
-  
         return NoContent();
     }
 
- 
     [HttpDelete("{id:long}")]
+    [Authorize(Roles = "Admin,Programmer")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Delete(long id)
@@ -83,5 +83,23 @@ public class ProductController : ControllerBase
             return BadRequest(new { message = result.Message });
 
         return Ok(new { message = result.Message });
+    }
+
+    //[HttpGet("all")]
+    //[Authorize(Roles = "Admin,User,Programmer")]
+    //[ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
+    //public async Task<ActionResult<List<ProductViewModel>>> GetAllProducts()
+    //{
+    //    var result = await _productApplication.GetAllProducts();
+    //    return Ok(result);
+    //}
+
+    [HttpGet("all-with-category")]
+    [Authorize(Roles = "Admin,User,Programmer")]
+    [ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
+    public async Task<ActionResult<List<ProductViewModel>>> GetAllProductsWithCategory()
+    {
+        var result = await _productApplication.GetAllProductsWithCategory();
+        return Ok(result);
     }
 }

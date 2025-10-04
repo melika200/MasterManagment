@@ -1,5 +1,6 @@
 ﻿using MasterManagment.Application.Contracts.CartItem;
 using MasterManagment.Application.Contracts.Order;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostWebApi.Controllers;
@@ -16,8 +17,8 @@ public class CartController : ControllerBase
         _cartApplication = cartApplication;
     }
 
-
     [HttpPost("create")]
+    [Authorize(Roles = "Admin,User,Programmer")]
     [ProducesResponseType(200, Type = typeof(long))]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Create([FromBody] CreateCartCommand command)
@@ -36,8 +37,8 @@ public class CartController : ControllerBase
         }
     }
 
-
     [HttpPut("edit")]
+    [Authorize(Roles = "Admin,Programmer")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Edit([FromBody] EditCartCommand command)
@@ -56,8 +57,8 @@ public class CartController : ControllerBase
         }
     }
 
-
     [HttpPut("cancel/{id:long}")]
+    [Authorize(Roles = "Admin,Programmer")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Cancel(long id)
@@ -73,8 +74,8 @@ public class CartController : ControllerBase
         }
     }
 
-
     [HttpGet("{id:long}/amount")]
+    [Authorize(Roles = "Admin,User,Programmer")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> GetAmount(long id)
@@ -90,8 +91,8 @@ public class CartController : ControllerBase
         }
     }
 
-
     [HttpGet("{id:long}/items")]
+    [Authorize(Roles = "Admin,User,Programmer")]
     [ProducesResponseType(200, Type = typeof(List<CartItemViewModel>))]
     [ProducesResponseType(400)]
     public async Task<IActionResult> GetItems(long id)
@@ -107,8 +108,8 @@ public class CartController : ControllerBase
         }
     }
 
-
     [HttpPost("search")]
+    [Authorize(Roles = "Admin,Programmer,User")]
     [ProducesResponseType(200, Type = typeof(List<CartViewModel>))]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Search([FromBody] CartSearchCriteria criteria)
@@ -124,8 +125,8 @@ public class CartController : ControllerBase
         }
     }
 
-
     [HttpDelete("{id:long}")]
+    [Authorize(Roles = "Admin,Programmer")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Delete(long id)

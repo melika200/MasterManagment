@@ -15,5 +15,6 @@ namespace MasterManagment.Application.Contracts.Product
         Task<ProductViewModel> GetDetails(long id);
         Task<List<ProductViewModel>> Search(ProductSearchCriteria searchModel);
         Task<OperationResult> DeleteAsync(long id);
+        Task<List<ProductViewModel>> GetAllProductsWithCategory();
     }
 }

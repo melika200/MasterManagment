@@ -48,6 +48,24 @@ namespace MasterManagment.Application
             return operation.Succedded("محصول با موفقیت ثبت شد");
         }
 
+        public async Task<List<ProductViewModel>> GetAllProductsWithCategory()
+        {
+            var products = await _productRepository.GetAllProductsWithCategory();
+            return products.Select(p => new ProductViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                ImagePath = p.ImagePath,
+                Price = p.Price,
+                Description = p.Description,
+                Stock = p.Stock,
+                CategoryId = p.CategoryId,
+                IsAvailable = p.IsAvailable,
+                CategoryName = p.Category?.Name
+            }).ToList();
+        }
+
+
         public async Task<OperationResult> Edit(EditProductCommand command)
         {
             var operation = new OperationResult();
@@ -102,7 +120,7 @@ namespace MasterManagment.Application
 
         public async Task<List<ProductViewModel>> Search(ProductSearchCriteria searchModel)
         {
-            var query = await _productRepository.GetAllWithCategory();
+            var query = await _productRepository.GetAllProductsWithCategory();
 
             if (!string.IsNullOrWhiteSpace(searchModel.Name))
                 query = query.Where(x => x.Name.Contains(searchModel.Name));

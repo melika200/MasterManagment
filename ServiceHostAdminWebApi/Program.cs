@@ -1,15 +1,15 @@
-using System.Text;
 using _01_FrameWork.Infrastructure.Configuration;
 using AccountManagement.Infrastructure.Configuration;
 using AccountManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Infrastructure.Configuration;
 using MasterManagement.Infrastructure.EFCore.Context;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 builder.Services.AddMemoryCache();
 
 
@@ -26,13 +26,12 @@ FrameworkBootstrapper.Configure(builder.Services, connectionString);
 
 builder.Services.AddControllers();
 
-
 builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+   .AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-       // options.RequireHttpsMetadata = false; 
-        options.TokenValidationParameters = new TokenValidationParameters
+        // options.RequireHttpsMetadata = false; 
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -40,11 +39,11 @@ builder.Services
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!))
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!))
         };
 
-       
-        options.Events = new JwtBearerEvents
+
+        options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
             {
@@ -63,7 +62,6 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-
 builder.Services.AddApiVersioning(options =>
 {
     options.AssumeDefaultVersionWhenUnspecified = true;
@@ -73,11 +71,11 @@ builder.Services.AddApiVersioning(options =>
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("admin-v1", new OpenApiInfo
     {
-        Title = "Master Management API",
-        Version = "v1",
-        Description = "API documentation for Master Management project"
+        Title = "Admin Management API",
+        Version = "admin-v1",
+        Description = "API documentation for Admin Management project"
     });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -111,14 +109,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Master Management API V1");
-        c.RoutePrefix = string.Empty;
+        c.SwaggerEndpoint("/swagger/admin-v1/swagger.json", "Admin Management API V1");
+       
     });
 }
 
 app.UseHttpsRedirection();
-
-app.UseRouting();
 
 app.UseAuthentication();
 

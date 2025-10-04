@@ -29,7 +29,7 @@ public class ProductRepository : RepositoryBase<long, Product>, IProductReposito
         return await query.ToListAsync();
     }
 
-    public async Task<IEnumerable<Product>> GetAllWithCategory(Expression<Func<Product, bool>>? where = null)
+    public async Task<IEnumerable<Product>> GetAllProductsWithCategory(Expression<Func<Product, bool>>? where = null)
     {
         IQueryable<Product> query = _context.Products.Include(p => p.Category);
         if (where != null)

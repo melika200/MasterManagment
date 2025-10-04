@@ -50,45 +50,7 @@ public class UserApplication : IUserApplication
 
     }
 
-    //public async Task<OperationResult> Create(CreateUserCommand command)
-    //{
-    //    var operationResult = new OperationResult();
-
-    //    try
-    //    {
-    //        if (string.IsNullOrEmpty(command.Username))
-    //            return operationResult.Failed("نام کاربری نمی‌تواند خالی باشد.");
-
-    //        if (await _userRepository.IsExistsAsync(x => x.Username == command.Username))
-    //            return operationResult.Failed(ApplicationMessages.DuplicatedRecord);
-
-    //        var roleIdToUse = command.RoleId > 0 ? command.RoleId : RolesType.User.Id;
-
-    //        var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == roleIdToUse);
-    //        if (role == null)
-    //            return operationResult.Failed("نقش مورد نظر یافت نشد.");
-
-    //        var user = new User(
-    //            command.Fullname?.Normalize_FullPersianTextAndNumbers(),
-    //            command.Username,
-    //            AccountUtils.HashPassword(command.Password),
-    //            command.Mobile?.Normalize_PersianNumbers(),
-    //            role.Id);
-
-    //        await _userRepository.AddAsync(user);
-
-    //        await _uniteOfWork.CommitAsync();
-
-    //        _logger.LogInformation("ایجاد کاربر با نام کاربری {Username} موفقیت‌آمیز بود.", command.Username);
-
-    //        return operationResult.Succedded();
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, "خطا در ایجاد کاربر با نام کاربری {Username}.", command.Username);
-    //        return operationResult.Failed("خطا در ایجاد کاربر.");
-    //    }
-    //}
+  
 
     public async Task<OperationResult> Create(CreateUserCommand command)
     {
@@ -115,7 +77,7 @@ public class UserApplication : IUserApplication
     public async Task<User?> GetUserWithRoleByUsernameAsync(string username)
     {
         //return await _userRepository.GetAsync(u => u.Username == username);
-        return await _userRepository.GetWithRoleAsync(username);
+        return await _userRepository.GetUserWithRoleAsync(username);
     }
 
     public async Task<OperationResult> Edit(EditUserCommand command)

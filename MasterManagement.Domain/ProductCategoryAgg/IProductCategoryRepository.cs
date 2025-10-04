@@ -10,6 +10,7 @@ public interface IProductCategoryRepository : IRepository<long, ProductCategory>
     EditProductCategoryCommand ?GetDetails(long id);
     List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel);
     Task<ProductCategory?> GetById(long id);
+    Task<List<ProductCategoryViewModel>> GetAllCategories();
 
     //List<ProductCategory> GetAll();
 

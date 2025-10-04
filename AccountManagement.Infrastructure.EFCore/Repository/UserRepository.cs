@@ -14,7 +14,7 @@ public class UserRepository : RepositoryBase<long, User>, IUserRepository
         _context = context;
     }
 
-    public Task<User?> GetWithRoleAsync(string username)
+    public Task<User?> GetUserWithRoleAsync(string username)
     {
         return _context.Users.Where(x => x.Username == username)
             .Include(x => x.Role)
