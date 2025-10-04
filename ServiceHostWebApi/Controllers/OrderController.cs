@@ -36,43 +36,6 @@ public class OrderController : ControllerBase
         }
     }
 
-  
-    [HttpPut("edit")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> Edit([FromBody] EditOrderCommand command)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        try
-        {
-            await _orderApplication.EditAsync(command);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    
-    [HttpPut("cancel/{id:long}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> Cancel(long id)
-    {
-        try
-        {
-            await _orderApplication.CancelAsync(id);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
    
     [HttpGet("{id:long}/amount")]
     [ProducesResponseType(200, Type = typeof(decimal))]
@@ -128,3 +91,40 @@ public class OrderController : ControllerBase
         }
     }
 }
+
+  
+    //[HttpPut("edit")]
+    //[ProducesResponseType(204)]
+    //[ProducesResponseType(400)]
+    //public async Task<IActionResult> Edit([FromBody] EditOrderCommand command)
+    //{
+    //    if (!ModelState.IsValid)
+    //        return BadRequest(ModelState);
+
+    //    try
+    //    {
+    //        await _orderApplication.EditAsync(command);
+    //        return NoContent();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}
+
+    
+    //[HttpPut("cancel/{id:long}")]
+    //[ProducesResponseType(204)]
+    //[ProducesResponseType(400)]
+    //public async Task<IActionResult> Cancel(long id)
+    //{
+    //    try
+    //    {
+    //        await _orderApplication.CancelAsync(id);
+    //        return NoContent();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}
