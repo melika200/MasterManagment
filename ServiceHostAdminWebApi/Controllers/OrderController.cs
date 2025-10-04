@@ -195,7 +195,7 @@ public class OrderController : ControllerBase
                 TotalAmount = order.TotalAmount,
                 IsPaid = order.IsPaid,
                 IsCanceled = order.IsCanceled,
-                IssueTrackingNo = order.IssueTrackingNo,
+                IssueTrackingNo = order.IssueTrackingNo!,
                 Items = items
             };
 

@@ -5,6 +5,7 @@ namespace MasterManagment.Application.Contracts.Order
     public class CreateCartCommand
     {
         public long AccountId { get; set; }
+        //public string? AccountName { get; set; }
         public int PaymentMethod { get; set; }
         public List<CartItemViewModel>? Items { get; set; }
         //public double DiscountAmount { get; set; }

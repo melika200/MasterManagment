@@ -16,6 +16,7 @@ public enum PaymentMethod
 public class Cart : EntityBase,ISoftDelete
 {
     public long AccountId { get; private set; }
+    //public string AccountName { get; private set; }
     public bool IsDeleted { get; set; } = false;
     public PaymentMethod PaymentMethod { get; private set; }
     public double TotalAmount { get; private set; }
@@ -28,9 +29,10 @@ public class Cart : EntityBase,ISoftDelete
 
     public List<CartItem> Items { get; private set; }
 
-    public Cart(long accountId, PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
+    public Cart(long accountId,PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
     {
         AccountId = accountId;
+        //AccountName = accountName;
         PaymentMethod = paymentMethod;
         TotalAmount = totalAmount;
         DiscountAmount = discountAmount;

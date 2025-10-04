@@ -41,6 +41,7 @@ namespace MasterManagment.Application
 
             var cart = new Cart(
                 command.AccountId,
+                //command.AccountName!,
                 (PaymentMethod)command.PaymentMethod,
                 0, 0, 0);
 
@@ -162,7 +163,7 @@ namespace MasterManagment.Application
             return query.Select(c => new CartViewModel
             {
                 Id = c.Id,
-                AccountName = "", // بارگذاری نام کاربر از سرویس مربوطه پیشنهاد می‌شود
+                //AccountName = c.AccountName,
                 PaymentMethod = (int)c.PaymentMethod,
                 TotalAmount = c.TotalAmount,
                 IsPaid = c.IsPaid,
