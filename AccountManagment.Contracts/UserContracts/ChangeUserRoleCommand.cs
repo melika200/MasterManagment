@@ -1,8 +1,8 @@
 ﻿namespace AccountManagment.Contracts.UserContracts;
 
-public class EditUserCommand:CreateUserCommand
+public class ChangeUserRoleCommand
 {
     public long Id { get; set; }
-    //public long RoleId { get; set; }
-    
+    public long NewRoleId { get; set; }
+
 }

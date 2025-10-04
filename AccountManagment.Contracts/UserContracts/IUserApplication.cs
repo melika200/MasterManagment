@@ -10,6 +10,11 @@ public interface IUserApplication
     Task<OperationResult> Edit(EditUserCommand command);
     Task<OperationResult> ChangePassword(ChangePasswordCommand command);
     EditUserViewModel? GetForEdit(long id);
+
+    Task<OperationResult> DeleteAsync(long id);
+    Task<OperationResult> ActivateAsync(long id);
+    Task<OperationResult> DeactivateAsync(long id);
+    Task<OperationResult> ChangeRoleAsync(ChangeUserRoleCommand command);
     List<UserViewModel>? Search(UserSearchCriteria criteria);
     //bool IsAccountExists(CreateUserCommand command);
     Task<bool> IsExistsBy(string username);

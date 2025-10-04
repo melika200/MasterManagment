@@ -6,7 +6,7 @@ namespace AccountManagment.Domain.UserAgg;
 public class User:EntityBase,ISoftDelete
 {
     public bool IsDeleted { get; set; } = false;
-
+    public bool IsActive { get; private set; } = true;
     public string Username { get; private set; }
     public string? Fullname { get; private set; }
     public string? Password { get; private set; }
@@ -20,6 +20,7 @@ public class User:EntityBase,ISoftDelete
     {
         Username = username;
         RoleId = roleId;
+        IsActive = true;
     }
 
 
@@ -46,5 +47,16 @@ public class User:EntityBase,ISoftDelete
     public void SoftDelete()
     {
         IsDeleted = true;
+    }
+
+    public void Activate()
+    {
+        IsActive = true;
+    }
+
+   
+    public void Deactivate()
+    {
+        IsActive = false;
     }
 }

@@ -50,7 +50,70 @@ public class UserApplication : IUserApplication
 
     }
 
-  
+
+
+    public async Task<OperationResult> DeleteAsync(long id)
+    {
+        var operationResult = new OperationResult();
+        var user = await _userRepository.GetAsync(id);
+        if (user == null)
+            return operationResult.Failed("کاربر یافت نشد.");
+
+        user.IsDeleted = true;
+        await _userRepository.UpdateAsync(user);
+        await _uniteOfWork.CommitAsync();
+
+        return operationResult.Succedded();
+    }
+
+    public async Task<OperationResult> ActivateAsync(long id)
+    {
+        var operationResult = new OperationResult();
+        var user = await _userRepository.GetAsync(id);
+        if (user == null)
+            return operationResult.Failed("کاربر یافت نشد.");
+
+        user.Activate();
+        await _userRepository.UpdateAsync(user);
+        await _uniteOfWork.CommitAsync();
+
+        return operationResult.Succedded();
+    }
+
+    public async Task<OperationResult> DeactivateAsync(long id)
+    {
+        var operationResult = new OperationResult();
+        var user = await _userRepository.GetAsync(id);
+        if (user == null)
+            return operationResult.Failed("کاربر یافت نشد.");
+
+        user.Deactivate();
+        await _userRepository.UpdateAsync(user);
+        await _uniteOfWork.CommitAsync();
+
+        return operationResult.Succedded();
+    }
+
+    public async Task<OperationResult> ChangeRoleAsync(ChangeUserRoleCommand command)
+    {
+        var operationResult = new OperationResult();
+
+        var user = await _userRepository.GetAsync(command.Id);
+        if (user == null)
+            return operationResult.Failed("کاربر یافت نشد.");
+
+        var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == command.NewRoleId);
+        if (role == null)
+            return operationResult.Failed("نقش انتخاب شده معتبر نیست.");
+
+        user.ChangeRole(role);  
+        await _userRepository.UpdateAsync(user);
+        await _uniteOfWork.CommitAsync();
+
+        return operationResult.Succedded();
+    }
+
+
 
     public async Task<OperationResult> Create(CreateUserCommand command)
     {
@@ -80,34 +143,92 @@ public class UserApplication : IUserApplication
         return await _userRepository.GetUserWithRoleAsync(username);
     }
 
-    public async Task<OperationResult> Edit(EditUserCommand command)
-    {
-         throw new NotImplementedException();
-    }
+   
 
-    public long GetUserId(string? name)
-    {
-        throw new NotImplementedException();
-    }
-
-    public List<UserViewModel> GetAccountsByIds(List<long> accountIds)
-    {
-        throw new NotImplementedException();
-    }
-
-    public EditUserViewModel? GetForEdit(long id)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task<bool> IsExistsBy(string username)
     {
         return await _userRepository.IsExistsAsync(x => x.Username == username && x.IsDeleted == false);
     }
 
+    public async Task<OperationResult> Edit(EditUserCommand command)
+    {
+        var operationResult = new OperationResult();
+
+        var user = await _userRepository.GetAsync(command.Id);
+        if (user == null)
+            return operationResult.Failed("کاربر یافت نشد.");
+
+        if (string.IsNullOrEmpty(command.Username))
+            return operationResult.Failed("نام کاربری نمی‌تواند خالی باشد.");
+
+        // چک برای نام کاربری تکراری به جز کاربر فعلی
+        bool isDuplicate = await _userRepository.IsExistsAsync(x => x.Username == command.Username && x.Id != command.Id && !x.IsDeleted);
+        if (isDuplicate)
+            return operationResult.Failed("نام کاربری تکراری است.");
+
+        user.Edit(command.Fullname, command.Username);
+
+        // اگر نیاز به تغییر نقش هست، متد ChangeRole هم صدا زده شود
+        if (command.RoleId > 0 && command.RoleId != user.RoleId)
+        {
+            var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == command.RoleId);
+            if (role == null)
+                return operationResult.Failed("نقش انتخاب شده معتبر نیست.");
+
+            user.ChangeRole(role);
+        }
+
+        await _userRepository.UpdateAsync(user);
+        await _uniteOfWork.CommitAsync();
+
+        return operationResult.Succedded();
+    }
+
+    public long GetUserId(string? name)
+    {
+        // فرض بر این است که این متد باید آی دی کاربر بر اساس نام کاربری (Username) را برگرداند
+        var user = _userRepository.GetAsync(x => x.Username == name).Result;
+        if (user != null)
+            return user.Id;
+
+        return 0;
+    }
+
+    public List<UserViewModel> GetAccountsByIds(List<long> accountIds)
+    {
+        // گرفتن کاربران بر اساس لیست آیدی‌ها
+        var users = _userRepository.GetManyAsync(x => accountIds.Contains(x.Id)).Result;
+        if (users == null)
+            return new List<UserViewModel>();
+
+        return users.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
+    }
+
+    public EditUserViewModel? GetForEdit(long id)
+    {
+        var user = _userRepository.GetAsync(id).Result;
+        if (user == null)
+            return null;
+
+        var model = _mapper.Map<EditUserViewModel>(user);
+        return model;
+    }
+
     public List<UserViewModel>? Search(UserSearchCriteria criteria)
     {
-        throw new NotImplementedException();
+        var query = _userRepository.GetManyAsync(x =>
+            (!string.IsNullOrEmpty(criteria.Username) ? x.Username.Contains(criteria.Username) : true)
+            && (!criteria.IsActive.HasValue || x.IsActive == criteria.IsActive.Value)
+            && !x.IsDeleted).Result;
+
+        if (query == null)
+            return new List<UserViewModel>();
+
+        return query.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
     }
+
+
+
 
 }
