@@ -10,6 +10,10 @@ public class User:EntityBase,ISoftDelete
     public string Username { get; private set; }
     public string? Fullname { get; private set; }
     public string? Password { get; private set; }
+    public string? Address { get; private set; }
+    public string? PhoneNumber { get; private set; }
+    public string? PostalCode { get; private set; }
+
     public int RoleId { get; private set; }
 
     public RoleAgg.Role? Role { get; private set; }

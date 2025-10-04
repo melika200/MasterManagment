@@ -9,6 +9,7 @@ namespace MasterManagment.Application.Contracts.Order
     public class OrderSearchCriteria
     {
         public long AccountId { get; set; }
+        public long OrderId { get; set; }
         public bool? IsPaid { get; set; }
         public bool? IsCanceled { get; set; }
     }

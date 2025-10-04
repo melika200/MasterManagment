@@ -195,15 +195,15 @@ public class UserApplication : IUserApplication
         return 0;
     }
 
-    public List<UserViewModel> GetAccountsByIds(List<long> accountIds)
-    {
-        // گرفتن کاربران بر اساس لیست آیدی‌ها
-        var users = _userRepository.GetManyAsync(x => accountIds.Contains(x.Id)).Result;
-        if (users == null)
-            return new List<UserViewModel>();
+    //public List<UserViewModel> GetAccountsByIds(List<long> accountIds)
+    //{
+    //    // گرفتن کاربران بر اساس لیست آیدی‌ها
+    //    var users = _userRepository.GetManyAsync(x => accountIds.Contains(x.Id)).Result;
+    //    if (users == null)
+    //        return new List<UserViewModel>();
 
-        return users.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
-    }
+    //    return users.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
+    //}
 
     public EditUserViewModel? GetForEdit(long id)
     {
@@ -228,7 +228,22 @@ public class UserApplication : IUserApplication
         return query.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
     }
 
+    public async Task<List<UserViewModel>> GetAccountsByIds(List<long> accountIds)
+    {
+        var users = await _userRepository.GetManyAsync(x => accountIds.Contains(x.Id) && !x.IsDeleted);
+        if (users == null)
+            return new List<UserViewModel>();
 
-
+        return users.Select(u => new UserViewModel
+        {
+            Id = u.Id,
+            Username = u.Username,
+            Fullname = u.Fullname,
+            Address = u.Address,         
+            PhoneNumber = u.PhoneNumber,   
+            PostalCode = u.PostalCode      
+                                          
+        }).ToList();
+    }
 
 }
