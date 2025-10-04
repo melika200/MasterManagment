@@ -27,7 +27,7 @@ public class AccountController : ControllerBase
         _logger = logger;
     }
 
-    
+
     [HttpPost("login")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -71,6 +71,7 @@ public class AccountController : ControllerBase
     [HttpPost("verify")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
+    [ProducesResponseType(403)]
     [ProducesResponseType(500)]
     public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequestCommand request, [FromQuery] string? ReturnUrl)
     {
@@ -104,6 +105,16 @@ public class AccountController : ControllerBase
                     return StatusCode(500, new { Error = "خطا در پردازش کاربر." });
                 }
             }
+            if (!user.IsActive)
+            {
+
+                return Forbid("حساب کاربری شما فعال نیست. لطفاً با پشتیبانی تماس بگیرید.");
+            }
+
+            //if (!user.IsActive)
+            //{
+            //    return new BadRequestObjectResult(new { Error = "حساب کاربری شما فعال نیست. لطفاً با پشتیبانی تماس بگیرید." });
+            //}
 
             _memoryCache.Remove(mobileNormalized!);
 
@@ -122,4 +133,61 @@ public class AccountController : ControllerBase
             return StatusCode(500, new { Error = "خطای داخلی رخ داده است." });
         }
     }
+
+
+
+    //[HttpPost("verify")]
+    //[ProducesResponseType(200)]
+    //[ProducesResponseType(400)]
+    //[ProducesResponseType(500)]
+    //public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequestCommand request, [FromQuery] string? ReturnUrl)
+    //{
+    //    if (string.IsNullOrWhiteSpace(request.Mobile) || string.IsNullOrWhiteSpace(request.OtpCode))
+    //        return BadRequest(new { Error = "شماره موبایل و کد تایید را وارد کنید." });
+
+    //    var mobileNormalized = request.Mobile.Normalize_PersianNumbers();
+
+    //    if (!_memoryCache.TryGetValue<OTPModel>(mobileNormalized!, out var otpModel) || !otpModel.IsValid(request.OtpCode))
+    //    {
+    //        return BadRequest(new { Error = "کد تایید معتبر نیست یا اشتباه است." });
+    //    }
+
+    //    try
+    //    {
+    //        var user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized!);
+
+    //        if (user == null)
+    //        {
+    //            var opResult = await _userApplication.Create(new CreateUserCommand { Username = mobileNormalized });
+    //            if (!opResult.IsSuccedded)
+    //            {
+    //                _logger.LogWarning("خطا در ساخت کاربر جدید با موبایل {Mobile}: {Message}", mobileNormalized, opResult.Message);
+    //                return BadRequest(new { Error = opResult.Message });
+    //            }
+
+    //            user = await _userApplication.GetUserWithRoleByUsernameAsync(mobileNormalized!);
+    //            if (user == null)
+    //            {
+    //                _logger.LogError("کاربر بلافاصله پس از ایجاد، پیدا نشد (خطا احتمالی).");
+    //                return StatusCode(500, new { Error = "خطا در پردازش کاربر." });
+    //            }
+    //        }
+
+    //        _memoryCache.Remove(mobileNormalized!);
+
+    //        var generatedToken = await _jwtTokenGenerator.GenerateTokensAsync(user);
+
+    //        return Ok(new
+    //        {
+    //            Message = "ورود موفقیت‌آمیز بود.",
+    //            Token = generatedToken,
+    //            ReturnUrl = ReturnUrl ?? "/"
+    //        });
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "خطا در تایید کد OTP یا تولید توکن");
+    //        return StatusCode(500, new { Error = "خطای داخلی رخ داده است." });
+    //    }
+    //}
 }
