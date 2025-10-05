@@ -94,11 +94,11 @@ public class UserApplication : IUserApplication
         return operationResult.Succedded();
     }
 
-    public async Task<OperationResult> ChangeRoleAsync(ChangeUserRoleCommand command)
+    public async Task<OperationResult> ChangeRoleAsync(long userId, ChangeUserRoleCommand command)
     {
         var operationResult = new OperationResult();
 
-        var user = await _userRepository.GetAsync(command.Id);
+        var user = await _userRepository.GetAsync(userId);
         if (user == null)
             return operationResult.Failed("کاربر یافت نشد.");
 
@@ -106,12 +106,13 @@ public class UserApplication : IUserApplication
         if (role == null)
             return operationResult.Failed("نقش انتخاب شده معتبر نیست.");
 
-        user.ChangeRole(role);  
+        user.ChangeRole(role);
         await _userRepository.UpdateAsync(user);
         await _uniteOfWork.CommitAsync();
 
         return operationResult.Succedded();
     }
+
 
 
 
@@ -213,30 +214,35 @@ public class UserApplication : IUserApplication
             return null;
 
         var model = _mapper.Map<EditUserViewModel>(user);
+
+     
+        model.AllRoles = RolesType.AllTypes;
+
         return model;
     }
 
-    public List<UserViewModel>? Search(UserSearchCriteria criteria)
-    {
-        var query = _userRepository.GetAllUsersAsync(x =>
-            (!string.IsNullOrEmpty(criteria.Username) ? x.Username.Contains(criteria.Username) : true)
-            && (!criteria.IsActive.HasValue || x.IsActive == criteria.IsActive.Value)
-            && !x.IsDeleted).Result;
 
-        if (query == null)
-            return new List<UserViewModel>();
+    //public List<UserViewModel>? Search(UserSearchCriteria criteria)
+    //{
+    //    var query = _userRepository.GetAllUsersAsync(x =>
+    //        (!string.IsNullOrEmpty(criteria.Username) ? x.Username.Contains(criteria.Username) : true)
+    //        && (!criteria.IsActive.HasValue || x.IsActive == criteria.IsActive.Value)
+    //        && !x.IsDeleted).Result;
 
-        //return query.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
-        return query.Select(u => new UserViewModel
-        {
-            Id = u.Id,
-            Fullname = u.Fullname,
-            Username = u.Username,
-            Password=u.Password,
-            Role = u.Role?.Name  
-        }).ToList();
+    //    if (query == null)
+    //        return new List<UserViewModel>();
 
-    }
+    //    //return query.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
+    //    return query.Select(u => new UserViewModel
+    //    {
+    //        Id = u.Id,
+    //        Fullname = u.Fullname,
+    //        Username = u.Username,
+    //        Password=u.Password,
+    //        Role = u.Role?.Name  
+    //    }).ToList();
+
+    //}
 
     public async Task<List<UserViewModel>> GetAccountsByIds(List<long> accountIds)
     {
@@ -253,6 +259,19 @@ public class UserApplication : IUserApplication
             PhoneNumber = u.PhoneNumber,   
             PostalCode = u.PostalCode      
                                           
+        }).ToList();
+    }
+
+    public async Task<List<UserViewModel>> GetAllUsers()
+    {
+        var users = await _userRepository.GetAllUsersAsync();
+        return users.Select(u => new UserViewModel
+        {
+            Id = u.Id,
+            Fullname = u.Fullname,
+            Username = u.Username,
+            Password=u.Password,
+            Role = u.Role?.Name
         }).ToList();
     }
 

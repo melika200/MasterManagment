@@ -2,7 +2,7 @@
 
 public class ChangeUserRoleCommand
 {
-    public long Id { get; set; }
+    //public long Id { get; set; }
     public long NewRoleId { get; set; }
 
 }

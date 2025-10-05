@@ -1,4 +1,5 @@
-﻿using AccountManagment.Contracts.UserContracts;
+﻿using System.Threading.Tasks;
+using AccountManagment.Contracts.UserContracts;
 using AccountManagment.Domain.RolesTypesAgg;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,14 +21,11 @@ namespace ServiceHostAdminWebApi.Controllers
 
         [HttpGet("AllUsers")]
         [ProducesResponseType(200, Type = typeof(List<UserViewModel>))]
-        public ActionResult<List<UserViewModel>> GetAllUsers([FromQuery] UserSearchCriteria criteria)
+        public async Task<ActionResult<List<UserViewModel>>> GetAllUsers()
         {
-            if (criteria.RoleId != 1)
-            {
-                return BadRequest("تنها نقش با شناسه 1 معتبر است.");
-            }
 
-            var users = _userApplication.Search(criteria);
+
+            var users = await _userApplication.GetAllUsers();
 
             //if (!RolesType.AllTypes.Any(r => r.Id == criteria.RoleId))
             //{
@@ -37,17 +35,17 @@ namespace ServiceHostAdminWebApi.Controllers
             return Ok(users);
         }
 
-        //[HttpGet("{id:long}")]
-        //[ProducesResponseType(200, Type = typeof(EditUserViewModel))]
-        //[ProducesResponseType(404)]
-        //public IActionResult GetUserForEdit(long id)
-        //{
-        //    var user = _userApplication.GetForEdit(id);
-        //    if (user == null)
-        //        return NotFound();
+        [HttpGet("{id:long}")]
+        [ProducesResponseType(200, Type = typeof(EditUserViewModel))]
+        [ProducesResponseType(404)]
+        public IActionResult GetUserForEdit(long id)
+        {
+            var user = _userApplication.GetForEdit(id);
+            if (user == null)
+                return NotFound();
 
-        //    return Ok(user);
-        //}
+            return Ok(user);
+        }
 
         [HttpPut("{id:long}")]
         [ProducesResponseType(204)]
@@ -104,14 +102,13 @@ namespace ServiceHostAdminWebApi.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> ChangeUserRole(long id, [FromBody] ChangeUserRoleCommand command)
         {
-            command.Id = id;
-
-            var result = await _userApplication.ChangeRoleAsync(command);
+            var result = await _userApplication.ChangeRoleAsync(id, command);
             if (!result.IsSuccedded)
                 return BadRequest(new { message = result.Message });
 
             return NoContent();
         }
+
     }
 
 

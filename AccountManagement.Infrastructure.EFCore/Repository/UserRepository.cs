@@ -16,12 +16,11 @@ public class UserRepository : RepositoryBase<long, User>, IUserRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<User>> GetAllUsersAsync(Expression<Func<User, bool>> expression)
+    public async Task<List<User>> GetAllUsersAsync()
     {
 
         return await _context.Users
             .Include(u => u.Role)
-            .Where(expression)
             .ToListAsync();
     }
 

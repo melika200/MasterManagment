@@ -14,8 +14,9 @@ public interface IUserApplication
     Task<OperationResult> DeleteAsync(long id);
     Task<OperationResult> ActivateAsync(long id);
     Task<OperationResult> DeactivateAsync(long id);
-    Task<OperationResult> ChangeRoleAsync(ChangeUserRoleCommand command);
-    List<UserViewModel>? Search(UserSearchCriteria criteria);
+    Task<OperationResult> ChangeRoleAsync(long userId, ChangeUserRoleCommand command);
+    Task<List<UserViewModel>> GetAllUsers();
+    //List<UserViewModel>? Search(UserSearchCriteria criteria);
     //bool IsAccountExists(CreateUserCommand command);
     Task<bool> IsExistsBy(string username);
     long GetUserId(string? username);
