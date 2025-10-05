@@ -1,6 +1,5 @@
 ﻿using _01_FrameWork.Infrastructure;
 using MasterManagement.Domain.GalleryAgg;
-using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Infrastructure.EFCore.Context;
 
 namespace MasterManagement.Infrastructure.EFCore.Repository;

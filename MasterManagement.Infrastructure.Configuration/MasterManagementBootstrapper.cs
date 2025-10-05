@@ -1,4 +1,5 @@
-﻿using MasterManagement.Domain.OrderAgg;
+﻿using MasterManagement.Domain.GalleryAgg;
+using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
@@ -6,6 +7,7 @@ using MasterManagement.Infrastructure.EFCore;
 using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Infrastructure.EFCore.Repository;
 using MasterManagment.Application;
+using MasterManagment.Application.Contracts.Gallery;
 using MasterManagment.Application.Contracts.Order;
 using MasterManagment.Application.Contracts.Payment;
 using MasterManagment.Application.Contracts.Product;
@@ -31,6 +33,8 @@ public class MasterManagementBootstrapper
         services.AddTransient<IOrderRepository,OrderRepository>();
         services.AddTransient<IPaymentApplication,PaymentApplication>();
         services.AddTransient<IPaymentRepository,PaymentRepository>();
+        services.AddTransient<IGalleryRepository, GalleryRepository>();
+        services.AddTransient<IGalleryApplication, GalleryApplication>();
 
 
         services.AddTransient<IMasterUnitOfWork, MasterUnitOfWork>();

@@ -22,4 +22,8 @@
     <ProjectReference Include="..\MasterManagement.Infrastructure.Configuration\MasterManagement.Infrastructure.Configuration.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Uploads\" />
+  </ItemGroup>
+
 </Project>
