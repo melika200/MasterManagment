@@ -1,7 +1,10 @@
-﻿namespace MasterManagment.Application.Contracts.Gallery;
+﻿using System.Text.Json.Serialization;
+
+namespace MasterManagment.Application.Contracts.Gallery;
 
 public class EditGalleryCommand
 {
+    [JsonIgnore]
     public long Id { get; set; }
     public long ProductId { get; set; }
     public string FileName { get; set; } = null!;

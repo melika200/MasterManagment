@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MasterManagment.Application.Contracts.Gallery;
 
 namespace MasterManagment.Application.Contracts.Product
 {
@@ -20,6 +21,7 @@ namespace MasterManagment.Application.Contracts.Product
         public bool IsAvailable { get; set; }
         public int TotalRatings { get; set; }
         public double AverageRating { get; set; }
+        public List<GalleryViewModel>? Galleries { get; set; }
 
     }
 }

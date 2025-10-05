@@ -55,9 +55,8 @@ public class ProductController : ControllerBase
 
         return Ok(new { message = result.Message });
     }
-
     [HttpPut("{id:long}")]
-    [ProducesResponseType(204)]
+    [ProducesResponseType(200, Type = typeof(ProductEditResponseCommand))] 
     [ProducesResponseType(400)]
     public async Task<IActionResult> Edit(long id, [FromBody] EditProductCommand command)
     {
@@ -70,8 +69,26 @@ public class ProductController : ControllerBase
         if (!result.IsSuccedded)
             return BadRequest(new { message = result.Message });
 
-        return NoContent();
+       
+        return Ok(result);
     }
+
+    //[HttpPut("{id:long}")]
+    //[ProducesResponseType(204)]
+    //[ProducesResponseType(400)]
+    //public async Task<IActionResult> Edit(long id, [FromBody] EditProductCommand command)
+    //{
+    //    command.Id = id;
+
+    //    if (!ModelState.IsValid)
+    //        return BadRequest(ModelState);
+
+    //    var result = await _productApplication.Edit(command);
+    //    if (!result.IsSuccedded)
+    //        return BadRequest(new { message = result.Message });
+
+    //    return NoContent();
+    //}
 
     [HttpDelete("{id:long}")]
     [ProducesResponseType(200)]
@@ -105,6 +122,31 @@ public class ProductController : ControllerBase
 
         return Ok(result.Message);
     }
+
+    [HttpDelete("gallery/{id:long}")]
+    public async Task<IActionResult> DeleteGallery(long id)
+    {
+        var result = await _galleryApplication.DeleteAsync(id);
+        if (!result.IsSuccedded)
+            return BadRequest(result.Message);
+
+        return Ok(result.Message);
+    }
+
+    [HttpPut("gallery/{id:long}")]
+    public async Task<IActionResult> EditGallery(long id, [FromBody] EditGalleryCommand command)
+    {
+        command.Id = id;
+        if (id != command.Id)
+            return BadRequest("شناسه گالری نامعتبر است.");
+
+        var result = await _galleryApplication.EditAsync(command);
+        if (!result.IsSuccedded)
+            return BadRequest(result.Message);
+
+        return NoContent();
+    }
+
 
 }
 

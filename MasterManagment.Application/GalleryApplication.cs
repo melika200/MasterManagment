@@ -56,40 +56,35 @@ namespace MasterManagment.Application
             return operation.Succedded("تصویر با موفقیت آپلود شد.");
         }
 
-        //public async Task<OperationResult> UploadImageAsync(UploadGalleryImageCommand command)
-        //{
-        //    var operation = new OperationResult();
+        public async Task<OperationResult> DeleteAsync(long galleryId)
+        {
+            var operation = new OperationResult();
+            var gallery = await _GalleryRepository.GetAsync(galleryId);
+            if (gallery == null)
+                return operation.Failed("گالری یافت نشد.");
 
-        //    if (command.File == null || command.File.Length == 0)
-        //        return operation.Failed("فایل ارسال نشده است.");
+            await _GalleryRepository.DeleteAsync(gallery);
+            await _unitOfWork.CommitAsync();
 
-        //    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif",".webp" };
-        //    var ext = Path.GetExtension(command.File.FileName).ToLowerInvariant();
-        //    if (!allowedExtensions.Contains(ext))
-        //        return operation.Failed("فرمت فایل مجاز نیست.");
+            return operation.Succedded("گالری با موفقیت حذف شد.");
+        }
 
+        public async Task<OperationResult> EditAsync(EditGalleryCommand command)
+        {
+            var operation = new OperationResult();
+            var gallery = await _GalleryRepository.GetAsync(command.Id);
+            if (gallery == null)
+                return operation.Failed("گالری یافت نشد.");
 
-        //    var newFileName = $"{Guid.NewGuid()}{ext}";
+            gallery.UpdateFile(command.FileName, command.FilePath);
 
+            await _GalleryRepository.UpdateAsync(gallery);
+            await _unitOfWork.CommitAsync();
 
-        //    var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
-        //    if (!Directory.Exists(uploadsFolder))
-        //        Directory.CreateDirectory(uploadsFolder);
-
-        //    var filePath = Path.Combine(uploadsFolder, newFileName);
-
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //    {
-        //        await command.File.CopyToAsync(stream);
-        //    }
+            return operation.Succedded("گالری با موفقیت ویرایش شد.");
+        }
 
 
-        //    var gallery = new Gallery(command.ProductId, newFileName, filePath);
-        //    await _GalleryRepository.CreateAsync(gallery);
-        //    await _unitOfWork.CommitAsync();
-
-        //    return operation.Succedded("تصویر با موفقیت آپلود شد.");
-        //}
     }
 
 }

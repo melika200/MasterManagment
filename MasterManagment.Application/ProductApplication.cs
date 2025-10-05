@@ -1,6 +1,8 @@
 ﻿using _01_FrameWork.Application;
+using MasterManagement.Domain.GalleryAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
+using MasterManagment.Application.Contracts.Gallery;
 using MasterManagment.Application.Contracts.Product;
 using MasterManagment.Application.Contracts.UnitOfWork;
 
@@ -11,15 +13,18 @@ namespace MasterManagment.Application
         private readonly IProductRepository _productRepository;
         private readonly IProductCategoryRepository _categoryRepository;
         private readonly IMasterUnitOfWork _unitOfWork;
+        private readonly IGalleryRepository _galleryRepository;
 
         public ProductApplication(
             IProductRepository productRepository,
             IProductCategoryRepository categoryRepository,
-            IMasterUnitOfWork unitOfWork)
+            IMasterUnitOfWork unitOfWork,
+            IGalleryRepository galleryRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _unitOfWork = unitOfWork;
+            _galleryRepository = galleryRepository;
         }
 
         public async Task<OperationResult> CreateAsync(CreateProductCommand command)
@@ -65,21 +70,32 @@ namespace MasterManagment.Application
             }).ToList();
         }
 
-
-        public async Task<OperationResult> Edit(EditProductCommand command)
+        public async Task<ProductEditResponseCommand> Edit(EditProductCommand command)
         {
-            var operation = new OperationResult();
+            var response = new ProductEditResponseCommand();
 
-            var product = await _productRepository.GetAsync(command.Id);
+            var product = await _productRepository.GetByIdAsync(command.Id);
             if (product == null)
-                return operation.Failed("محصول یافت نشد");
+            {
+                response.IsSuccedded = false;
+                response.Message = "محصول یافت نشد";
+                return response;
+            }
 
             if (await _productRepository.IsExistsAsync(x => x.Name == command.Name && x.Id != command.Id))
-                return operation.Failed("نام محصول تکراری است");
+            {
+                response.IsSuccedded = false;
+                response.Message = "نام محصول تکراری است";
+                return response;
+            }
 
-            var category = _categoryRepository.GetById(command.CategoryId).Result;
+            var category = await _categoryRepository.GetById(command.CategoryId);
             if (category == null)
-                return operation.Failed("دسته‌بندی انتخاب شده معتبر نیست");
+            {
+                response.IsSuccedded = false;
+                response.Message = "دسته‌بندی انتخاب شده معتبر نیست";
+                return response;
+            }
 
             product.Edit(
                 command.Name!,
@@ -90,21 +106,14 @@ namespace MasterManagment.Application
                 command.CategoryId,
                 command.IsAvailable);
 
-           await _productRepository.UpdateAsync(product);
-           await _unitOfWork.CommitAsync();
+            await _productRepository.UpdateAsync(product);
+            await _unitOfWork.CommitAsync();
 
-            return operation.Succedded("ویرایش محصول با موفقیت انجام شد");
-        }
+            var galleries = await _galleryRepository.GetManyAsync(g => g.ProductId == product.Id);
 
-        public async Task<ProductViewModel> GetDetails(long id)
-        {
-            var product = await _productRepository.GetByIdAsync(id);
-            if (product == null)
-                return null!;
-
-            return new ProductViewModel
+            var productViewModel = new ProductViewModel
             {
-                Id=product.Id,
+                Id = product.Id,
                 Name = product.Name,
                 ImagePath = product.ImagePath,
                 Price = product.Price,
@@ -114,9 +123,100 @@ namespace MasterManagment.Application
                 IsAvailable = product.IsAvailable,
                 TotalRatings = product.TotalRatings,
                 AverageRating = product.AverageRating,
-                CategoryName = product.Category?.Name
+                CategoryName = product.Category?.Name,
+                Galleries = galleries.Select(g => new GalleryViewModel
+                {
+                    Id = g.Id,
+                    FileName = g.FileName,
+                    FilePath = g.FilePath
+                }).ToList()
+            };
+
+            response.IsSuccedded = true;
+            response.Message = "ویرایش محصول با موفقیت انجام شد";
+            response.Product = productViewModel;
+            return response;
+        }
+
+
+        //public async Task<OperationResult> Edit(EditProductCommand command)
+        //{
+        //    var operation = new OperationResult();
+
+        //    var product = await _productRepository.GetAsync(command.Id);
+        //    if (product == null)
+        //        return operation.Failed("محصول یافت نشد");
+
+        //    if (await _productRepository.IsExistsAsync(x => x.Name == command.Name && x.Id != command.Id))
+        //        return operation.Failed("نام محصول تکراری است");
+
+        //    var category = _categoryRepository.GetById(command.CategoryId).Result;
+        //    if (category == null)
+        //        return operation.Failed("دسته‌بندی انتخاب شده معتبر نیست");
+
+        //    product.Edit(
+        //        command.Name!,
+        //        command.ImagePath!,
+        //        command.Price,
+        //        command.Description!,
+        //        command.Stock,
+        //        command.CategoryId,
+        //        command.IsAvailable);
+
+        //    await _productRepository.UpdateAsync(product);
+        //    await _unitOfWork.CommitAsync();
+
+        //    return operation.Succedded("ویرایش محصول با موفقیت انجام شد");
+        //}
+        public async Task<ProductViewModel> GetDetails(long id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null)
+                return null!;
+
+            return new ProductViewModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                ImagePath = product.ImagePath,
+                Price = product.Price,
+                Description = product.Description,
+                Stock = product.Stock,
+                CategoryId = product.CategoryId,
+                IsAvailable = product.IsAvailable,
+                TotalRatings = product.TotalRatings,
+                AverageRating = product.AverageRating,
+                CategoryName = product.Category?.Name,
+                Galleries = product.Galleries?.Select(g => new GalleryViewModel
+                {
+                    Id = g.Id,
+                    FileName = g.FileName,
+                    FilePath = g.FilePath
+                }).ToList()
             };
         }
+
+        //public async Task<ProductViewModel> GetDetails(long id)
+        //{
+        //    var product = await _productRepository.GetByIdAsync(id);
+        //    if (product == null)
+        //        return null!;
+
+        //    return new ProductViewModel
+        //    {
+        //        Id=product.Id,
+        //        Name = product.Name,
+        //        ImagePath = product.ImagePath,
+        //        Price = product.Price,
+        //        Description = product.Description,
+        //        Stock = product.Stock,
+        //        CategoryId = product.CategoryId,
+        //        IsAvailable = product.IsAvailable,
+        //        TotalRatings = product.TotalRatings,
+        //        AverageRating = product.AverageRating,
+        //        CategoryName = product.Category?.Name
+        //    };
+        //}
 
         public async Task<List<ProductViewModel>> Search(ProductSearchCriteria searchModel)
         {

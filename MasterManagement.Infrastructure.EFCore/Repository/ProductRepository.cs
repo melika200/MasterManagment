@@ -17,7 +17,7 @@ public class ProductRepository : RepositoryBase<long, Product>, IProductReposito
 
     public async Task<Product?> GetByIdAsync(long id)
     {
-        return await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
+        return await _context.Products.Include(p => p.Category).Include(g=>g.Galleries).FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<IEnumerable<Product>> GetAll(Expression<Func<Product, bool>>? where = null)
