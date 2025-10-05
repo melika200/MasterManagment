@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using _01_FrameWork.Domain;
 using MasterManagement.Domain.CartAgg;
+using MasterManagement.Domain.GalleryAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.OrderItemAgg;
 using MasterManagement.Domain.PaymentAgg;
@@ -21,6 +22,7 @@ public class MasterContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Gallery> Galleries { get; set; }
 
 
     public MasterContext(DbContextOptions<MasterContext> options) : base(options)

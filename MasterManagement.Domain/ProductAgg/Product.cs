@@ -1,4 +1,5 @@
 ﻿using _01_FrameWork.Domain;
+using MasterManagement.Domain.GalleryAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 
 namespace MasterManagement.Domain.ProductAgg;
@@ -17,6 +18,8 @@ public class Product : EntityBase,ISoftDelete
     public bool IsAvailable { get; private set; }
     public int TotalRatings { get; private set; }
     public double AverageRating { get; private set; }
+    public ICollection<Gallery>? Galleries { get; private set; }
+
 
     public Product(
         string name,
@@ -43,6 +46,7 @@ public class Product : EntityBase,ISoftDelete
         IsAvailable = isAvailable;
         TotalRatings = 0;
         AverageRating = 0.0;
+        Galleries = new List<Gallery>();
 
     }
 
