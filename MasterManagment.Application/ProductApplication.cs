@@ -98,7 +98,7 @@ namespace MasterManagment.Application
 
         public async Task<ProductViewModel> GetDetails(long id)
         {
-            var product = await _productRepository.GetAsync(id);
+            var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
                 return null!;
 
@@ -153,7 +153,7 @@ namespace MasterManagment.Application
         {
             var operation = new OperationResult();
 
-            var product = await _productRepository.GetById(id);
+            var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
                 return operation.Failed("محصول یافت نشد");
             product.SoftDelete();

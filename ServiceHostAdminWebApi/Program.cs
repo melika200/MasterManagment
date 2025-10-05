@@ -110,11 +110,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/admin-v1/swagger.json", "Admin Management API V1");
-       
+        c.RoutePrefix = string.Empty;  
     });
+
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.UseAuthentication();
 

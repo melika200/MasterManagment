@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using _01_FrameWork.Application;
+﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagment.Application.Contracts.ProductCategory;
 using MasterManagment.Application.Contracts.UnitOfWork;
@@ -60,9 +59,23 @@ public class ProductCategoryApplication : IProductCategoryApplication
         return operation.Succedded();
     }
 
-    public EditProductCategoryCommand GetDetails(long id)
+    public async Task<ProductCategoryViewModel> GetDetails(long id)
     {
-        return _productCategoryRepository.GetDetails(id)!;
+        var productcategory = await _productCategoryRepository.GetAsync(id);
+        if (productcategory == null)
+            return null!;
+
+        return new ProductCategoryViewModel
+        {
+            Id = productcategory.Id,
+            Name = productcategory.Name,
+            ImagePath = productcategory.Picture,
+            Description = productcategory.Description,
+            Picture = productcategory.Picture,
+            CreationDate = productcategory.CreationDate.ToString()
+
+
+        };
     }
 
     public List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel)
@@ -86,8 +99,8 @@ public class ProductCategoryApplication : IProductCategoryApplication
 
     public async Task<List<ProductCategoryViewModel>> GetAll()
     {
-        
+
         return await _productCategoryRepository.GetAllCategories();
-      
+
     }
 }

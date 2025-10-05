@@ -6,7 +6,7 @@ namespace MasterManagment.Application.Contracts.ProductCategory;
 {
     Task<OperationResult> CreateAsync(CreateProductCategoryCommand command);
     Task<OperationResult> EditAsync(EditProductCategoryCommand command);
-    EditProductCategoryCommand GetDetails(long id);
+    Task<ProductCategoryViewModel> GetDetails(long id);
     List<ProductCategoryViewModel> Search(ProductCategorySearchModel searchModel);
     Task<OperationResult> DeleteAsync(long id);
     Task<List<ProductCategoryViewModel>> GetAll();

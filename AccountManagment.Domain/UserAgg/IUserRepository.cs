@@ -16,5 +16,7 @@ namespace AccountManagment.Domain.UserAgg
         //EditUserViewModel? GetForEdit(long id);
         //List<UserViewModel>? Search(UserSearchCriteria criteria);
         Task<User?> GetUserWithRoleAsync(string username);
+        Task<IEnumerable<User>> GetAllUsersAsync(Expression<Func<User, bool>> expression);
+
     }
 }

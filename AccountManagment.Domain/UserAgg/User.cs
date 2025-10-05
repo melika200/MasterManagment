@@ -36,10 +36,11 @@ public class User:EntityBase,ISoftDelete
     }
 
 
-    public void Edit(string fullname, string username)
+    public void Edit(string fullname, string username,string password)
     {
         Fullname = fullname;
         Username = username;
+        Password = password;
     }
   
 

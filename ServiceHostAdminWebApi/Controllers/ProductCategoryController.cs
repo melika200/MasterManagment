@@ -1,4 +1,5 @@
-﻿using MasterManagment.Application.Contracts.ProductCategory;
+﻿using System.Threading.Tasks;
+using MasterManagment.Application.Contracts.ProductCategory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ServiceHostAdminWebApi.Controllers;
@@ -8,7 +9,7 @@ namespace ServiceHostAdminWebApi.Controllers;
     [ApiController]
     [ApiVersion("1.0")]
     [Route("admin/api/v{version:apiVersion}/[controller]")]
-    [Authorize(Roles = "Admin,Programmer")] 
+    //[Authorize(Roles = "Admin,Programmer")] 
     public class ProductCategoryController : ControllerBase
     {
         private readonly IProductCategoryApplication _productCategoryApplication;
@@ -27,11 +28,11 @@ namespace ServiceHostAdminWebApi.Controllers;
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(EditProductCategoryCommand))]
+        [ProducesResponseType(200, Type = typeof(ProductCategoryViewModel))]
         [ProducesResponseType(404)]
-        public ActionResult<EditProductCategoryCommand> Get(long id)
+        public async Task<ActionResult<ProductCategoryViewModel>> Get(long id)
         {
-            var details = _productCategoryApplication.GetDetails(id);
+            var details =await _productCategoryApplication.GetDetails(id);
             if (details == null)
                 return NotFound();
 

@@ -167,7 +167,8 @@ public class UserApplication : IUserApplication
         if (isDuplicate)
             return operationResult.Failed("نام کاربری تکراری است.");
 
-        user.Edit(command.Fullname, command.Username);
+
+        user.Edit(command.Fullname, command.Username,command.Password);
 
         // اگر نیاز به تغییر نقش هست، متد ChangeRole هم صدا زده شود
         if (command.RoleId > 0 && command.RoleId != user.RoleId)
@@ -217,7 +218,7 @@ public class UserApplication : IUserApplication
 
     public List<UserViewModel>? Search(UserSearchCriteria criteria)
     {
-        var query = _userRepository.GetManyAsync(x =>
+        var query = _userRepository.GetAllUsersAsync(x =>
             (!string.IsNullOrEmpty(criteria.Username) ? x.Username.Contains(criteria.Username) : true)
             && (!criteria.IsActive.HasValue || x.IsActive == criteria.IsActive.Value)
             && !x.IsDeleted).Result;
@@ -225,7 +226,16 @@ public class UserApplication : IUserApplication
         if (query == null)
             return new List<UserViewModel>();
 
-        return query.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
+        //return query.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
+        return query.Select(u => new UserViewModel
+        {
+            Id = u.Id,
+            Fullname = u.Fullname,
+            Username = u.Username,
+            Password=u.Password,
+            Role = u.Role?.Name  
+        }).ToList();
+
     }
 
     public async Task<List<UserViewModel>> GetAccountsByIds(List<long> accountIds)

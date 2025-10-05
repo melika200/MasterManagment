@@ -15,7 +15,7 @@ public class ProductRepository : RepositoryBase<long, Product>, IProductReposito
         _context = context;
     }
 
-    public async Task<Product?> GetById(long id)
+    public async Task<Product?> GetByIdAsync(long id)
     {
         return await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
     }
@@ -51,7 +51,7 @@ public class ProductRepository : RepositoryBase<long, Product>, IProductReposito
 
     public async Task Delete(long id)
     {
-        var product = await GetById(id);
+        var product = await GetByIdAsync(id);
         if (product != null)
             _context.Products.Remove(product);
     }

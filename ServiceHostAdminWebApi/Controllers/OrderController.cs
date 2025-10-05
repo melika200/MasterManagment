@@ -9,7 +9,7 @@ namespace ServiceHostAdminWebApi.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("admin/api/v{version:apiVersion}/[controller]")]
-[Authorize(Roles = "Admin,Programmer")]
+//[Authorize(Roles = "Admin,Programmer")]
 public class OrderController : ControllerBase
 {
     private readonly IOrderApplication _orderApplication;
