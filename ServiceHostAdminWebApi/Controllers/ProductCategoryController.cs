@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using MasterManagment.Application.Contracts.ProductCategory;
-using Microsoft.AspNetCore.Authorization;
+﻿using MasterManagment.Application.Contracts.ProductCategory;
 using Microsoft.AspNetCore.Mvc;
 namespace ServiceHostAdminWebApi.Controllers;
 

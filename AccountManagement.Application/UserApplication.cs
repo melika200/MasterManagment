@@ -163,15 +163,15 @@ public class UserApplication : IUserApplication
         if (string.IsNullOrEmpty(command.Username))
             return operationResult.Failed("نام کاربری نمی‌تواند خالی باشد.");
 
-        // چک برای نام کاربری تکراری به جز کاربر فعلی
+        
         bool isDuplicate = await _userRepository.IsExistsAsync(x => x.Username == command.Username && x.Id != command.Id && !x.IsDeleted);
         if (isDuplicate)
             return operationResult.Failed("نام کاربری تکراری است.");
 
+      
+        user.Edit(command.Fullname, command.Username, command.Password);
 
-        user.Edit(command.Fullname, command.Username,command.Password);
-
-        // اگر نیاز به تغییر نقش هست، متد ChangeRole هم صدا زده شود
+      
         if (command.RoleId > 0 && command.RoleId != user.RoleId)
         {
             var role = RolesType.AllTypes.FirstOrDefault(r => r.Id == command.RoleId);
@@ -186,6 +186,7 @@ public class UserApplication : IUserApplication
 
         return operationResult.Succedded();
     }
+
 
     public long GetUserId(string? name)
     {
@@ -207,9 +208,9 @@ public class UserApplication : IUserApplication
     //    return users.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
     //}
 
-    public EditUserViewModel? GetForEdit(long id)
+    public async Task<EditUserViewModel?> GetForEdit(long id)
     {
-        var user = _userRepository.GetAsync(id).Result;
+        var user = await _userRepository.GetAsync(id);
         if (user == null)
             return null;
 

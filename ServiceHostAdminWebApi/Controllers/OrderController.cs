@@ -20,38 +20,39 @@ public class OrderController : ControllerBase
     }
 
 
-    [HttpPost("AllOrders")]
+
+    [HttpGet("AllOrders")]
     [ProducesResponseType(200, Type = typeof(List<OrderViewModel>))]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> GetAllOrders([FromBody] OrderSearchCriteria criteria)
+    public async Task<IActionResult> GetAllOrders()
     {
         try
         {
-            var orders = await _orderApplication.SearchAsync(criteria);
+            
+            var orders = await _orderApplication.GetOrders();
+
             var userIds = orders.Select(o => o.AccountId).Distinct().ToList();
 
-
-           
             var users = await _userApplication.GetAccountsByIds(userIds);
 
             var result = orders.Select(order =>
-                {
-                    var user = users.FirstOrDefault(u => u.Id == order.AccountId);
+            {
+                var user = users.FirstOrDefault(u => u.Id == order.AccountId);
 
-                    return new OrderViewModel
-                    {
-                        Id = order.Id,
-                        AccountId = order.AccountId,
-                        AccountName = user?.Fullname ?? "",
-                        AccountPhone = user?.PhoneNumber ?? "",
-                        AccountAddress = user?.Address ?? "",
-                        PaymentMethod = order.PaymentMethod,
-                        TotalAmount = order.TotalAmount,
-                        IsPaid = order.IsPaid,
-                        IsCanceled = order.IsCanceled,
-                        IssueTrackingNo = order.IssueTrackingNo
-                    };
-                }).ToList();
+                return new OrderViewModel
+                {
+                    Id = order.Id,
+                    AccountId = order.AccountId,
+                    AccountName = user?.Fullname ?? string.Empty,
+                    AccountPhone = user?.PhoneNumber ?? string.Empty,
+                    AccountAddress = user?.Address ?? string.Empty,
+                    PaymentMethod = order.PaymentMethod,
+                    TotalAmount = order.TotalAmount,
+                    IsPaid = order.IsPaid,
+                    IsCanceled = order.IsCanceled,
+                    IssueTrackingNo = order.IssueTrackingNo
+                };
+            }).ToList();
 
             return Ok(result);
         }
@@ -61,51 +62,92 @@ public class OrderController : ControllerBase
         }
     }
 
+
+
     [HttpGet("{id:long}")]
     [ProducesResponseType(200, Type = typeof(OrderDetailViewModel))]
     [ProducesResponseType(404)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> GetById(long id)
+    public async Task<IActionResult> GetOrderById(long id)
     {
-        try
+        var orders = await _orderApplication.SearchAsync(new OrderSearchCriteria { OrderId = id });
+        var order = orders.FirstOrDefault();
+        if (order == null) return NotFound();
+
+        var user = await _userApplication.GetForEdit(order.AccountId); 
+        if (user == null) return BadRequest("کاربر مرتبط با سفارش یافت نشد.");
+
+        var items = await _orderApplication.GetOrderItemsAsync(order.Id);
+
+        var orderDetail = new OrderDetailViewModel
         {
-            var order = (await _orderApplication.SearchAsync(new OrderSearchCriteria { OrderId = id })).FirstOrDefault();
-            if (order == null)
-                return NotFound();
+            Id = order.Id,
+            AccountId = order.AccountId,
+            AccountName = user.Fullname ?? "",
+            AccountPhone = user.PhoneNumber ?? "",
+            AccountAddress = user.Address ?? "",
+            PaymentMethod = order.PaymentMethod,
+            TotalAmount = order.TotalAmount,
+            IsPaid = order.IsPaid,
+            IsCanceled = order.IsCanceled,
+            IssueTrackingNo = order.IssueTrackingNo ?? "",
+            Items = items
+        };
 
-            var user = _userApplication.GetForEdit(order.AccountId);
-            if (user == null)
-                return BadRequest("کاربر مرتبط با سفارش یافت نشد.");
-
-            var items = await _orderApplication.GetItemsAsync(order.Id);
-
-            var orderDetail = new OrderDetailViewModel
-            {
-                Id = order.Id,
-                AccountId = order.AccountId,
-                AccountName = user.Fullname ?? "",
-                AccountPhone = user.PhoneNumber ?? "",
-                AccountAddress = user.Address ?? "",
-                PaymentMethod = order.PaymentMethod,
-                TotalAmount = order.TotalAmount,
-                IsPaid = order.IsPaid,
-                IsCanceled = order.IsCanceled,
-                IssueTrackingNo = order.IssueTrackingNo!,
-                Items = items
-            };
-
-            return Ok(orderDetail);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(orderDetail);
     }
-    
-    
-    
-    
-    
+
+
+    //[HttpGet("{id:long}")]
+    //[ProducesResponseType(200, Type = typeof(OrderDetailViewModel))]
+    //[ProducesResponseType(404)]
+    //[ProducesResponseType(400)]
+    //public async Task<IActionResult> GetOrderById(long id)
+    //{
+    //    try
+    //    {
+    //        var orders = await _orderApplication.SearchAsync(new OrderSearchCriteria { OrderId = id });
+    //        var order = orders.FirstOrDefault();
+    //        if (order == null)
+    //            return NotFound();
+
+
+    //        var user = await _userApplication.GetForEdit(order.AccountId);
+    //        if (user == null)
+    //            return BadRequest("کاربر مرتبط با سفارش یافت نشد.");
+
+    //        var items = await _orderApplication.GetOrderItemsAsync(order.Id);
+
+    //        var orderDetail = new OrderDetailViewModel
+    //        {
+    //            Id = order.Id,
+    //            AccountId = order.AccountId,
+    //            AccountName = user.Fullname ?? "",
+    //            AccountPhone = user.PhoneNumber ?? "",
+    //            AccountAddress = user.Address ?? "",
+    //            PaymentMethod = order.PaymentMethod,
+    //            TotalAmount = order.TotalAmount,
+    //            IsPaid = order.IsPaid,
+    //            IsCanceled = order.IsCanceled,
+    //            IssueTrackingNo = order.IssueTrackingNo ?? "",
+    //            Items = items
+    //        };
+
+    //        return Ok(orderDetail);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}
+
+
+
+
+
+
+
+
     //[HttpPost("createFromCart")]
     //[ProducesResponseType(200, Type = typeof(long))]
     //[ProducesResponseType(400)]

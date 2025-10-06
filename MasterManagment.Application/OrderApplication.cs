@@ -65,6 +65,11 @@ public class OrderApplication : IOrderApplication
         return operation.Succedded();
     }
 
+    public async Task<List<OrderViewModel>> GetOrders()
+    {
+        return await _orderRepository.GetAllOrdersAsync();
+       
+    }
     public async Task<OperationResult> EditAsync(EditOrderCommand command)
     {
         var operation = new OperationResult();
@@ -125,9 +130,9 @@ public class OrderApplication : IOrderApplication
         return order.PayAmount;
     }
 
-    public async Task<List<OrderItemViewModel>> GetItemsAsync(long orderId)
+    public async Task<List<OrderItemViewModel>> GetOrderItemsAsync(long orderId)
     {
-        var order = await _orderRepository.GetAsync(orderId);
+        var order = await _orderRepository.GetOrderWithItemAsync(orderId);
         if (order == null)
             throw new Exception($"سفارش با شناسه {orderId} یافت نشد");
 
@@ -143,29 +148,9 @@ public class OrderApplication : IOrderApplication
 
     public async Task<List<OrderViewModel>> SearchAsync(OrderSearchCriteria searchModel)
     {
-        var orders = await _orderRepository.GetAllAsync();
-        var query = orders.AsQueryable();
-
-        if (searchModel.AccountId != 0)
-            query = query.Where(o => o.AccountId == searchModel.AccountId);
-
-        if (searchModel.IsCanceled.HasValue)
-            query = query.Where(o => o.IsCanceled == searchModel.IsCanceled.Value);
-
-        if (searchModel.IsPaid.HasValue)
-            query = query.Where(o => o.IsPaid == searchModel.IsPaid.Value);
-
-        return query.Select(o => new OrderViewModel
-        {
-            Id = o.Id,
-            AccountName = "",
-            PaymentMethod = (int)o.PaymentMethod,
-            TotalAmount = o.TotalAmount,
-            IsPaid = o.IsPaid,
-            IsCanceled = o.IsCanceled,
-            IssueTrackingNo = o.IssueTrackingNo
-        }).ToList();
+        return await _orderRepository.SearchAsync(searchModel);
     }
+
 
     public async Task<long> FinalizeFromCartAsync(long cartId, string transactionId)
     {

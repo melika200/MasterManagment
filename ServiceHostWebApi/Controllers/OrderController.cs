@@ -65,7 +65,7 @@ public class OrderController : ControllerBase
     {
         try
         {
-            var items = await _orderApplication.GetItemsAsync(id);
+            var items = await _orderApplication.GetOrderItemsAsync(id);
             return Ok(items);
         }
         catch (Exception ex)

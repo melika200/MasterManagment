@@ -9,7 +9,7 @@ public interface IUserApplication
      //
     Task<OperationResult> Edit(EditUserCommand command);
     Task<OperationResult> ChangePassword(ChangePasswordCommand command);
-    EditUserViewModel? GetForEdit(long id);
+    Task<EditUserViewModel?> GetForEdit(long id);
     Task<List<UserViewModel>> GetAccountsByIds(List<long> accountIds);
     Task<OperationResult> DeleteAsync(long id);
     Task<OperationResult> ActivateAsync(long id);

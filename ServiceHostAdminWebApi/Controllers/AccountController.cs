@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using AccountManagment.Contracts.UserContracts;
-using AccountManagment.Domain.RolesTypesAgg;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostAdminWebApi.Controllers
@@ -38,28 +37,38 @@ namespace ServiceHostAdminWebApi.Controllers
         [HttpGet("{id:long}")]
         [ProducesResponseType(200, Type = typeof(EditUserViewModel))]
         [ProducesResponseType(404)]
-        public IActionResult GetUserForEdit(long id)
+        public async Task<IActionResult> GetUserForEdit(long id)
         {
-            var user = _userApplication.GetForEdit(id);
+            var user =await _userApplication.GetForEdit(id);
             if (user == null)
                 return NotFound();
 
             return Ok(user);
         }
-
         [HttpPut("{id:long}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
         public async Task<IActionResult> EditUser(long id, [FromBody] EditUserCommand command)
         {
             command.Id = id;
-
             var result = await _userApplication.Edit(command);
             if (!result.IsSuccedded)
                 return BadRequest(new { message = result.Message });
 
             return NoContent();
         }
+
+        //[HttpPut("{id:long}")]
+        //[ProducesResponseType(204)]
+        //[ProducesResponseType(400)]
+        //public async Task<IActionResult> EditUser(long id, [FromBody] EditUserCommand command)
+        //{
+        //    command.Id = id;
+
+        //    var result = await _userApplication.Edit(command);
+        //    if (!result.IsSuccedded)
+        //        return BadRequest(new { message = result.Message });
+
+        //    return NoContent();
+        //}
 
         [HttpDelete("{id:long}")]
         [ProducesResponseType(200)]
