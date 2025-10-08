@@ -1,8 +1,8 @@
 ﻿using _01_FrameWork.Domain;
-using MasterManagement.Domain.OrderAgg;
 
 namespace MasterManagement.Domain.ShippingAgg;
 
-public interface IShippingRepository : IRepository<long, Order>
+public interface IShippingRepository : IRepository<long, Shipping>
 {
+    Task<Shipping?> GetByCartIdAsync(long cartId);
 }

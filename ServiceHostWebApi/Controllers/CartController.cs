@@ -1,5 +1,6 @@
 ﻿using MasterManagment.Application.Contracts.CartItem;
 using MasterManagment.Application.Contracts.OrderContracts;
+using MasterManagment.Application.Contracts.Shipping;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostWebApi.Controllers;
@@ -10,10 +11,12 @@ namespace ServiceHostWebApi.Controllers;
 public class CartController : ControllerBase
 {
     private readonly ICartApplication _cartApplication;
+    private readonly IShippingApplication _shippingApplication;
 
-    public CartController(ICartApplication cartApplication)
+    public CartController(ICartApplication cartApplication, IShippingApplication shippingApplication)
     {
         _cartApplication = cartApplication;
+        _shippingApplication = shippingApplication;
     }
 
     [HttpPost("create")]
@@ -129,4 +132,53 @@ public class CartController : ControllerBase
 
         return Ok(new { message = result.Message });
     }
+
+
+
+    //Shipping :
+
+
+
+
+
+
+    [HttpPost("Shipping")]
+    [ProducesResponseType(200, Type = typeof(long))]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> Create([FromBody] CreateShippingCommand command)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var id = await _shippingApplication.CreateAsync(command);
+            return Ok(new { ShippingId = id });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("Shipping/{cartId:long}")]
+    [ProducesResponseType(200, Type = typeof(ShippingViewModel))]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetByCartId(long cartId)
+    {
+        var shipping = await _shippingApplication.GetByCartIdAsync(cartId);
+        if (shipping == null)
+            return NotFound();
+
+        return Ok(shipping);
+    }
 }
+
+
+
+
+
+
+
+
+

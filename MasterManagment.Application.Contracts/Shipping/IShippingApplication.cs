@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MasterManagment.Application.Contracts.Shipping;
 
-namespace MasterManagment.Application.Contracts.Shipping
+public interface IShippingApplication
 {
-    interface IShippingApplication
-    {
-    }
+    Task<long> CreateAsync(CreateShippingCommand command);
+    Task<ShippingViewModel?> GetByCartIdAsync(long cartId);
 }

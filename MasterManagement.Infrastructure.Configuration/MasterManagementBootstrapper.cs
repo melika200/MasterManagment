@@ -3,6 +3,7 @@ using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
+using MasterManagement.Domain.ShippingAgg;
 using MasterManagement.Infrastructure.EFCore;
 using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Infrastructure.EFCore.Repository;
@@ -12,6 +13,7 @@ using MasterManagment.Application.Contracts.OrderContracts;
 using MasterManagment.Application.Contracts.Payment;
 using MasterManagment.Application.Contracts.Product;
 using MasterManagment.Application.Contracts.ProductCategory;
+using MasterManagment.Application.Contracts.Shipping;
 using MasterManagment.Application.Contracts.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +37,8 @@ public class MasterManagementBootstrapper
         services.AddTransient<IPaymentRepository,PaymentRepository>();
         services.AddTransient<IGalleryRepository, GalleryRepository>();
         services.AddTransient<IGalleryApplication, GalleryApplication>();
+        services.AddTransient<IShippingApplication, ShippingApplication>();
+        services.AddTransient<IShippingRepository, ShippingRepository>();
 
 
         services.AddTransient<IMasterUnitOfWork, MasterUnitOfWork>();

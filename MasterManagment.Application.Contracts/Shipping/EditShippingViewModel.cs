@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MasterManagment.Application.Contracts.Shipping;
 
-namespace MasterManagment.Application.Contracts.Shipping
+public class EditShippingViewModel
 {
-    class EditShippingViewModel
-    {
-    }
+    public long Id { get; set; }
+    public long CartId { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public int ShippingStatusId { get; set; }
+    public string ShippingMethodName { get; set; } = string.Empty;
 }

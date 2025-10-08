@@ -29,6 +29,7 @@ public class MasterContext : DbContext
     public DbSet<Gallery> Galleries { get; set; }
     public DbSet<OrderState> OrderState { get; set; }
     public DbSet<ShippingStatus> ShippingStatus { get; set; }
+    public DbSet<Shipping> Shippings { get; set; }
     public MasterContext(DbContextOptions<MasterContext> options) : base(options)
     {
     }

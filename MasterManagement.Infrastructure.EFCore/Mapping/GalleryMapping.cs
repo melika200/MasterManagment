@@ -22,7 +22,8 @@ namespace MasterManagement.Infrastructure.EFCore.Mapping
 
             builder.HasOne(x => x.Product)
                 .WithMany(p => p.Galleries)
-                .HasForeignKey(x => x.ProductId);
+                .HasForeignKey(x => x.ProductId)
+                .IsRequired(false);
         }
     }
 }

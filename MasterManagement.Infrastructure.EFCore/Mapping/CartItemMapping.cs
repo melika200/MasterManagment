@@ -18,7 +18,8 @@ public class CartItemMapping : IEntityTypeConfiguration<CartItem>
 
         builder.HasOne(ci => ci.Cart)
                .WithMany(c => c.Items)
-               .HasForeignKey(ci => ci.CartId);
+               .HasForeignKey(ci => ci.CartId)
+               .IsRequired(false);
 
         //builder.HasOne(ci => ci.Product)
         //       .WithMany()

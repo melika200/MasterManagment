@@ -9,7 +9,7 @@ public class Gallery : EntityBase
     public long ProductId { get; private set; }
     public string FileName { get; private set; }
     public string FilePath { get; private set; }
-    public Product Product { get; private set; }
+    public Product? Product { get; private set; }
     //public DateTime UploadedOn { get; private set; }
 
 
