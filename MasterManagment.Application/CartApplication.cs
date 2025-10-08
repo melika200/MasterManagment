@@ -3,7 +3,7 @@ using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagment.Application.Contracts.CartItem;
-using MasterManagment.Application.Contracts.Order;
+using MasterManagment.Application.Contracts.OrderContracts;
 using MasterManagment.Application.Contracts.UnitOfWork;
 
 namespace MasterManagment.Application

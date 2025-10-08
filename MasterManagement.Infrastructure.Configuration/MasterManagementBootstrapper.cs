@@ -8,7 +8,7 @@ using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Infrastructure.EFCore.Repository;
 using MasterManagment.Application;
 using MasterManagment.Application.Contracts.Gallery;
-using MasterManagment.Application.Contracts.Order;
+using MasterManagment.Application.Contracts.OrderContracts;
 using MasterManagment.Application.Contracts.Payment;
 using MasterManagment.Application.Contracts.Product;
 using MasterManagment.Application.Contracts.ProductCategory;

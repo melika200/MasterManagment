@@ -11,8 +11,4 @@
     <ProjectReference Include="..\MasterManagment.Application.Contracts\MasterManagment.Application.Contracts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="OrderStateAgg\" />
-  </ItemGroup>
-
 </Project>

@@ -3,7 +3,7 @@ using _01_FrameWork.Infrastructure;
 using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Infrastructure.EFCore.Context;
-using MasterManagment.Application.Contracts.Order;
+using MasterManagment.Application.Contracts.OrderContracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace MasterManagement.Infrastructure.EFCore.Repository

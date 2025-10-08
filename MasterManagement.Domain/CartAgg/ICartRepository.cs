@@ -1,6 +1,6 @@
 ﻿using _01_FrameWork.Domain;
 using MasterManagement.Domain.CartAgg;
-using MasterManagment.Application.Contracts.Order;
+using MasterManagment.Application.Contracts.OrderContracts;
 
 namespace MasterManagement.Domain.OrderAgg;
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using _01_FrameWork.Application;
 using MasterManagment.Application.Contracts.CartItem;
 
-namespace MasterManagment.Application.Contracts.Order
+namespace MasterManagment.Application.Contracts.OrderContracts
 {
     public interface ICartApplication
     {

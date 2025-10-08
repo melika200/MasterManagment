@@ -1,6 +1,6 @@
 ﻿using MasterManagment.Application.Contracts.CartItem;
 
-namespace MasterManagment.Application.Contracts.Order;
+namespace MasterManagment.Application.Contracts.OrderContracts;
 
 
 public class EditCartViewModel

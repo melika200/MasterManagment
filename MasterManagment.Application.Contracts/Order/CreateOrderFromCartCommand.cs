@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MasterManagment.Application.Contracts.Order
+namespace MasterManagment.Application.Contracts.OrderContracts
 {
     
     

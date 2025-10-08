@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MasterManagment.Application.Contracts.OrderItem;
 
-namespace MasterManagment.Application.Contracts.Order
+namespace MasterManagment.Application.Contracts.OrderContracts
 {
     public class EditOrderViewModel
     {

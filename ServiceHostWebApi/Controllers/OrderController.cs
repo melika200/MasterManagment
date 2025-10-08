@@ -1,4 +1,4 @@
-﻿using MasterManagment.Application.Contracts.Order;
+﻿using MasterManagment.Application.Contracts.OrderContracts;
 using MasterManagment.Application.Contracts.OrderItem;
 using Microsoft.AspNetCore.Mvc;
 
@@ -65,7 +65,7 @@ public class OrderController : ControllerBase
     {
         try
         {
-            var items = await _orderApplication.GetOrderItemsAsync(id);
+            var items = await _orderApplication.GetOrderDetailAsync(id);
             return Ok(items);
         }
         catch (Exception ex)
@@ -74,7 +74,50 @@ public class OrderController : ControllerBase
         }
     }
 
-    
+
+
+    [HttpGet("AllOrders")]
+    [ProducesResponseType(200, Type = typeof(List<OrderViewModel>))]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> GetAllOrders()
+    {
+        try
+        {
+            var orders = await _orderApplication.GetOrders();
+            return Ok(orders);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"خطا در دریافت سفارش‌ها: {ex.Message}");
+        }
+    }
+
+
+
+
+
+    [HttpGet("{id:long}")]
+    [ProducesResponseType(200, Type = typeof(OrderDetailViewModel))]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> GetOrderById(long id)
+    {
+        try
+        {
+            var orderDetail = await _orderApplication.GetOrderDetailAsync(id);
+            if (orderDetail == null)
+                return NotFound($"سفارشی با شناسه {id} یافت نشد.");
+
+            return Ok(orderDetail);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"خطا در دریافت جزئیات سفارش: {ex.Message}");
+        }
+    }
+
+
+
     [HttpPost("search")]
     [ProducesResponseType(200, Type = typeof(List<OrderViewModel>))]
     [ProducesResponseType(400)]

@@ -2,9 +2,11 @@
 using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.OrderItemAgg;
+using MasterManagement.Domain.OrderStatesTypeAgg;
 using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
-using MasterManagment.Application.Contracts.Order;
+using MasterManagement.Domain.ShippingStatusesTypeAgg;
+using MasterManagment.Application.Contracts.OrderContracts;
 using MasterManagment.Application.Contracts.OrderItem;
 using MasterManagment.Application.Contracts.UnitOfWork;
 
@@ -65,11 +67,85 @@ public class OrderApplication : IOrderApplication
         return operation.Succedded();
     }
 
+    public async Task<OperationResult> SetTrackingNumberAsync(long orderId, string trackingNumber)
+    {
+        var operation = new OperationResult();
+        var order = await _orderRepository.GetAsync(orderId);
+
+        if (order == null)
+            return operation.Failed("سفارش یافت نشد");
+
+        order.SetIssueTrackingNo(trackingNumber);
+        await _orderRepository.UpdateAsync(order);
+        await _unitOfWork.CommitAsync();
+
+        return operation.Succedded();
+    }
+
+
+
+    public async Task<OperationResult> SetOrderStateAsync(long orderId, int newStateId)
+    {
+        var operation = new OperationResult();
+        var order = await _orderRepository.GetAsync(orderId);
+        if (order == null)
+            return operation.Failed("سفارش یافت نشد");
+
+        var newState = OrderStatesType.AllStates.FirstOrDefault(s => s.Id == newStateId);
+        if (newState == null)
+            return operation.Failed("وضعیت سفارش معتبر نیست");
+
+        order.SetOrderState(newState);
+
+
+        await _orderRepository.UpdateAsync(order);
+        await _unitOfWork.CommitAsync();
+
+        return operation.Succedded();
+    }
+
+    public async Task<OperationResult> SetOrderShippingStateAsync(long orderId, int newShippingStateId)
+    {
+        var operation = new OperationResult();
+        var order = await _orderRepository.GetAsync(orderId);
+        if (order == null)
+            return operation.Failed("سفارش یافت نشد");
+
+        var newState = ShippingStatusesType.AllStatuses.FirstOrDefault(s => s.Id == newShippingStateId);
+        if (newState == null)
+            return operation.Failed("وضعیت ارسال معتبر نیست");
+
+        order.SetShippingStatus(newState);
+
+
+        await _orderRepository.UpdateAsync(order);
+        await _unitOfWork.CommitAsync();
+
+        return operation.Succedded();
+    }
+
+
     public async Task<List<OrderViewModel>> GetOrders()
     {
-        return await _orderRepository.GetAllOrdersAsync();
-       
+        var orders = await _orderRepository.GetAllOrdersAsync();
+
+        return orders.Select(u => new OrderViewModel
+        {
+            Id = u.Id,
+            AccountId = u.AccountId,
+            FullName = u.FullName,
+            Mobile = u.Mobile,
+            Address = u.Address,
+            PaymentMethod = (int)u.PaymentMethod,
+            TotalAmount = u.TotalAmount,
+            IsPaid = u.IsPaid,
+            IsCanceled = u.IsCanceled,
+            IssueTrackingNo = u.IssueTrackingNo,
+            OrderState = u.OrderState?.Name ?? "نامشخص",
+            ShippingState = u.ShippingStatus?.Name ?? "نامشخص"
+        }).ToList();
     }
+
     public async Task<OperationResult> EditAsync(EditOrderCommand command)
     {
         var operation = new OperationResult();
@@ -130,26 +206,53 @@ public class OrderApplication : IOrderApplication
         return order.PayAmount;
     }
 
-    public async Task<List<OrderItemViewModel>> GetOrderItemsAsync(long orderId)
+    //public async Task<List<OrderItemViewModel>> GetOrderItemsAsync(long orderId)
+    //{
+    //    var order = await _orderRepository.GetOrderWithItemAsync(orderId);
+    //    if (order == null)
+    //        throw new Exception($"سفارش با شناسه {orderId} یافت نشد");
+
+    //    return order.Items.Select(i => new OrderItemViewModel
+    //    {
+    //        ProductId = i.ProductId,
+    //        ProductName = i.ProductName,
+    //        Count = i.Count,
+    //        UnitPrice = i.UnitPrice,
+    //        DiscountRate = i.DiscountRate
+    //    }).ToList();
+    //}
+    public async Task<OrderDetailViewModel?> GetOrderDetailAsync(long orderId)
     {
         var order = await _orderRepository.GetOrderWithItemAsync(orderId);
         if (order == null)
-            throw new Exception($"سفارش با شناسه {orderId} یافت نشد");
+            return null;
 
-        return order.Items.Select(i => new OrderItemViewModel
+        return new OrderDetailViewModel
         {
-            ProductId = i.ProductId,
-            ProductName = i.ProductName,
-            Count = i.Count,
-            UnitPrice = i.UnitPrice,
-            DiscountRate = i.DiscountRate
-        }).ToList();
+            Id = order.Id,
+            AccountId = order.AccountId,
+            FullName = order.FullName ?? "",
+            PhoneNumber = order.Mobile ?? "",
+            Address = order.Address ?? "",
+            PaymentMethod = (int)order.PaymentMethod,
+            TotalAmount = order.TotalAmount,
+            IsPaid = order.IsPaid,
+            IsCanceled = order.IsCanceled,
+            IssueTrackingNo = order.IssueTrackingNo ?? "",
+            OrderState = order.OrderState?.Name ?? "نامشخص",
+            ShippingState = order.ShippingStatus?.Name ?? "نامشخص",
+            Items = order.Items.Select(i => new OrderItemViewModel
+            {
+                ProductId = i.ProductId,
+                ProductName = i.ProductName,
+                Count = i.Count,
+                UnitPrice = i.UnitPrice,
+                DiscountRate = i.DiscountRate
+            }).ToList()
+        };
     }
 
-    public async Task<List<OrderViewModel>> SearchAsync(OrderSearchCriteria searchModel)
-    {
-        return await _orderRepository.SearchAsync(searchModel);
-    }
+
 
 
     public async Task<long> FinalizeFromCartAsync(long cartId, string transactionId)
@@ -192,5 +295,14 @@ public class OrderApplication : IOrderApplication
         await _unitOfWork.CommitAsync();
 
         return order.Id;
+    }
+    
+    
+    
+    
+    
+    public async Task<List<OrderViewModel>> SearchAsync(OrderSearchCriteria searchModel)
+    {
+        return await _orderRepository.SearchAsync(searchModel);
     }
 }

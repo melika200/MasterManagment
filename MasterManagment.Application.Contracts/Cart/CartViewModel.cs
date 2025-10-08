@@ -1,4 +1,4 @@
-﻿namespace MasterManagment.Application.Contracts.Order;
+﻿namespace MasterManagment.Application.Contracts.OrderContracts;
 
 public class CartViewModel
 {

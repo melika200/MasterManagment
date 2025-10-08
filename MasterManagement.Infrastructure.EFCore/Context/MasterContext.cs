@@ -4,9 +4,13 @@ using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.GalleryAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.OrderItemAgg;
+using MasterManagement.Domain.OrderStateAgg;
+using MasterManagement.Domain.OrderStatesTypeAgg;
 using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
+using MasterManagement.Domain.ShippingStatusAgg;
+using MasterManagement.Domain.ShippingStatusesTypeAgg;
 using MasterManagement.Infrastructure.EFCore.Mapping;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,8 +27,8 @@ public class MasterContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Gallery> Galleries { get; set; }
-
-
+    public DbSet<OrderState> OrderState { get; set; }
+    public DbSet<ShippingStatus> ShippingStatus { get; set; }
     public MasterContext(DbContextOptions<MasterContext> options) : base(options)
     {
     }
@@ -51,6 +55,8 @@ public class MasterContext : DbContext
 
         var assembly = typeof(ProductCategoryMapping).Assembly;
         modelBuilder.ApplyConfigurationsFromAssembly(assembly);
+        modelBuilder.Entity<OrderState>().HasData(OrderStatesType.AllStates);
+        modelBuilder.Entity<ShippingStatus>().HasData(ShippingStatusesType.AllStatuses);
         base.OnModelCreating(modelBuilder);
     }
 }
