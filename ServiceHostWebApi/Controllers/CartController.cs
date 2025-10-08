@@ -137,11 +137,6 @@ public class CartController : ControllerBase
 
     //Shipping :
 
-
-
-
-
-
     [HttpPost("Shipping")]
     [ProducesResponseType(200, Type = typeof(long))]
     [ProducesResponseType(400)]
@@ -172,6 +167,17 @@ public class CartController : ControllerBase
 
         return Ok(shipping);
     }
+
+
+    [HttpGet("shipping-statuses")]
+    [ProducesResponseType(200, Type = typeof(List<ShippingStatusViewModel>))]
+    public IActionResult GetShippingStatuses()
+    {
+        var statuses = _shippingApplication.GetAll();
+        return Ok(statuses);
+    }
+
+
 }
 
 

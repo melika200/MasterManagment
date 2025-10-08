@@ -132,13 +132,14 @@ namespace MasterManagment.Application
 
         public async Task<List<CartItemViewModel>> GetItemsAsync(long cartId)
         {
-            var cart = await _cartRepository.GetAsync(cartId);
+            var cart = await _cartRepository.GetCartWithItemAsync(cartId);
             if (cart == null)
                 throw new Exception($"Cart with id {cartId} not found.");
 
             return cart.Items.Select(i => new CartItemViewModel
             {
                 ProductId = i.ProductId,
+                ProductName=i.ProductName,
                 //ProductName = i.ProductName,
                 Count = i.Count,
                 //UnitPrice = i.UnitPrice,
@@ -163,6 +164,7 @@ namespace MasterManagment.Application
             return query.Select(c => new CartViewModel
             {
                 Id = c.Id,
+                AccountId=c.AccountId,
                 //AccountName = c.AccountName,
                 PaymentMethod = (int)c.PaymentMethod,
                 TotalAmount = c.TotalAmount,

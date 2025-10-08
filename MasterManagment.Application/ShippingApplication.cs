@@ -1,4 +1,5 @@
 ﻿using MasterManagement.Domain.ShippingAgg;
+using MasterManagement.Domain.ShippingStatusesTypeAgg;
 using MasterManagment.Application.Contracts.Shipping;
 using MasterManagment.Application.Contracts.UnitOfWork;
 
@@ -30,7 +31,18 @@ public class ShippingApplication : IShippingApplication
         return shipping.Id;
     }
 
- 
+
+    public Task<List<ShippingStatusViewModel>> GetAll()
+    {
+        var result = ShippingStatusesType.AllStatuses
+            .Select(s => new ShippingStatusViewModel
+            {
+                Id = s.Id,
+                Name = s.Name
+            }).ToList();
+
+        return Task.FromResult(result);
+    }
 
 
     public async Task<ShippingViewModel?> GetByCartIdAsync(long cartId)
