@@ -129,4 +129,19 @@ public class PaymentApplication : IPaymentApplication
 
         return cart.PayAmount;
     }
+
+    public async Task<OperationResult> ConfirmAsync(ConfirmPaymentCommand command)
+    {
+        var operation = new OperationResult();
+        var payment = await _paymentRepository.GetPaymentByIdAsync(command.PaymentId);
+        if (payment == null)
+            return operation.Failed("پرداخت یافت نشد");
+
+        payment.MarkAsConfirmed();
+        await _unitOfWork.CommitAsync();
+
+        return operation.Succedded("پرداخت تأیید شد");
+    }
+
+
 }

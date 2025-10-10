@@ -1,4 +1,7 @@
-﻿using MasterManagment.Application.Contracts.Payment;
+﻿using MasterManagment.Application.Contracts.OrderContracts;
+using MasterManagment.Application.Contracts.OrderItem;
+using MasterManagment.Application.Contracts.Payment;
+using MasterManagment.Application.Contracts.Shipping;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostWebApi.Controllers;
@@ -9,13 +12,19 @@ namespace ServiceHostWebApi.Controllers;
 public class PaymentController : ControllerBase
 {
     private readonly IPaymentApplication _paymentApplication;
+    private readonly ICartApplication _cartApplication;
+    private readonly IOrderApplication _orderApplication;
+    private readonly IShippingApplication _shippingApplication;
 
-    public PaymentController(IPaymentApplication paymentApplication)
+    public PaymentController(IPaymentApplication paymentApplication, ICartApplication cartApplication, IOrderApplication orderApplication , IShippingApplication shippingApplication )
     {
         _paymentApplication = paymentApplication;
+        _cartApplication = cartApplication;
+        _orderApplication = orderApplication;
+        _shippingApplication = shippingApplication;
     }
 
-  
+
     [HttpPost("create")]
     [ProducesResponseType(200, Type = typeof(long))]
     [ProducesResponseType(400)]
@@ -115,19 +124,77 @@ public class PaymentController : ControllerBase
     }
 
   
-    [HttpPost("search")]
-    [ProducesResponseType(200, Type = typeof(List<PaymentViewModel>))]
+
+    [HttpPost("confirm-payment")]
+    [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Search([FromBody] PaymentSearchCriteria criteria)
+    public async Task<IActionResult> ConfirmPayment([FromBody] ConfirmPaymentCommand command)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
-            var payments = await _paymentApplication.SearchAsync(criteria);
-            return Ok(payments);
+            var result = await _paymentApplication.ConfirmAsync(command);
+            if (!result.IsSuccedded)
+                return BadRequest(new { message = result.Message });
+
+            var cartItems = await _cartApplication.GetItemsAsync(command.CartId);
+            var cartAmount = await _cartApplication.GetAmountByAsync(command.CartId);
+            var shipping = await _shippingApplication.GetByCartIdAsync(command.CartId);
+
+            var orderItems = cartItems.Select(item => new OrderItemViewModel
+            {
+                ProductId = item.ProductId,
+                ProductName = item.ProductName,
+                Count=item.Count,
+                UnitPrice=item.UnitPrice
+               
+            }).ToList();
+
+            var createOrderCommand = new CreateOrderCommand
+            {
+                AccountId = command.AccountId,
+                CartId = command.CartId,
+                PaymentId = command.PaymentId,
+                PaymentMethodId = command.PaymentMethodId,
+                PaymentMethodName=command.PaymentMethodName,
+                DiscountAmount = command.DiscountAmount,
+                PayAmount = command.PayAmount,
+                TotalAmount = cartAmount,
+                Items = orderItems,
+                ShippingInfo = shipping
+            };
+
+            var orderId = await _orderApplication.CreateAsync(createOrderCommand);
+
+            await _cartApplication.DeleteAsync(command.CartId);
+
+            return Ok(new { OrderId = orderId });
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
     }
+
 }
+
+   
+
+
+//[HttpPost("search")]
+    //[ProducesResponseType(200, Type = typeof(List<PaymentViewModel>))]
+    //[ProducesResponseType(400)]
+    //public async Task<IActionResult> Search([FromBody] PaymentSearchCriteria criteria)
+    //{
+    //    try
+    //    {
+    //        var payments = await _paymentApplication.SearchAsync(criteria);
+    //        return Ok(payments);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}

@@ -12,7 +12,6 @@ public class OrderMapping : IEntityTypeConfiguration<Order>
         builder.HasKey(o => o.Id);
 
         builder.Property(o => o.AccountId).IsRequired();
-        builder.Property(o => o.PaymentMethod).IsRequired();
         builder.Property(o => o.TotalAmount).IsRequired();
         builder.Property(o => o.DiscountAmount).IsRequired();
         builder.Property(o => o.PayAmount).IsRequired();
@@ -22,6 +21,13 @@ public class OrderMapping : IEntityTypeConfiguration<Order>
         builder.Property(o => o.RefId).IsRequired();
         builder.Property(o => o.ShippingStatusId).IsRequired();
         builder.Property(x => x.OrderStateId).IsRequired();
+
+        builder.Property(o => o.PaymentMethodId).IsRequired();
+
+        builder.HasOne(o => o.PaymentMethod)
+               .WithMany(m => m.Orders)
+               .HasForeignKey(o => o.PaymentMethodId);
+
 
         builder.HasOne(x => x.OrderState)
                .WithMany(os => os.Orders)

@@ -21,6 +21,12 @@ public class PaymentRepository : RepositoryBase<long, Payment>, IPaymentReposito
         return await _dbSet.FirstOrDefaultAsync(p => p.TransactionId == transactionId);
     }
 
+    public async Task<Payment?> GetPaymentByIdAsync(long id)
+    {
+        return await _dbSet.FirstOrDefaultAsync(p => p.Id == id);
+    }
+  
+
     public async Task<List<Payment>> GetPaymentsByOrderIdAsync(long orderId)
     {
         return await _dbSet.Where(p => p.OrderId == orderId).ToListAsync();

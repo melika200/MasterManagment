@@ -15,5 +15,8 @@ namespace MasterManagment.Application.Contracts.Payment
         Task<PaymentViewModel?> GetByIdAsync(long id);
         Task<List<PaymentViewModel>> GetByCartIdAsync(long cartId);
         Task<List<PaymentViewModel>> SearchAsync(PaymentSearchCriteria searchModel);
+        Task<OperationResult> ConfirmAsync(ConfirmPaymentCommand command);
+
+
     }
 }

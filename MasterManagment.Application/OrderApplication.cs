@@ -4,6 +4,7 @@ using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.OrderItemAgg;
 using MasterManagement.Domain.OrderStatesTypeAgg;
 using MasterManagement.Domain.PaymentAgg;
+using MasterManagement.Domain.PaymentMethodsTypeAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ShippingStatusesTypeAgg;
 using MasterManagment.Application.Contracts.OrderContracts;
@@ -42,12 +43,17 @@ public class OrderApplication : IOrderApplication
             if (product == null)
                 return operation.Failed($"محصول با شناسه {item.ProductId} یافت نشد");
         }
+        var method = PaymentMethodsType.AllMethods.FirstOrDefault(m => m.Id == command.PaymentMethodId);
+        if (method == null)
+            return operation.Failed("روش پرداخت معتبر نیست");
 
         var order = new Order(command.AccountId,
-                              (PaymentMethod)command.PaymentMethod,
+                              method.Id,
                               command.TotalAmount,
                               command.DiscountAmount,
                               command.PayAmount);
+
+        order.SetPaymentMethod(method);
 
         foreach (var item in command.Items)
         {
@@ -136,7 +142,8 @@ public class OrderApplication : IOrderApplication
             FullName = u.FullName,
             Mobile = u.Mobile,
             Address = u.Address,
-            PaymentMethod = (int)u.PaymentMethod,
+            PaymentMethodId = u.PaymentMethod.Id,
+            PaymentMethodName = u.PaymentMethod.Name,
             TotalAmount = u.TotalAmount,
             IsPaid = u.IsPaid,
             IsCanceled = u.IsCanceled,
@@ -160,8 +167,12 @@ public class OrderApplication : IOrderApplication
             if (product == null)
                 return operation.Failed($"محصول با شناسه {item.ProductId} یافت نشد");
         }
+        var method = PaymentMethodsType.AllMethods.FirstOrDefault(m => m.Id == command.PaymentMethodId);
+        if (method == null)
+            return operation.Failed("روش پرداخت معتبر نیست");
 
-        order.Edit((PaymentMethod)command.PaymentMethod,
+
+        order.Edit(method,
                    command.TotalAmount,
                    command.DiscountAmount,
                    command.PayAmount);
@@ -234,7 +245,8 @@ public class OrderApplication : IOrderApplication
             FullName = order.FullName ?? "",
             PhoneNumber = order.Mobile ?? "",
             Address = order.Address ?? "",
-            PaymentMethod = (int)order.PaymentMethod,
+            PaymentMethodId = order.PaymentMethod.Id,
+            PaymentMethodName = order.PaymentMethod.Name,
             TotalAmount = order.TotalAmount,
             IsPaid = order.IsPaid,
             IsCanceled = order.IsCanceled,
@@ -272,7 +284,7 @@ public class OrderApplication : IOrderApplication
             throw new Exception("پرداخت موفق ثبت نشده است.");
 
         var order = new Order(cart.AccountId,
-                              cart.PaymentMethod,
+                              cart.PaymentMethodId,
                               cart.TotalAmount,
                               cart.DiscountAmount,
                               cart.PayAmount);

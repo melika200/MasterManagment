@@ -7,6 +7,10 @@ using MasterManagement.Domain.OrderItemAgg;
 using MasterManagement.Domain.OrderStateAgg;
 using MasterManagement.Domain.OrderStatesTypeAgg;
 using MasterManagement.Domain.PaymentAgg;
+using MasterManagement.Domain.PaymentMethodAgg;
+using MasterManagement.Domain.PaymentMethodsTypeAgg;
+using MasterManagement.Domain.PaymentStatusAgg;
+using MasterManagement.Domain.PaymentStatusesTypeAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagement.Domain.ShippingStatusAgg;
@@ -30,6 +34,10 @@ public class MasterContext : DbContext
     public DbSet<OrderState> OrderState { get; set; }
     public DbSet<ShippingStatus> ShippingStatus { get; set; }
     public DbSet<Shipping> Shippings { get; set; }
+    public DbSet<PaymentStatus> PaymentStatus { get; set; }
+    public DbSet<PaymentMethod> PaymentMethod { get; set; }
+
+
     public MasterContext(DbContextOptions<MasterContext> options) : base(options)
     {
     }
@@ -58,6 +66,9 @@ public class MasterContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(assembly);
         modelBuilder.Entity<OrderState>().HasData(OrderStatesType.AllStates);
         modelBuilder.Entity<ShippingStatus>().HasData(ShippingStatusesType.AllStatuses);
+        modelBuilder.Entity<PaymentStatus>().HasData(PaymentStatusesType.AllStatuses);
+        modelBuilder.Entity<PaymentMethod>().HasData(PaymentMethodsType.AllMethods);
+
         base.OnModelCreating(modelBuilder);
     }
 }

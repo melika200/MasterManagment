@@ -7,7 +7,8 @@ public class OrderViewModel
     public string? FullName { get; set; }
     public string? Mobile { get; set; }
     public string? Address { get; set; }
-    public int PaymentMethod { get; set; }
+    public int PaymentMethodId { get; set; }
+    public string PaymentMethodName { get; set; } = string.Empty;
     public double TotalAmount { get; set; }
     public bool IsPaid { get; set; }
     public bool IsCanceled { get; set; }

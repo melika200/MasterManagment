@@ -1,15 +1,9 @@
 ﻿using _01_FrameWork.Domain;
+using MasterManagement.Domain.PaymentMethodAgg;
 
 namespace MasterManagement.Domain.CartAgg;
 
-public enum PaymentMethod
-{
-    Online = 1,
-    CashOnDelivery = 2,
-    CardToCard = 3,
-    Wallet = 4,
-    Installment = 5
-}
+
 
 //نماینده یک سفارش کلی مشتری است که کالاها را به صورت یک مجموعه خریداری می‌کند.
 //شامل شناسه حساب کاربری مشتری، روش پرداخت، مبالغ کلی، وضعیت پرداخت(آیا پرداخت شده؟)، وضعیت لغو(کنسل شده؟)، شماره پیگیری ارسال کالا  و شناسه تراکنش پرداخت است.
@@ -18,6 +12,7 @@ public class Cart : EntityBase,ISoftDelete
     public long AccountId { get; private set; }
     //public string AccountName { get; private set; }
     public bool IsDeleted { get; set; } = false;
+    public int PaymentMethodId { get; private set; }
     public PaymentMethod PaymentMethod { get; private set; }
     public double TotalAmount { get; private set; }
     public double DiscountAmount { get; private set; }
@@ -29,11 +24,12 @@ public class Cart : EntityBase,ISoftDelete
 
     public List<CartItem> Items { get; private set; }
 
-    public Cart(long accountId,PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
+    public Cart(long accountId,int paymentMethodId, double totalAmount, double discountAmount, double payAmount)
     {
         AccountId = accountId;
         //AccountName = accountName;
-        PaymentMethod = paymentMethod;
+        //PaymentMethod = paymentMethod;
+        PaymentMethodId = paymentMethodId;
         TotalAmount = totalAmount;
         DiscountAmount = discountAmount;
         PayAmount = payAmount;
@@ -87,7 +83,11 @@ public class Cart : EntityBase,ISoftDelete
         IsPaid = true;
         if (refId != null) RefId = refId;
     }
-
+    public void SetPaymentMethod(PaymentMethod method)
+    {
+        PaymentMethod = method;
+        PaymentMethodId = method.Id;
+    }
     public void Cancel()
     {
         IsCanceled = true;

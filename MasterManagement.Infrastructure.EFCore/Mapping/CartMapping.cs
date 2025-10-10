@@ -12,7 +12,6 @@ public class CartMapping : IEntityTypeConfiguration<Cart>
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.AccountId).IsRequired();
-        builder.Property(c => c.PaymentMethod).IsRequired();
         builder.Property(c => c.TotalAmount).IsRequired();
         builder.Property(c => c.DiscountAmount).IsRequired();
         builder.Property(c => c.PayAmount).IsRequired();
@@ -20,6 +19,12 @@ public class CartMapping : IEntityTypeConfiguration<Cart>
         builder.Property(c => c.IsCanceled).IsRequired();
         builder.Property(c => c.IssueTrackingNo).HasMaxLength(500);
         builder.Property(c => c.RefId).IsRequired();
+        builder.Property(c => c.PaymentMethodId).IsRequired();
+
+        builder.HasOne(c => c.PaymentMethod)
+               .WithMany(m => m.Carts)
+               .HasForeignKey(c => c.PaymentMethodId);
+
 
         builder.HasMany(c => c.Items)
                .WithOne(i => i.Cart)

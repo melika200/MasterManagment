@@ -1,4 +1,7 @@
 ﻿using _01_FrameWork.Domain;
+using MasterManagement.Domain.PaymentMethodAgg;
+using MasterManagement.Domain.PaymentStatusAgg;
+using MasterManagement.Domain.PaymentStatusesTypeAgg;
 
 namespace MasterManagement.Domain.PaymentAgg;
 
@@ -7,6 +10,10 @@ public class Payment : EntityBase
     public long CartId { get; private set; }        
     public long OrderId { get; private set; }         
     public double Amount { get; private set; }
+    public int PaymentMethodId { get; private set; }
+    public PaymentMethod? PaymentMethod { get; private set; }
+    public int PaymentStatusId { get; private set; }
+    public PaymentStatus? Status { get; private set; }
     public DateTime PaymentDate { get; private set; }
     public string TransactionId { get; private set; }
     public bool IsSucceeded { get; private set; }
@@ -53,4 +60,10 @@ public class Payment : EntityBase
         if (orderId != 0)
             OrderId = orderId;
     }
+    public void MarkAsConfirmed()
+    {
+        PaymentStatusId = PaymentStatusesType.Confirmed.Id;
+    }
+
+
 }

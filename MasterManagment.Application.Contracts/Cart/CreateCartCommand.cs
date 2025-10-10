@@ -6,7 +6,9 @@ namespace MasterManagment.Application.Contracts.OrderContracts
     {
         public long AccountId { get; set; }
         //public string? AccountName { get; set; }
-        public int PaymentMethod { get; set; }
+        public int PaymentMethodId { get; set; }
+        public string PaymentMethodName { get; set; } = string.Empty;
+
         public List<CartItemViewModel>? Items { get; set; }
         //public double DiscountAmount { get; set; }
         //public double PayAmount { get; set; }

@@ -1,7 +1,7 @@
 ﻿using _01_FrameWork.Domain;
-using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderItemAgg;
 using MasterManagement.Domain.OrderStateAgg;
+using MasterManagement.Domain.PaymentMethodAgg;
 using MasterManagement.Domain.ShippingStatusAgg;
 
 namespace MasterManagement.Domain.OrderAgg;
@@ -9,7 +9,8 @@ namespace MasterManagement.Domain.OrderAgg;
 public class Order : EntityBase
 {
     public long AccountId { get; private set; }
-    public PaymentMethod PaymentMethod { get; private set; }
+    public int PaymentMethodId { get; private set; }
+    public PaymentMethod? PaymentMethod { get; private set; }
     public double TotalAmount { get; private set; }
     public double DiscountAmount { get; private set; }
     public double PayAmount { get; private set; }
@@ -30,10 +31,10 @@ public class Order : EntityBase
 
     public ICollection<OrderItem> Items { get; private set; } = new List<OrderItem>();
 
-    public Order(long accountId, PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
+    public Order(long accountId,int paymentMethodId, double totalAmount, double discountAmount, double payAmount)
     {
         AccountId = accountId;
-        PaymentMethod = paymentMethod;
+        PaymentMethodId = paymentMethodId;
         TotalAmount = totalAmount;
         DiscountAmount = discountAmount;
         PayAmount = payAmount;
@@ -91,6 +92,11 @@ public class Order : EntityBase
     {
         IsCanceled = true;
     }
+    public void SetPaymentMethod(PaymentMethod method)
+{
+    PaymentMethod = method;
+    PaymentMethodId = method.Id;
+}
 
     public void SetIssueTrackingNo(string number)
     {

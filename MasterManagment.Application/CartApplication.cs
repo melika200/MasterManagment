@@ -1,6 +1,7 @@
 ﻿using _01_FrameWork.Application;
 using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderAgg;
+using MasterManagement.Domain.PaymentMethodsTypeAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagment.Application.Contracts.CartItem;
 using MasterManagment.Application.Contracts.OrderContracts;
@@ -38,12 +39,16 @@ namespace MasterManagment.Application
                 if (item.Count <= 0)
                     return operation.Failed($"تعداد محصول {product.Name} باید بیشتر از صفر باشد");
             }
+            var method = PaymentMethodsType.AllMethods.FirstOrDefault(m => m.Id == command.PaymentMethodId);
+            if (method == null)
+                return operation.Failed("روش پرداخت معتبر نیست");
 
             var cart = new Cart(
                 command.AccountId,
                 //command.AccountName!,
-                (PaymentMethod)command.PaymentMethod,
+               method.Id,
                 0, 0, 0);
+            cart.SetPaymentMethod(method);
 
             foreach (var item in command.Items)
             {
@@ -83,7 +88,13 @@ namespace MasterManagment.Application
                     return operation.Failed($"تعداد محصول {product.Name} باید بیشتر از صفر باشد");
             }
 
-            cart.Edit((PaymentMethod)command.PaymentMethod, 0, 0, 0);
+            //cart.Edit((PaymentMethod)command.PaymentMethod, 0, 0, 0);
+            var method = PaymentMethodsType.AllMethods.FirstOrDefault(m => m.Id == command.PaymentMethodId);
+            if (method == null)
+                return operation.Failed("روش پرداخت معتبر نیست");
+
+            cart.Edit(method, 0, 0, 0);
+
             cart.ClearItems();
 
             foreach (var item in command.Items)
@@ -166,7 +177,8 @@ namespace MasterManagment.Application
                 Id = c.Id,
                 AccountId=c.AccountId,
                 //AccountName = c.AccountName,
-                PaymentMethod = (int)c.PaymentMethod,
+                PaymentMethodId = c.PaymentMethod.Id,
+                PaymentMethodName = c.PaymentMethod.Name,
                 TotalAmount = c.TotalAmount,
                 IsPaid = c.IsPaid,
                 IsCanceled = c.IsCanceled,

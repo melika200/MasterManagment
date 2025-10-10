@@ -6,4 +6,6 @@ public interface IPaymentRepository : IRepository<long, Payment>
 {
     Task<Payment?> GetByTransactionIdAsync(string transactionId);
     Task<List<Payment>> GetPaymentsByOrderIdAsync(long orderId);
+    Task<Payment?> GetPaymentByIdAsync(long id);
+
 }
