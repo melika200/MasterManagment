@@ -1,4 +1,5 @@
-﻿using MasterManagment.Application.Contracts.OrderContracts;
+﻿using MasterManagement.Domain.PaymentMethodsTypeAgg;
+using MasterManagment.Application.Contracts.OrderContracts;
 using MasterManagment.Application.Contracts.OrderItem;
 using MasterManagment.Application.Contracts.Payment;
 using MasterManagment.Application.Contracts.Shipping;
@@ -81,7 +82,25 @@ public class PaymentController : ControllerBase
         }
     }
 
-  
+
+    [HttpGet("paymentMethods")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> GetPaymentMethodsAsync()
+    {
+        var methods = await Task.FromResult(
+            PaymentMethodsType.AllMethods
+                .Select(m => new
+                {
+                    m.Id,
+                    m.Name
+                }).ToList());
+
+        return Ok(methods);
+    }
+
+
+
     [HttpGet("{id:long}")]
     [ProducesResponseType(200, Type = typeof(PaymentViewModel))]
     [ProducesResponseType(404)]

@@ -17,24 +17,24 @@ public class OrderController : ControllerBase
     }
 
 
-    [HttpPost("createFromCart")]
-    [ProducesResponseType(200, Type = typeof(long))]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> CreateFromCart([FromBody] CreateOrderFromCartCommand command)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+    //[HttpPost("createFromCart")]
+    //[ProducesResponseType(200, Type = typeof(long))]
+    //[ProducesResponseType(400)]
+    //public async Task<IActionResult> CreateFromCart([FromBody] CreateOrderFromCartCommand command)
+    //{
+    //    if (!ModelState.IsValid)
+    //        return BadRequest(ModelState);
 
-        try
-        {
-            var orderId = await _orderApplication.FinalizeFromCartAsync(command.CartId, command.TransactionId!);
-            return Ok(new { OrderId = orderId });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
+    //    try
+    //    {
+    //        var orderId = await _orderApplication.FinalizeFromCartAsync(command.CartId, command.TransactionId!);
+    //        return Ok(new { OrderId = orderId });
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}
 
    
     [HttpGet("{id:long}/amount")]

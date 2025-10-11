@@ -110,7 +110,8 @@ public class OrderApplication : IOrderApplication
         return operation.Succedded();
     }
 
-    public async Task<OperationResult> SetOrderShippingStateAsync(long orderId, int newShippingStateId)
+    public async Task<OperationResult> 
+        SetOrderShippingStateAsync(long orderId, int newShippingStateId)
     {
         var operation = new OperationResult();
         var order = await _orderRepository.GetAsync(orderId);
