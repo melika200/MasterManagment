@@ -71,7 +71,7 @@ public class PaymentController : ControllerBase
     /// </summary>
     /// <param name="cartId"></param>
     /// <returns></returns>
-    [HttpGet("cart/{cartId:long}")]
+    [HttpGet("{cartId:long}")]
     [ProducesResponseType(200, Type = typeof(List<PaymentViewModel>))]
     [ProducesResponseType(400)]
     public async Task<IActionResult> GetByCartId(long cartId)
@@ -154,7 +154,8 @@ public class PaymentController : ControllerBase
         var user = (await _userApplication.GetAccountsByIds(new List<long> { accountId })).FirstOrDefault();
         if (user == null)
             return BadRequest("کاربر یافت نشد");
-
+        ///به حای  دامین ها آدرس  واقعی سایت مون باید بزارم.
+        ///callbackurl :آدرسیه که زرین‌پال بعد از پرداخت موفق یا ناموفق، کاربر رو بهش برمی‌گردونه
         var request = new
         {
             merchant_id = "یادم باشه برم ثبت نام کنم تو زرین پال بعد اینجا پر کنم ",
@@ -172,11 +173,12 @@ public class PaymentController : ControllerBase
         var httpClient = new HttpClient();
         var json = JsonConvert.SerializeObject(request);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-
+        /// ارسال درخواست به زرین‌پاله برای شروع پرداخت
         var response = await httpClient.PostAsync("https://payment.zarinpal.com/pg/v4/payment/request.json", content);
         var responseString = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<ZarinPalRequestResponse>(responseString);
-
+        ///redirecturl:
+        ///این آدرس درگاه پرداخت زرین‌پاله که کاربر باید بهش هدایت بشه
         if (result?.data?.code == 100)
         {
             var authority = result.data.authority;
@@ -216,7 +218,7 @@ public class PaymentController : ControllerBase
         var httpClient = new HttpClient();
         var json = JsonConvert.SerializeObject(verifyRequest);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-
+        ///برای تأیید پرداخته
         var response = await httpClient.PostAsync("https://payment.zarinpal.com/pg/v4/payment/verify.json", content);
         var responseString = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<ZarinPalVerifyResponse>(responseString);
