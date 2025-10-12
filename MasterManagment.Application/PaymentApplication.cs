@@ -144,4 +144,22 @@ public class PaymentApplication : IPaymentApplication
     }
 
 
+
+    public async Task<PaymentViewModel?> GetByTransactionIdAsync(string transactionId)
+    {
+        var payment = await _paymentRepository.GetByTransactionIdAsync(transactionId);
+        if (payment == null) return null;
+
+        return new PaymentViewModel
+        {
+            Id = payment.Id,
+            CartId=payment.CartId,
+            Amount = payment.Amount,
+            TransactionId = payment.TransactionId,
+            IsSucceeded = payment.IsSucceeded
+           
+        };
+    }
+
+
 }

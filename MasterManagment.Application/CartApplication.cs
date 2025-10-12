@@ -201,5 +201,25 @@ namespace MasterManagment.Application
 
             return operation.Succedded("سبد خرید با موفقیت حذف شد");
         }
+
+
+        public async Task<CartViewModel?> GetCartByIdAsync(long cartId)
+        {
+            var cart = await _cartRepository.GetAsync(cartId);
+            if (cart == null) return null;
+
+            return new CartViewModel
+            {
+                Id = cart.Id,
+                AccountId = cart.AccountId,
+                PaymentMethodId = cart.PaymentMethodId,
+                PaymentMethodName = cart.PaymentMethod.Name,
+                DiscountAmount = cart.DiscountAmount,
+                TotalAmount = cart.PayAmount
+                // سایر فیلدها...
+            };
+        }
+
+
     }
 }
