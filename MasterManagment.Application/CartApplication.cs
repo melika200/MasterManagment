@@ -6,6 +6,7 @@ using MasterManagement.Domain.ProductAgg;
 using MasterManagment.Application.Contracts.CartItem;
 using MasterManagment.Application.Contracts.OrderContracts;
 using MasterManagment.Application.Contracts.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace MasterManagment.Application
 {
@@ -25,49 +26,76 @@ namespace MasterManagment.Application
         {
             var operation = new OperationResult();
 
-            var existingCart = await _cartRepository.IsExistsAsync(c => c.AccountId == command.AccountId && !c.IsCanceled && !c.IsPaid);
-            if (existingCart)
-                return operation.Failed("برای این حساب کاربری سبد خرید فعالی وجود دارد");
-
-            foreach (var item in command.Items!)
+            try
             {
-                var product = await _productRepository.GetAsync(item.ProductId);
-                if (product == null)
-                    return operation.Failed($"محصول با شناسه {item.ProductId} یافت نشد");
-                if (!product.IsAvailable)
-                    return operation.Failed($"محصول {product.Name} در دسترس نیست");
-                if (item.Count <= 0)
-                    return operation.Failed($"تعداد محصول {product.Name} باید بیشتر از صفر باشد");
+               
+                var existingCart = await _cartRepository.IsExistsAsync(c =>
+                    c.AccountId == command.AccountId && !c.IsCanceled && !c.IsPaid);
+
+                if (existingCart)
+                    return operation.Failed("برای این حساب کاربری سبد خرید فعالی وجود دارد");
+
+
+              
+                var productIds = command.Items!.Select(i => i.ProductId).ToList();
+                var products = await _productRepository.GetListProductByIdsAsync(productIds);
+
+               
+                foreach (var item in command.Items)
+                {
+                    var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                    if (product == null)
+                        return operation.Failed($"محصول با شناسه {item.ProductId} یافت نشد");
+                    if (!product.IsAvailable)
+                        return operation.Failed($"محصول {product.Name} در دسترس نیست");
+                    if (item.Count <= 0)
+                        return operation.Failed($"تعداد محصول {product.Name} باید بیشتر از صفر باشد");
+                }
+
+            
+                var method = PaymentMethodsType.AllMethods.FirstOrDefault(m => m.Id == command.PaymentMethodId);
+                if (method == null)
+                    return operation.Failed("روش پرداخت معتبر نیست");
+
+                var cart = new Cart(
+                    command.AccountId,
+                    method.Id,
+                    method.Name,
+                    0, 0, 0);
+
+          
+                foreach (var item in command.Items)
+                {
+                    var product = products.First(p => p.Id == item.ProductId);
+
+                    var cartItem = new CartItem(
+                        product.Id,
+                        product.Name,
+                        (double)product.Price,
+                        item.Count,
+                        item.DiscountRate);
+
+                    cart.AddItem(cartItem);
+                }
+
+               
+                await _cartRepository.CreateAsync(cart);
+                await _unitOfWork.CommitAsync();
+
+                return operation.Succedded("سبد خرید با موفقیت ایجاد شد");
             }
-            var method = PaymentMethodsType.AllMethods.FirstOrDefault(m => m.Id == command.PaymentMethodId);
-            if (method == null)
-                return operation.Failed("روش پرداخت معتبر نیست");
-
-            var cart = new Cart(
-                command.AccountId,
-                //command.AccountName!,
-               method.Id,
-                0, 0, 0);
-            cart.SetPaymentMethod(method);
-
-            foreach (var item in command.Items)
+            catch (DbUpdateException dbEx)
             {
-                var product = await _productRepository.GetAsync(item.ProductId);
-                var cartItem = new CartItem(
-                    product!.Id,
-                    product.Name,
-                    (double)product.Price,
-                    item.Count,
-                    item.DiscountRate);
-
-                cart.AddItem(cartItem);
+                
+                return operation.Failed($"خطای پایگاه داده: {dbEx.InnerException?.Message ?? dbEx.Message}");
             }
-
-            await _cartRepository.CreateAsync(cart);
-            await _unitOfWork.CommitAsync();
-
-            return operation.Succedded("سبد خرید با موفقیت ایجاد شد");
+            catch (Exception ex)
+            {
+              
+                return operation.Failed($"خطای غیرمنتظره: {ex.InnerException?.Message ?? ex.Message}");
+            }
         }
+
 
         public async Task<OperationResult> EditAsync(EditCartCommand command)
         {
@@ -93,7 +121,7 @@ namespace MasterManagment.Application
             if (method == null)
                 return operation.Failed("روش پرداخت معتبر نیست");
 
-            cart.Edit(method, 0, 0, 0);
+            cart.Edit(method.Id,method.Name, 0, 0, 0);
 
             cart.ClearItems();
 
@@ -177,8 +205,8 @@ namespace MasterManagment.Application
                 Id = c.Id,
                 AccountId=c.AccountId,
                 //AccountName = c.AccountName,
-                PaymentMethodId = c.PaymentMethod.Id,
-                PaymentMethodName = c.PaymentMethod.Name,
+                PaymentMethodId = c.PaymentMethodId,
+                PaymentMethodName = c.PaymentMethodName,
                 TotalAmount = c.TotalAmount,
                 IsPaid = c.IsPaid,
                 IsCanceled = c.IsCanceled,
@@ -213,10 +241,10 @@ namespace MasterManagment.Application
                 Id = cart.Id,
                 AccountId = cart.AccountId,
                 PaymentMethodId = cart.PaymentMethodId,
-                PaymentMethodName = cart.PaymentMethod.Name,
+                PaymentMethodName = cart.PaymentMethodName,
                 DiscountAmount = cart.DiscountAmount,
                 TotalAmount = cart.PayAmount
-                // سایر فیلدها...
+           
             };
         }
 

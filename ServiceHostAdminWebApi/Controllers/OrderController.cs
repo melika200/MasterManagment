@@ -1,6 +1,5 @@
 ﻿using AccountManagment.Contracts.UserContracts;
 using MasterManagment.Application.Contracts.OrderContracts;
-using MasterManagment.Application.Contracts.OrderItem;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostAdminWebApi.Controllers;
@@ -12,57 +11,16 @@ namespace ServiceHostAdminWebApi.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly IOrderApplication _orderApplication;
-    private readonly IUserApplication _userApplication;
+  
 
-    public OrderController(IOrderApplication orderApplication, IUserApplication userApplication)
+    public OrderController(IOrderApplication orderApplication)
     {
         _orderApplication = orderApplication;
-        _userApplication = userApplication;
+      
     }
 
 
 
-    //[HttpGet("AllOrders")]
-    //[ProducesResponseType(200, Type = typeof(List<OrderViewModel>))]
-    //[ProducesResponseType(400)]
-    //public async Task<IActionResult> GetAllOrders()
-    //{
-    //    try
-    //    {
-
-    //        var orders = await _orderApplication.GetOrders();
-
-    //        //var userIds = orders.Select(o => o.AccountId).Distinct().ToList();
-
-    //        //var users = await _userApplication.GetAccountsByIds(userIds);
-
-    //        var result = orders.Select(order =>
-    //        {
-    //            //var user = users.FirstOrDefault(u => u.Id == order.AccountId);
-
-    //            return new OrderViewModel
-    //            {
-    //                Id = order.Id,
-    //                AccountId = order.AccountId,
-    //                FullName = order.FullName ?? string.Empty,
-    //                Mobile = order?.Mobile ?? string.Empty,
-    //                Address = order?.Address ?? string.Empty,
-    //                PaymentMethod = order.PaymentMethod,
-    //                TotalAmount = order.TotalAmount,
-    //                IsPaid = order.IsPaid,
-    //                IsCanceled = order.IsCanceled,
-    //                IssueTrackingNo = order.IssueTrackingNo
-
-    //            };
-    //        }).ToList();
-
-    //        return Ok(result);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest(ex.Message);
-    //    }
-    //}
     [HttpGet("AllOrders")]
     [ProducesResponseType(200, Type = typeof(List<OrderViewModel>))]
     [ProducesResponseType(400)]
@@ -147,6 +105,12 @@ public class OrderController : ControllerBase
 
 
 
+
+
+
+
+
+}
 
 
 
@@ -252,8 +216,44 @@ public class OrderController : ControllerBase
     //        return BadRequest(ex.Message);
     //    }
     //}
-}
+    //[HttpGet("AllOrders")]
+    //[ProducesResponseType(200, Type = typeof(List<OrderViewModel>))]
+    //[ProducesResponseType(400)]
+    //public async Task<IActionResult> GetAllOrders()
+    //{
+    //    try
+    //    {
 
+    //        var orders = await _orderApplication.GetOrders();
 
+    //        //var userIds = orders.Select(o => o.AccountId).Distinct().ToList();
 
+    //        //var users = await _userApplication.GetAccountsByIds(userIds);
 
+    //        var result = orders.Select(order =>
+    //        {
+    //            //var user = users.FirstOrDefault(u => u.Id == order.AccountId);
+
+    //            return new OrderViewModel
+    //            {
+    //                Id = order.Id,
+    //                AccountId = order.AccountId,
+    //                FullName = order.FullName ?? string.Empty,
+    //                Mobile = order?.Mobile ?? string.Empty,
+    //                Address = order?.Address ?? string.Empty,
+    //                PaymentMethod = order.PaymentMethod,
+    //                TotalAmount = order.TotalAmount,
+    //                IsPaid = order.IsPaid,
+    //                IsCanceled = order.IsCanceled,
+    //                IssueTrackingNo = order.IssueTrackingNo
+
+    //            };
+    //        }).ToList();
+
+    //        return Ok(result);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}

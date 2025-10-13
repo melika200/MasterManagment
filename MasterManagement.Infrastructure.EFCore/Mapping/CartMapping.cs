@@ -21,10 +21,13 @@ public class CartMapping : IEntityTypeConfiguration<Cart>
         builder.Property(c => c.RefId).IsRequired();
         builder.Property(c => c.PaymentMethodId).IsRequired();
 
-        builder.HasOne(c => c.PaymentMethod)
-               .WithMany(m => m.Carts)
-               .HasForeignKey(c => c.PaymentMethodId);
-
+        //builder.HasOne(c => c.PaymentMethod)
+        //       .WithMany(m => m.Carts)
+        //       .HasForeignKey(c => c.PaymentMethodId);
+        builder.Property(c => c.PaymentMethodId).IsRequired();
+        builder.Property(c => c.PaymentMethodName)
+               .HasMaxLength(100)
+               .IsRequired();
 
         builder.HasMany(c => c.Items)
                .WithOne(i => i.Cart)

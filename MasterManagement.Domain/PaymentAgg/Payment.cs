@@ -50,6 +50,11 @@ public class Payment : EntityBase
         PaymentDate = DateTime.Now;
     }
 
+    public void SetAsSucceeded()
+    {
+        IsSucceeded = true;
+    }
+
     public void MarkAsFailed()
     {
         IsSucceeded = false;

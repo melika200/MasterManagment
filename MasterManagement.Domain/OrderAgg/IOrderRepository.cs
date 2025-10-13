@@ -9,6 +9,8 @@ public interface IOrderRepository : IRepository<long, Order>
     Task<Order?> GetOrderWithItemAsync(long orderId);
     Task<List<OrderViewModel>> SearchAsync(OrderSearchCriteria criteria);
     Task<List<Order>> GetAllOrdersAsync();
-    
+    Task<List<Order>> GetOrdersByAccountIdAsync(long accountId);
+
+
 
 }

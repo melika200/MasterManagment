@@ -29,6 +29,14 @@ public class ProductRepository : RepositoryBase<long, Product>, IProductReposito
         return await query.ToListAsync();
     }
 
+    public async Task<List<Product>> GetListProductByIdsAsync(List<long> ids)
+    {
+        return await _context.Products
+            .AsNoTracking() 
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Product>> GetAllProductsWithCategory(Expression<Func<Product, bool>>? where = null)
     {
         IQueryable<Product> query = _context.Products.Include(p => p.Category);
@@ -38,28 +46,6 @@ public class ProductRepository : RepositoryBase<long, Product>, IProductReposito
         return await query.ToListAsync();
     }
 
-    public async Task Add(Product product)
-    {
-        await _context.Products.AddAsync(product);
-    }
-
-    public Task Update(Product product)
-    {
-        _context.Products.Update(product);
-        return Task.CompletedTask;
-    }
-
-    public async Task Delete(long id)
-    {
-        var product = await GetByIdAsync(id);
-        if (product != null)
-            _context.Products.Remove(product);
-    }
-
-    public void Delete(Product product)
-    {
-        _context.Products.Remove(product);
-    }
 
     public async Task<IEnumerable<Product>> GetProductsByCategoryId(long categoryId)
     {

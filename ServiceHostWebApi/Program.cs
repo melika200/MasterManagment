@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
+builder.Services.AddHttpContextAccessor();
 
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;

@@ -31,7 +31,7 @@ public class PaymentController : ControllerBase
         _userApplication = userApplication;
     }
 
-    [HttpGet("paymentMethods")]
+    [HttpGet("Methods")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> GetPaymentMethodsAsync()
@@ -46,7 +46,7 @@ public class PaymentController : ControllerBase
 
         return Ok(methods);
     }
-    [HttpGet("{id:long}")]
+    [HttpGet("by-id/{id:long}")]
     [ProducesResponseType(200, Type = typeof(PaymentViewModel))]
     [ProducesResponseType(404)]
     [ProducesResponseType(400)]
@@ -71,7 +71,7 @@ public class PaymentController : ControllerBase
     /// </summary>
     /// <param name="cartId"></param>
     /// <returns></returns>
-    [HttpGet("{cartId:long}")]
+    [HttpGet("by-cart/{cartId:long}")]
     [ProducesResponseType(200, Type = typeof(List<PaymentViewModel>))]
     [ProducesResponseType(400)]
     public async Task<IActionResult> GetByCartId(long cartId)
@@ -156,9 +156,11 @@ public class PaymentController : ControllerBase
             return BadRequest("کاربر یافت نشد");
         ///به حای  دامین ها آدرس  واقعی سایت مون باید بزارم.
         ///callbackurl :آدرسیه که زرین‌پال بعد از پرداخت موفق یا ناموفق، کاربر رو بهش برمی‌گردونه
+
+        var merchantId = "<<<TODO: وارد کنم از appsettings یا Environment>>>";
         var request = new
         {
-            merchant_id = "یادم باشه برم ثبت نام کنم تو زرین پال بعد اینجا پر کنم ",
+            merchant_id = merchantId,//یادم باشه برم ثبت نام کنم تو زرین پال بعد اینجا پر کنم 
             amount = (int)cartAmount,
             description = "پرداخت برای سفارش",
             callback_url = $"https://yourdomain.com/api/v1/payment/verify-zarinpal?cartId={cartId}",
@@ -197,11 +199,13 @@ public class PaymentController : ControllerBase
     {
         if (string.IsNullOrEmpty(authority) || status.ToLower() != "ok")
             return BadRequest("پرداخت توسط کاربر لغو شده یا ناموفق بوده است.");
+        //return Redirect("https://yourfrontend.com/payment/fail?reason=user_cancelled");
 
         var cartAmount = await _cartApplication.GetAmountByAsync(cartId);
         var cart = await _cartApplication.GetCartByIdAsync(cartId);
         if (cart == null)
             return BadRequest("سبد خرید یافت نشد");
+        // return Redirect("https://yourfrontend.com/payment/fail?reason=cart_not_found");
         var paymentMethodId = cart.PaymentMethodId;
         var paymentMethodName = cart.PaymentMethodName;
         var discountAmount = cart.DiscountAmount;

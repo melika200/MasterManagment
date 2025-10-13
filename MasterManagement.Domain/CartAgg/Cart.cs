@@ -13,7 +13,7 @@ public class Cart : EntityBase,ISoftDelete
     //public string AccountName { get; private set; }
     public bool IsDeleted { get; set; } = false;
     public int PaymentMethodId { get; private set; }
-    public PaymentMethod PaymentMethod { get; private set; }
+    public string PaymentMethodName { get; private set; }
     public double TotalAmount { get; private set; }
     public double DiscountAmount { get; private set; }
     public double PayAmount { get; private set; }
@@ -24,12 +24,12 @@ public class Cart : EntityBase,ISoftDelete
 
     public List<CartItem> Items { get; private set; }
 
-    public Cart(long accountId,int paymentMethodId, double totalAmount, double discountAmount, double payAmount)
+    public Cart(long accountId, int paymentMethodId, string paymentMethodName, double totalAmount, double discountAmount, double payAmount)
     {
         AccountId = accountId;
         //AccountName = accountName;
-        //PaymentMethod = paymentMethod;
         PaymentMethodId = paymentMethodId;
+        PaymentMethodName = paymentMethodName;
         TotalAmount = totalAmount;
         DiscountAmount = discountAmount;
         PayAmount = payAmount;
@@ -70,9 +70,10 @@ public class Cart : EntityBase,ISoftDelete
     {
         IsDeleted = true;
     }
-    public void Edit(PaymentMethod paymentMethod, double totalAmount, double discountAmount, double payAmount)
+    public void Edit(int paymentMethodId, string paymentMethodName, double totalAmount, double discountAmount, double payAmount)
     {
-        PaymentMethod = paymentMethod;
+        PaymentMethodId = paymentMethodId;
+        PaymentMethodName = paymentMethodName;
         TotalAmount = totalAmount;
         DiscountAmount = discountAmount;
         PayAmount = payAmount;
@@ -83,10 +84,10 @@ public class Cart : EntityBase,ISoftDelete
         IsPaid = true;
         if (refId != null) RefId = refId;
     }
-    public void SetPaymentMethod(PaymentMethod method)
+    public void SetPaymentMethod(int methodId, string methodName)
     {
-        PaymentMethod = method;
-        PaymentMethodId = method.Id;
+        PaymentMethodId = methodId;
+        PaymentMethodName = methodName;
     }
     public void Cancel()
     {

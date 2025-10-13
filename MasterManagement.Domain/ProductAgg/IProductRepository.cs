@@ -9,6 +9,7 @@ public interface IProductRepository : IRepository<long, Product>
     Task<IEnumerable<Product>> GetAllProductsWithCategory(Expression<Func<Product, bool>>? where = null);
     Task<IEnumerable<Product>> GetProductsByCategoryId(long categoryId);
     Task<Product?> GetByIdAsync(long id);
+    Task<List<Product>> GetListProductByIdsAsync(List<long> ids);
 
 
 }

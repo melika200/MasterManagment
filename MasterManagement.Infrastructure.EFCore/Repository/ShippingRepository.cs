@@ -19,7 +19,7 @@ public class ShippingRepository : RepositoryBase<long, Shipping>, IShippingRepos
 
     public async Task<Shipping?> GetByCartIdAsync(long cartId)
     {
-        return await _context.Set<Shipping>()
+        return await _context.Set<Shipping>().Include(s=>s.ShippingStatus)
             .FirstOrDefaultAsync(x => x.CartId == cartId);
     }
 }

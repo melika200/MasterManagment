@@ -2,7 +2,6 @@
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagment.Application.Contracts.OrderContracts;
-using MasterManagment.Application.Contracts.ProductCategory;
 using Microsoft.EntityFrameworkCore;
 
 namespace MasterManagement.Infrastructure.EFCore.Repository;
@@ -25,6 +24,17 @@ public class OrderRepository : RepositoryBase<long, Order>, IOrderRepository
             .Include(o => o.OrderState)
             .Include(o => o.ShippingStatus)
             .FirstOrDefaultAsync(o => o.Id == orderId);
+    }
+
+
+    public async Task<List<Order>> GetOrdersByAccountIdAsync(long accountId)
+    {
+        return await _context.Orders
+            .Include(o => o.PaymentMethod)
+            .Include(o => o.OrderState)
+            .Include(o => o.ShippingStatus)
+            .Where(o => o.AccountId == accountId)
+            .ToListAsync();
     }
 
 

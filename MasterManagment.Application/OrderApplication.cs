@@ -88,6 +88,32 @@ public class OrderApplication : IOrderApplication
         return operation.Succedded();
     }
 
+    public async Task<List<OrderViewModel>> GetOrdersByAccountAsync(long accountId)
+    {
+        var orders = await _orderRepository.GetOrdersByAccountIdAsync(accountId);
+
+        if (orders == null || !orders.Any())
+            return new List<OrderViewModel>();
+
+        return orders.Select(order => new OrderViewModel
+        {
+            Id = order.Id,
+            AccountId = order.AccountId,
+            FullName = order.FullName ?? string.Empty,
+            Mobile = order.Mobile ?? string.Empty,
+            Address = order.Address ?? string.Empty,
+            PaymentMethodId = order.PaymentMethodId,
+            PaymentMethodName = order.PaymentMethod?.Name ?? "نامشخص",
+            TotalAmount = order.TotalAmount,
+            //DiscountAmount = order.DiscountAmount,
+            //PayAmount = order.PayAmount,
+            IsPaid = order.IsPaid,
+            IsCanceled = order.IsCanceled,
+            IssueTrackingNo = order.IssueTrackingNo ?? string.Empty,
+            OrderState = order.OrderState?.Name ?? "نامشخص",
+            ShippingState = order.ShippingStatus?.Name ?? "نامشخص"
+        }).ToList();
+    }
 
 
     public async Task<OperationResult> SetOrderStateAsync(long orderId, int newStateId)
@@ -198,16 +224,20 @@ public class OrderApplication : IOrderApplication
         return operation.Succedded();
     }
 
-    public async Task CancelAsync(long id)
+    public async Task<OperationResult> CancelAsync(long id)
     {
+        var operation = new OperationResult();
         var order = await _orderRepository.GetAsync(id);
         if (order == null)
-            throw new Exception($"سفارش با شناسه {id} یافت نشد");
+            return operation.Failed($"سفارش با شناسه {id} یافت نشد");
 
         order.Cancel();
         await _orderRepository.UpdateAsync(order);
         await _unitOfWork.CommitAsync();
+
+        return operation.Succedded("سفارش با موفقیت لغو شد.");
     }
+
 
     public async Task<double> GetAmountByAsync(long id)
     {

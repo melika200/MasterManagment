@@ -4,6 +4,7 @@ using MasterManagement.Infrastructure.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MasterManagement.Infrastructure.EFCore.Migrations
 {
     [DbContext(typeof(MasterContext))]
-    partial class MasterContextModelSnapshot : ModelSnapshot
+    [Migration("20251013055813_addsomeentity")]
+    partial class addsomeentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,11 +101,6 @@ namespace MasterManagement.Infrastructure.EFCore.Migrations
 
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
-
-                    b.Property<string>("PaymentMethodName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("RefId")
                         .IsRequired()
@@ -661,11 +659,13 @@ namespace MasterManagement.Infrastructure.EFCore.Migrations
 
             modelBuilder.Entity("MasterManagement.Domain.CartAgg.Cart", b =>
                 {
-                    b.HasOne("MasterManagement.Domain.PaymentMethodAgg.PaymentMethod", null)
+                    b.HasOne("MasterManagement.Domain.PaymentMethodAgg.PaymentMethod", "PaymentMethod")
                         .WithMany("Carts")
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("PaymentMethod");
                 });
 
             modelBuilder.Entity("MasterManagement.Domain.GalleryAgg.Gallery", b =>

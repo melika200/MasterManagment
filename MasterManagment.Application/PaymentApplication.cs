@@ -17,9 +17,41 @@ public class PaymentApplication : IPaymentApplication
         _cartRepository = cartRepository;
     }
 
-    public async Task<OperationResult> CreateAsync(CreatePaymentCommand command)
+    //public async Task<OperationResult> CreateAsync(CreatePaymentCommand command)
+    //{
+    //    var operation = new OperationResult();
+
+    //    var payments = await _paymentRepository.GetManyAsync(p => p.CartId == command.CartId && p.IsSucceeded);
+    //    double totalPaid = payments.Sum(p => p.Amount);
+    //    double orderAmount;
+
+    //    try
+    //    {
+    //        orderAmount = await GetOrderPayAmountByCartId(command.CartId);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return operation.Failed(ex.Message);
+    //    }
+
+    //    if (totalPaid + command.Amount > orderAmount)
+    //        return operation.Failed("شما قبلاً تمام مبلغ سفارش را پرداخت کرده‌اید. پرداخت بیشتر امکان‌پذیر نیست.");
+
+    //    var payment = new Payment(
+    //        command.CartId,
+    //        command.Amount,
+    //        command.TransactionId!,
+    //        command.IsSucceeded);
+
+    //    await _paymentRepository.CreateAsync(payment);
+    //    await _unitOfWork.CommitAsync();
+
+    //    return operation.Succedded("پرداخت با موفقیت ثبت شد");
+    //}
+
+    public async Task<OperationResultWithId> CreateAsync(CreatePaymentCommand command)
     {
-        var operation = new OperationResult();
+        var operation = new OperationResultWithId();
 
         var payments = await _paymentRepository.GetManyAsync(p => p.CartId == command.CartId && p.IsSucceeded);
         double totalPaid = payments.Sum(p => p.Amount);
@@ -35,7 +67,7 @@ public class PaymentApplication : IPaymentApplication
         }
 
         if (totalPaid + command.Amount > orderAmount)
-            return operation.Failed("شما قبلاً تمام مبلغ سفارش را پرداخت کرده‌اید. پرداخت بیشتر امکان‌پذیر نیست.");
+            return operation.Failed("شما قبلاً تمام مبلغ سفارش را پرداخت کرده‌اید.");
 
         var payment = new Payment(
             command.CartId,
@@ -46,7 +78,7 @@ public class PaymentApplication : IPaymentApplication
         await _paymentRepository.CreateAsync(payment);
         await _unitOfWork.CommitAsync();
 
-        return operation.Succedded("پرداخت با موفقیت ثبت شد");
+        return operation.Succedded(payment.Id, "پرداخت با موفقیت ثبت شد");
     }
 
     public async Task<OperationResult> UpdateAsync(EditPaymentCommand command)
@@ -111,13 +143,13 @@ public class PaymentApplication : IPaymentApplication
             (!searchModel.IsSucceeded.HasValue || p.IsSucceeded == searchModel.IsSucceeded) &&
             (string.IsNullOrEmpty(searchModel.TransactionId) || p.TransactionId == searchModel.TransactionId));
 
-        return payments.Select(payment => new PaymentViewModel
+        return payments.Select(p => new PaymentViewModel
         {
-            Id = payment.Id,
-            CartId = payment.CartId,
-            Amount = payment.Amount,
-            TransactionId = payment.TransactionId,
-            IsSucceeded = payment.IsSucceeded
+            Id = p.Id,
+            CartId = p.CartId,
+            Amount = p.Amount,
+            TransactionId = p.TransactionId,
+            IsSucceeded = p.IsSucceeded
         }).ToList();
     }
 
@@ -138,6 +170,7 @@ public class PaymentApplication : IPaymentApplication
             return operation.Failed("پرداخت یافت نشد");
 
         payment.MarkAsConfirmed();
+        payment.SetAsSucceeded();
         await _unitOfWork.CommitAsync();
 
         return operation.Succedded("پرداخت تأیید شد");

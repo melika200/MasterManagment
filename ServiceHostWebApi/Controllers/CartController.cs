@@ -19,7 +19,7 @@ public class CartController : ControllerBase
         _shippingApplication = shippingApplication;
     }
 
-    [HttpPost("create")]
+    [HttpPost]
     [ProducesResponseType(200, Type = typeof(long))]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Create([FromBody] CreateCartCommand command)
@@ -38,10 +38,11 @@ public class CartController : ControllerBase
         }
     }
 
-    [HttpPut("edit")]
+    [HttpPut("{id:long}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Edit([FromBody] EditCartCommand command)
+    public async Task<IActionResult> Edit(long id, [FromBody] EditCartCommand command)
+
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -57,7 +58,7 @@ public class CartController : ControllerBase
         }
     }
 
-    [HttpPut("cancel/{id:long}")]
+    [HttpPatch("{id:long}/cancel")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Cancel(long id)
