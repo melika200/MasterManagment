@@ -19,6 +19,8 @@ public interface IRepository<TKey, T> where T : class
     Task<bool> IsExistsAsync(Expression<Func<T, bool>> expression);
 
 
+}
+
     //T Get(TKey id);
 
     //List<T> Get();
@@ -37,4 +39,3 @@ public interface IRepository<TKey, T> where T : class
     //Task<T?> GetAsync(Expression<Func<T, bool>> expression);
     //void SaveChanges();
     //Task SaveChangesAsync();
-}

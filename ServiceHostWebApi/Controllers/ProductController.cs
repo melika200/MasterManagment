@@ -47,6 +47,9 @@ public class ProductController : ControllerBase
 
 
 
+
+}
+
     //[HttpPost]
     //[Authorize(Roles = "Admin,Programmer")]
     //[ProducesResponseType(200)]
@@ -102,5 +105,3 @@ public class ProductController : ControllerBase
     //    var result = await _productApplication.GetAllProducts();
     //    return Ok(result);
     //}
-
-}

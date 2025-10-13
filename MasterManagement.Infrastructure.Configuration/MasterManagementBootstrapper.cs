@@ -1,9 +1,12 @@
-﻿using MasterManagement.Domain.GalleryAgg;
+﻿using MasterManagement.Application.Contracts.SliderContracts;
+using MasterManagement.Application;
+using MasterManagement.Domain.GalleryAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.PaymentAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagement.Domain.ShippingAgg;
+using MasterManagement.Domain.SliderAgg;
 using MasterManagement.Infrastructure.EFCore;
 using MasterManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Infrastructure.EFCore.Repository;
@@ -39,6 +42,9 @@ public class MasterManagementBootstrapper
         services.AddTransient<IGalleryApplication, GalleryApplication>();
         services.AddTransient<IShippingApplication, ShippingApplication>();
         services.AddTransient<IShippingRepository, ShippingRepository>();
+        services.AddTransient<ISliderRepository, SliderRepository>();
+        services.AddTransient<ISliderApplication, SliderApplication>();
+
 
 
         services.AddTransient<IMasterUnitOfWork, MasterUnitOfWork>();

@@ -73,22 +73,6 @@ public class ProductController : ControllerBase
         return Ok(result);
     }
 
-    //[HttpPut("{id:long}")]
-    //[ProducesResponseType(204)]
-    //[ProducesResponseType(400)]
-    //public async Task<IActionResult> Edit(long id, [FromBody] EditProductCommand command)
-    //{
-    //    command.Id = id;
-
-    //    if (!ModelState.IsValid)
-    //        return BadRequest(ModelState);
-
-    //    var result = await _productApplication.Edit(command);
-    //    if (!result.IsSuccedded)
-    //        return BadRequest(new { message = result.Message });
-
-    //    return NoContent();
-    //}
 
     [HttpDelete("{id:long}")]
     [ProducesResponseType(200)]
@@ -152,3 +136,20 @@ public class ProductController : ControllerBase
 
 
 
+
+    //[HttpPut("{id:long}")]
+    //[ProducesResponseType(204)]
+    //[ProducesResponseType(400)]
+    //public async Task<IActionResult> Edit(long id, [FromBody] EditProductCommand command)
+    //{
+    //    command.Id = id;
+
+    //    if (!ModelState.IsValid)
+    //        return BadRequest(ModelState);
+
+    //    var result = await _productApplication.Edit(command);
+    //    if (!result.IsSuccedded)
+    //        return BadRequest(new { message = result.Message });
+
+    //    return NoContent();
+    //}

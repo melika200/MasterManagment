@@ -15,6 +15,7 @@ using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
 using MasterManagement.Domain.ShippingStatusAgg;
 using MasterManagement.Domain.ShippingStatusesTypeAgg;
+using MasterManagement.Domain.SliderAgg;
 using MasterManagement.Infrastructure.EFCore.Mapping;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,7 @@ public class MasterContext : DbContext
     public DbSet<Shipping> Shippings { get; set; }
     public DbSet<PaymentStatus> PaymentStatus { get; set; }
     public DbSet<PaymentMethod> PaymentMethod { get; set; }
+    public DbSet<Slider> Sliders { get; set; }
 
 
     public MasterContext(DbContextOptions<MasterContext> options) : base(options)
