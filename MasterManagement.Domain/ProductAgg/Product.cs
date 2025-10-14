@@ -1,6 +1,7 @@
 ﻿using _01_FrameWork.Domain;
 using MasterManagement.Domain.GalleryAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
+using MasterManagement.Domain.ProductReviewAgg;
 
 namespace MasterManagement.Domain.ProductAgg;
 
@@ -19,6 +20,8 @@ public class Product : EntityBase,ISoftDelete
     public int TotalRatings { get; private set; }
     public double AverageRating { get; private set; }
     public ICollection<Gallery>? Galleries { get; private set; }
+    public ICollection<ProductReview>? Reviews { get; private set; } = new List<ProductReview>();
+
 
 
     public Product(

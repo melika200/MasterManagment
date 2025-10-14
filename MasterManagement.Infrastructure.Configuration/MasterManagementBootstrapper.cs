@@ -20,6 +20,8 @@ using MasterManagment.Application.Contracts.Shipping;
 using MasterManagment.Application.Contracts.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MasterManagment.Application.Contracts.ProductReview;
+using MasterManagement.Domain.ProductReviewAgg;
 
 
 namespace MasterManagement.Infrastructure.Configuration;
@@ -44,6 +46,8 @@ public class MasterManagementBootstrapper
         services.AddTransient<IShippingRepository, ShippingRepository>();
         services.AddTransient<ISliderRepository, SliderRepository>();
         services.AddTransient<ISliderApplication, SliderApplication>();
+        services.AddTransient<IProductReviewApplication, ProductReviewApplication>();
+        services.AddTransient<IProductReviewRepository, ProductReviewRepository>();
 
 
 

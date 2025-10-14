@@ -13,6 +13,7 @@ using MasterManagement.Domain.PaymentStatusAgg;
 using MasterManagement.Domain.PaymentStatusesTypeAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
+using MasterManagement.Domain.ProductReviewAgg;
 using MasterManagement.Domain.ShippingStatusAgg;
 using MasterManagement.Domain.ShippingStatusesTypeAgg;
 using MasterManagement.Domain.SliderAgg;
@@ -38,7 +39,7 @@ public class MasterContext : DbContext
     public DbSet<PaymentStatus> PaymentStatus { get; set; }
     public DbSet<PaymentMethod> PaymentMethod { get; set; }
     public DbSet<Slider> Sliders { get; set; }
-
+    public DbSet<ProductReview> ProductReviews { get; set; }
 
     public MasterContext(DbContextOptions<MasterContext> options) : base(options)
     {
