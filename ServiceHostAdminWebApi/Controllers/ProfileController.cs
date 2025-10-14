@@ -1,43 +1,49 @@
 ﻿using AccountManagment.Application.Contracts.Profile;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ServiceHostAdminWebApi.Controllers
+[ApiController]
+[ApiVersion("1.0")]
+[Route("admin/api/v{version:apiVersion}/[controller]")]
+public class AdminProfileController : ControllerBase
 {
-    [ApiController]
-    [ApiVersion("1.0")]
-    [Route("admin/api/v{version:apiVersion}/[controller]")]
-    public class ProfileController : ControllerBase
+    private readonly IProfileApplication _profileApplication;
+
+    public AdminProfileController(IProfileApplication profileApplication)
     {
-        private readonly IProfileApplication _profileApplication;
+        _profileApplication = profileApplication;
+    }
 
-        public ProfileController(IProfileApplication profileApplication)
-        {
-            _profileApplication = profileApplication;
-        }
+  
+    [HttpGet("all")]
+    [ProducesResponseType(200, Type = typeof(List<ProfileViewModel>))]
+    public async Task<ActionResult<List<ProfileViewModel>>> GetAllProfiles()
+    {
+        var profiles = await _profileApplication.GetAllProfileAsync();
+        return Ok(profiles.ToList());
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var profiles = await _profileApplication.GetAllProfileAsync(); 
-            return Ok(profiles);
-        }
+   
+    [HttpGet("{userId:long}")]
+    [ProducesResponseType(200, Type = typeof(ProfileViewModel))]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<ProfileViewModel>> GetProfile(long userId)
+    {
+        var profile = await _profileApplication.GetProfileByUserIdInAdminAsync(userId);
+        if (profile == null)
+            return NotFound(new { message = "پروفایل یافت نشد." });
+        return Ok(profile);
+    }
 
-        [HttpGet("{id:long}")]
-        public async Task<IActionResult> Get(long id)
-        {
-            var profile = await _profileApplication.GetProfileByIdAsync(id); 
-            if (profile == null)
-                return NotFound(new { message = "پروفایل یافت نشد." });
-            return Ok(profile);
-        }
+   
+    [HttpDelete("{id:long}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> Delete(long id)
+    {
+        var result = await _profileApplication.DeleteProfileAsync(id);
+        if (!result.IsSuccedded)
+            return BadRequest(new { message = result.Message });
 
-        [HttpDelete("{id:long}")]
-        public async Task<IActionResult> Delete(long id)
-        {
-            var result = await _profileApplication.DeleteProfileAsync(id); 
-            if (!result.IsSuccedded)
-                return BadRequest(result);
-            return Ok(result);
-        }
+        return Ok(new { message = result.Message });
     }
 }

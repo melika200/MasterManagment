@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
 
 namespace AccountManagment.Application.Contracts.Profile;
 
 public class CreateProfileCommand
 {
+    [JsonIgnore]
     public long UserId { get; set; }
     public string? FullName { get; set; }
     public string? Email { get; set; }

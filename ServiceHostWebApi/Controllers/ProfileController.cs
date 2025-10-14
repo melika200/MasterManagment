@@ -1,8 +1,6 @@
 ﻿using AccountManagment.Application.Contracts.Profile;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ServiceHostWebApi.Controllers;
-
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
@@ -15,30 +13,47 @@ public class ProfileController : ControllerBase
         _profileApplication = profileApplication;
     }
 
-    [HttpGet("{userId:long}")]
-    public async Task<IActionResult> GetProfile(long userId)
+
+    [HttpGet("myprofile")]
+    [ProducesResponseType(200, Type = typeof(ProfileViewModel))]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<ProfileViewModel>> GetMyProfile()
     {
-        var profile = await _profileApplication.GetProfileByUserIdAsync(userId);
+        var profile = await _profileApplication.GetProfileByUserIdAsync(User);
         if (profile == null)
             return NotFound(new { message = "پروفایل یافت نشد." });
         return Ok(profile);
     }
 
+ 
     [HttpPost]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Create([FromBody] CreateProfileCommand command)
     {
-        var result = await _profileApplication.CreateProfileAsync(command);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _profileApplication.CreateProfileAsync(command, User);
         if (!result.IsSuccedded)
-            return BadRequest(result);
-        return Ok(result);
+            return BadRequest(new { message = result.Message });
+
+        return Ok(new { message = result.Message });
     }
 
+  
     [HttpPut]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Edit([FromBody] EditProfileCommand command)
     {
-        var result = await _profileApplication.EditProfileAsync(command);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _profileApplication.EditProfileAsync(command, User);
         if (!result.IsSuccedded)
-            return BadRequest(result);
-        return Ok(result);
+            return BadRequest(new { message = result.Message });
+
+        return Ok(new { message = result.Message });
     }
 }
