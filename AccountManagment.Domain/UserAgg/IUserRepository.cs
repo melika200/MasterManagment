@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using _01_FrameWork.Domain;
+﻿using _01_FrameWork.Domain;
 
-namespace AccountManagment.Domain.UserAgg
+namespace AccountManagment.Domain.UserAgg;
+
+public interface IUserRepository : IRepository<long, User>
 {
-    public interface IUserRepository : IRepository<long, User>
-    {
-        //IQueryable<User> GetAccountsByIds(List<long> accountIds);
+    //IQueryable<User> GetAccountsByIds(List<long> accountIds);
 
-        //EditUserViewModel? GetForEdit(long id);
-        //List<UserViewModel>? Search(UserSearchCriteria criteria);
-        Task<User?> GetUserWithRoleAsync(string username);
-        Task<List<User>> GetAllUsersAsync();
-       
+    //EditUserViewModel? GetForEdit(long id);
+    //List<UserViewModel>? Search(UserSearchCriteria criteria);
+    Task<User?> GetUserWithRoleAsync(string username);
+    Task<List<User>> GetAllUsersAsync();
+   
 
-    }
 }

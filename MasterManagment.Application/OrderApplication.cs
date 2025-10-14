@@ -1,5 +1,4 @@
 ﻿using _01_FrameWork.Application;
-using MasterManagement.Domain.CartAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.OrderItemAgg;
 using MasterManagement.Domain.OrderStatesTypeAgg;

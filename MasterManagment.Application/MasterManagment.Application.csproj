@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AppCoreNet.Extensions.Hosting.Plugins.AspNetCore.Mvc" Version="0.7.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>

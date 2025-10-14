@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using _01_FrameWork.Domain;
 using AccountManagement.Infrastructure.EFCore.Mapping;
+using AccountManagment.Domain.ProfileAgg;
 using AccountManagment.Domain.RefreshTokenAgg;
 using AccountManagment.Domain.RoleAgg;
 using AccountManagment.Domain.RolesTypesAgg;
@@ -14,6 +15,8 @@ public class AccountContext:DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+    public DbSet<Profile> Profiles { get; set; }
+
 
     public AccountContext(DbContextOptions<AccountContext> options) : base(options)
     {
