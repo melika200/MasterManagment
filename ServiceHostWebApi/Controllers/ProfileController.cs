@@ -22,14 +22,15 @@ public class ProfileController : ControllerBase
         var profile = await _profileApplication.GetProfileByUserIdAsync(User);
         if (profile == null)
             return NotFound(new { message = "پروفایل یافت نشد." });
+
         return Ok(profile);
     }
 
- 
+
     [HttpPost]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Create([FromBody] CreateProfileCommand command)
+    public async Task<IActionResult> Create([FromForm] CreateProfileCommand command)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -41,11 +42,11 @@ public class ProfileController : ControllerBase
         return Ok(new { message = result.Message });
     }
 
-  
+
     [HttpPut]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Edit([FromBody] EditProfileCommand command)
+    public async Task<IActionResult> Edit([FromForm] EditProfileCommand command)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -57,3 +58,5 @@ public class ProfileController : ControllerBase
         return Ok(new { message = result.Message });
     }
 }
+
+

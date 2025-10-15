@@ -4,7 +4,7 @@ namespace MasterManagment.Application.Contracts.ProductReview;
 
 public interface IProductReviewApplication
 {
-    Task<OperationResult> CreateProductReviewAsync(CreateProductReviewCommand command);
+    Task<OperationResult> CreateProductReviewAsync(CreateProductReviewCommand command,long accountId);
     Task<OperationResult> ConfirmProductReviewAsync(long id);
     Task<OperationResult> UnConfirmProductReviewAsync(long id);
     Task<OperationResult> RemoveProductReviewAsync(long id);

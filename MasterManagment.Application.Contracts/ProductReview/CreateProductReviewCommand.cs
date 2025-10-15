@@ -7,8 +7,8 @@ public class CreateProductReviewCommand
     [Required]
     public long ProductId { get; set; }
 
-    [Required]
-    public long AccountId { get; set; }
+    //[Required]
+    //public long AccountId { get; set; }
 
     [Required]
     public string FullName { get; set; }

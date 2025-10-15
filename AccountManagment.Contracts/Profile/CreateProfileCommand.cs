@@ -5,8 +5,8 @@ namespace AccountManagment.Application.Contracts.Profile;
 
 public class CreateProfileCommand
 {
-    [JsonIgnore]
-    public long UserId { get; set; }
+    
+    //public long UserId { get; set; }
     public string? FullName { get; set; }
     public string? Email { get; set; }
     public string? Address { get; set; }

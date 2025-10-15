@@ -1,4 +1,5 @@
-﻿using MasterManagment.Application.Contracts.ProductReview;
+﻿using System.Security.Claims;
+using MasterManagment.Application.Contracts.ProductReview;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostWebApi.Controllers;
@@ -22,10 +23,22 @@ public class ProductReviewController : ControllerBase
         return Ok(result);
     }
 
+    //[HttpPost]
+    //public async Task<IActionResult> Create([FromBody] CreateProductReviewCommand command)
+    //{
+    //    var result = await _application.CreateProductReviewAsync(command);
+    //    return Ok(result);
+    //}
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProductReviewCommand command)
     {
-        var result = await _application.CreateProductReviewAsync(command);
+        // گرفتن accountId از توکن
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!long.TryParse(userIdClaim, out var accountId))
+            return BadRequest(new { message = "شناسه کاربر معتبر نیست." });
+
+        var result = await _application.CreateProductReviewAsync(command, accountId);
         return Ok(result);
     }
+
 }

@@ -1,4 +1,5 @@
 ﻿using _01_FrameWork.Domain;
+using AccountManagment.Domain.ProfileAgg;
 using AccountManagment.Domain.RefreshTokenAgg;
 
 namespace AccountManagment.Domain.UserAgg;
@@ -13,6 +14,8 @@ public class User:EntityBase,ISoftDelete
     public string? Address { get; private set; }
     public string? PhoneNumber { get; private set; }
     public string? PostalCode { get; private set; }
+    public Profile? Profile { get; private set; }
+
 
     public int RoleId { get; private set; }
 

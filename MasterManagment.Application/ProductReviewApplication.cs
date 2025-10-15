@@ -16,13 +16,13 @@ public class ProductReviewApplication : IProductReviewApplication
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<OperationResult> CreateProductReviewAsync(CreateProductReviewCommand command)
+    public async Task<OperationResult> CreateProductReviewAsync(CreateProductReviewCommand command,long accountId)
     {
         var operation = new OperationResult();
 
         var review = new ProductReview(
             command.ProductId,
-            command.AccountId,
+            accountId,
             command.FullName,
             command.Email,
             command.Message,

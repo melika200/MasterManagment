@@ -19,8 +19,10 @@ namespace AccountManagment.Infrastructure.EFCore.Mapping
             builder.Property(x => x.AvatarPath).HasMaxLength(300);
 
             builder.HasOne(x => x.User)
-                   .WithMany()
-                   .HasForeignKey(x => x.UserId);
+                   .WithOne(u => u.Profile)
+                   .HasForeignKey<Profile>(x => x.UserId);
+                  
+
         }
     }
 }

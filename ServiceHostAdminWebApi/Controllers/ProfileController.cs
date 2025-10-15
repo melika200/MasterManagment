@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("admin/api/v{version:apiVersion}/[controller]")]
-public class AdminProfileController : ControllerBase
+public class ProfileController : ControllerBase
 {
     private readonly IProfileApplication _profileApplication;
 
-    public AdminProfileController(IProfileApplication profileApplication)
+    public ProfileController(IProfileApplication profileApplication)
     {
         _profileApplication = profileApplication;
     }
