@@ -22,6 +22,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MasterManagment.Application.Contracts.ProductReview;
 using MasterManagement.Domain.ProductReviewAgg;
+using MasterManagment.Application.Contracts.FaqUs;
+using MasterManagement.Domain.FaqUs.Agg;
+using MasterManagement.Infrastructure.EFCore.Repositories;
+using MasterManagment.Application.Contracts.AboutUs;
+using MasterManagement.Domain.AboutUs.Agg;
 
 
 namespace MasterManagement.Infrastructure.Configuration;
@@ -48,6 +53,10 @@ public class MasterManagementBootstrapper
         services.AddTransient<ISliderApplication, SliderApplication>();
         services.AddTransient<IProductReviewApplication, ProductReviewApplication>();
         services.AddTransient<IProductReviewRepository, ProductReviewRepository>();
+        services.AddTransient<IFaqApplication,FaqApplication>();
+        services.AddTransient<IFaqRepository,FaqRepository>();
+        services.AddTransient<IAboutApplication,AboutApplication>();
+        services.AddTransient<IAboutRepository,AboutRepository>();
 
 
 

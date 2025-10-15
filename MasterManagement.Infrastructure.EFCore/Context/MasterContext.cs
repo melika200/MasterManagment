@@ -1,6 +1,8 @@
 ﻿using System.Linq.Expressions;
 using _01_FrameWork.Domain;
+using MasterManagement.Domain.AboutUsAgg;
 using MasterManagement.Domain.CartAgg;
+using MasterManagement.Domain.FaqUsAgg;
 using MasterManagement.Domain.GalleryAgg;
 using MasterManagement.Domain.OrderAgg;
 using MasterManagement.Domain.OrderItemAgg;
@@ -40,6 +42,8 @@ public class MasterContext : DbContext
     public DbSet<PaymentMethod> PaymentMethod { get; set; }
     public DbSet<Slider> Sliders { get; set; }
     public DbSet<ProductReview> ProductReviews { get; set; }
+    public DbSet<Faq> Faqs { get; set; }
+    public DbSet<About> Abouts { get; set; }
 
     public MasterContext(DbContextOptions<MasterContext> options) : base(options)
     {

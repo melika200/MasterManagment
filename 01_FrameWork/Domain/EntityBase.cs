@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace _01_FrameWork.Domain;
 
-namespace _01_FrameWork.Domain
+public class EntityBase
 {
-    public class EntityBase
-    {
-        public long Id { get; set; }
-        public DateTime CreationDate { get; set; }
+    public long Id { get; set; }
+    public DateTime CreationDate { get; set; }
 
-        public EntityBase()
-        {
-            CreationDate = DateTime.Now;
-        }
+    public EntityBase()
+    {
+        CreationDate = DateTime.Now;
     }
 }
