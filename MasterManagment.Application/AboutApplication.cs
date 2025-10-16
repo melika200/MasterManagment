@@ -2,16 +2,19 @@
 using MasterManagement.Domain.AboutUs.Agg;
 using MasterManagement.Domain.AboutUsAgg;
 using MasterManagment.Application.Contracts.AboutUs;
+using MasterManagment.Application.Contracts.UnitOfWork;
 
 namespace MasterManagment.Application;
 
 public class AboutApplication : IAboutApplication
 {
     private readonly IAboutRepository _aboutRepository;
+    private readonly IMasterUnitOfWork _unitOfWork;
 
-    public AboutApplication(IAboutRepository repository)
+    public AboutApplication(IAboutRepository repository, IMasterUnitOfWork unitOfWork )
     {
         _aboutRepository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task Create(CreateAboutCommand command)
@@ -24,6 +27,7 @@ public class AboutApplication : IAboutApplication
 
         var about = new About(command.Title, command.Description);
         await _aboutRepository.CreateAsync(about);
+        await _unitOfWork.CommitAsync();
     }
 
     public async Task Edit(EditAboutCommand command)
@@ -40,6 +44,7 @@ public class AboutApplication : IAboutApplication
 
         about.Update(command.Title, command.Description);
         await _aboutRepository.UpdateAsync(about);
+        await _unitOfWork.CommitAsync();
     }
 
     public async Task<AboutViewModel?> GetActiveAbout()
@@ -54,4 +59,22 @@ public class AboutApplication : IAboutApplication
             Description = about.Description
         };
     }
+
+    public async Task<List<AboutViewModel>> Search(AboutSearchCriteria criteria)
+    {
+         
+        var about = await _aboutRepository.GetAllAsync();
+
+     
+        if (criteria.IsActive.HasValue)
+            about = about.Where(f => f.IsActive == criteria.IsActive.Value).ToList();
+
+        return about.Select(a => new AboutViewModel
+        {
+            Id = a.Id,
+             Description=a.Description,
+             Title=a.Title
+        }).ToList();
+    
+}
 }

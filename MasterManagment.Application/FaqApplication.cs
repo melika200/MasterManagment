@@ -2,16 +2,18 @@
 using MasterManagement.Domain.FaqUs.Agg;
 using MasterManagement.Domain.FaqUsAgg;
 using MasterManagment.Application.Contracts.FaqUs;
+using MasterManagment.Application.Contracts.UnitOfWork;
 
 namespace MasterManagment.Application;
 
 public class FaqApplication : IFaqApplication
 {
     private readonly IFaqRepository _faqRepository;
-
-    public FaqApplication(IFaqRepository repository)
+    private readonly IMasterUnitOfWork _unitOfWork;
+    public FaqApplication(IFaqRepository repository, IMasterUnitOfWork unitOfWork )
     {
         _faqRepository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task Create(CreateFaqCommand command)
@@ -24,6 +26,7 @@ public class FaqApplication : IFaqApplication
 
         var faq = new Faq(command.Question, command.Answer);
         await _faqRepository.CreateAsync(faq);
+        await _unitOfWork.CommitAsync();
     }
 
     public async Task Edit(EditFaqCommand command)
@@ -40,6 +43,7 @@ public class FaqApplication : IFaqApplication
 
         faq.Update(command.Question, command.Answer);
         await _faqRepository.UpdateAsync(faq);
+        await _unitOfWork.CommitAsync();
     }
 
     public async Task<FaqViewModel?> GetById(long id)

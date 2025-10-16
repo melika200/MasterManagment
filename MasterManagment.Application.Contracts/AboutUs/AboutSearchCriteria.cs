@@ -1,7 +1,6 @@
-﻿namespace MasterManagment.Application.Contracts.AboutUs
+﻿namespace MasterManagment.Application.Contracts.AboutUs;
+
+public class AboutSearchCriteria
 {
-    public class AboutSearchCriteria
-    {
-        public bool? IsActive { get; set; }
-    }
+    public bool? IsActive { get; set; }
 }
