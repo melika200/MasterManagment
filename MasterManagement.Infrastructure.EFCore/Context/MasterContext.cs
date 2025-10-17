@@ -19,6 +19,8 @@ using MasterManagement.Domain.ProductReviewAgg;
 using MasterManagement.Domain.ShippingStatusAgg;
 using MasterManagement.Domain.ShippingStatusesTypeAgg;
 using MasterManagement.Domain.SliderAgg;
+using MasterManagement.Domain.SupportAgg;
+using MasterManagement.Domain.SupportStatusTypesAgg;
 using MasterManagement.Infrastructure.EFCore.Mapping;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,6 +46,8 @@ public class MasterContext : DbContext
     public DbSet<ProductReview> ProductReviews { get; set; }
     public DbSet<Faq> Faqs { get; set; }
     public DbSet<About> Abouts { get; set; }
+    public DbSet<Support> Supports { get; set; }
+    public DbSet<SupportStatus> SupportStatuses { get; set; }
 
     public MasterContext(DbContextOptions<MasterContext> options) : base(options)
     {
@@ -75,6 +79,8 @@ public class MasterContext : DbContext
         modelBuilder.Entity<ShippingStatus>().HasData(ShippingStatusesType.AllStatuses);
         modelBuilder.Entity<PaymentStatus>().HasData(PaymentStatusesType.AllStatuses);
         modelBuilder.Entity<PaymentMethod>().HasData(PaymentMethodsType.AllMethods);
+        modelBuilder.Entity<SupportStatus>().HasData(SupportStatusType.AllTypes);
+
 
         base.OnModelCreating(modelBuilder);
     }

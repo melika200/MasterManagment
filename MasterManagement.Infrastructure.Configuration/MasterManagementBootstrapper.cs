@@ -27,6 +27,8 @@ using MasterManagement.Domain.FaqUs.Agg;
 using MasterManagement.Infrastructure.EFCore.Repositories;
 using MasterManagment.Application.Contracts.AboutUs;
 using MasterManagement.Domain.AboutUs.Agg;
+using MasterManagement.Domain.SupportAgg;
+using MasterManagment.Application.Contracts.Support;
 
 
 namespace MasterManagement.Infrastructure.Configuration;
@@ -57,6 +59,8 @@ public class MasterManagementBootstrapper
         services.AddTransient<IFaqRepository,FaqRepository>();
         services.AddTransient<IAboutApplication,AboutApplication>();
         services.AddTransient<IAboutRepository,AboutRepository>();
+        services.AddTransient<ISupportRepository, SupportRepository>();
+        services.AddTransient<ISupportApplication, SupportApplication>();
 
 
 
