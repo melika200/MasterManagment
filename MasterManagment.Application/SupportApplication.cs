@@ -4,6 +4,7 @@ using MasterManagment.Application.Contracts.Support;
 using MasterManagment.Application.Contracts.UnitOfWork;
 using _01_FrameWork.Application;
 using _01_FrameWork.Application.Exceptions;
+using System.Security.Claims;
 
 namespace MasterManagment.Application;
 
@@ -23,6 +24,7 @@ public class SupportApplication : ISupportApplication
         var result = new OperationResult();
 
         var support = new Support(accountId, command.FullName, command.Email, command.PhoneNumber, command.Subject, command.Message);
+        //support.ChangeStatus(SupportStatusType.Open);
         support.ChangeStatus(SupportStatusType.Open);
 
         await _repository.CreateAsync(support);
@@ -106,9 +108,26 @@ public class SupportApplication : ISupportApplication
         }).ToList();
     }
 
-    public async Task<List<SupportViewModel>> SearchAsync(SupportSearchCriteria searchModel)
+    //public async Task<List<SupportViewModel>> SearchAsync(SupportSearchCriteria searchModel)
+    //{
+    //    var list = await _repository.GetAllSupport(searchModel.Keyword, searchModel.Status, searchModel.AccountId);
+    //    return list.Select(x => new SupportViewModel
+    //    {
+    //        Id = x.Id,
+    //        AccountId = x.AccountId,
+    //        FullName = x.FullName,
+    //        Email = x.Email,
+    //        PhoneNumber = x.PhoneNumber,
+    //        Subject = x.Subject,
+    //        Message = x.Message,
+    //        Status = x.Status?.Name ?? string.Empty,
+    //        CreationDate = x.CreationDate
+    //    }).ToList();
+    //}
+
+    public async Task<List<SupportViewModel>> GetAllAsync()
     {
-        var list = await _repository.SearchAsync(searchModel.Keyword, searchModel.Status, searchModel.AccountId);
+        var list = await _repository.GetAllSupport();
         return list.Select(x => new SupportViewModel
         {
             Id = x.Id,
@@ -123,22 +142,6 @@ public class SupportApplication : ISupportApplication
         }).ToList();
     }
 
-    public async Task<List<SupportViewModel>> GetAllAsync()
-    {
-        var list = await _repository.GetAllAsync();
-        return list.Select(x => new SupportViewModel
-        {
-            Id = x.Id,
-            AccountId = x.AccountId,
-            FullName = x.FullName,
-            Email = x.Email,
-            PhoneNumber = x.PhoneNumber,
-            Subject = x.Subject,
-            Message = x.Message,
-            Status = x.Status?.Name ?? string.Empty,
-            CreationDate = x.CreationDate
-        }).ToList();
-    }
 
     public async Task<OperationResult> MarkAsRepliedAsync(long id)
     {
@@ -151,4 +154,51 @@ public class SupportApplication : ISupportApplication
 
         return result.Succedded();
     }
+    public async Task<OperationResult> EditUserTicketAsync(EditUserSupportCommand model, ClaimsPrincipal user)
+    {
+        var result = new OperationResult();
+        var support = await _repository.GetAsync(model.Id) ?? throw new EntityNotFoundException(nameof(Support), model.Id);
+
+        var accountIdClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (accountIdClaim == null || support.AccountId != long.Parse(accountIdClaim))
+            return result.Failed("You cannot edit this ticket.");
+
+        support.Edit(model.FullName, model.Email, model.PhoneNumber, model.Subject, model.Message);
+        await _repository.UpdateAsync(support);
+        await _unitOfWork.CommitAsync();
+
+        return result.Succedded();
+    }
+    public async Task<OperationResult> EditAdminTicketAsync(EditAdminSupportCommand command)
+    {
+        var result = new OperationResult();
+
+        var support = await _repository.GetAsync(command.Id)
+            ?? throw new EntityNotFoundException(nameof(Support), command.Id);
+
+        if (!string.IsNullOrEmpty(command.ReplyMessage))
+            support.Reply(command.ReplyMessage);
+
+        if (!string.IsNullOrEmpty(command.Status))
+        {
+            
+            if (!int.TryParse(command.Status, out int statusId))
+                return result.Failed("Invalid status format.");
+
+         
+            var status = SupportStatusType.AllTypes.FirstOrDefault(x => x.Id == statusId);
+            if (status == null)
+                return result.Failed($"Invalid status id: {statusId}");
+
+            support.ChangeStatus(status);
+        }
+
+        await _repository.UpdateAsync(support);
+        await _unitOfWork.CommitAsync();
+
+        return result.Succedded();
+    }
+
+
+
 }

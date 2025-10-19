@@ -4,6 +4,7 @@ using MasterManagement.Infrastructure.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MasterManagement.Infrastructure.EFCore.Migrations
 {
     [DbContext(typeof(MasterContext))]
-    partial class MasterContextModelSnapshot : ModelSnapshot
+    [Migration("20251018122638_UpdateStatussTypeEntity")]
+    partial class UpdateStatussTypeEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -821,17 +824,17 @@ namespace MasterManagement.Infrastructure.EFCore.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Opened"
+                            Name = "Open"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Progress"
+                            Name = "InProgress"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Answer And Closed"
+                            Name = "Closed"
                         });
                 });
 

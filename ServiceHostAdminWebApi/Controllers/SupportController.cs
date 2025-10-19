@@ -1,4 +1,5 @@
 ﻿using MasterManagment.Application.Contracts.Support;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostAdminWebApi.Controllers;
@@ -18,9 +19,9 @@ public class SupportController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(List<SupportViewModel>))]
-    public async Task<ActionResult<List<SupportViewModel>>> GetAll([FromQuery] SupportSearchCriteria searchModel)
+    public async Task<ActionResult<List<SupportViewModel>>> GetAll()
     {
-        var result = await _supportApplication.SearchAsync(searchModel);
+        var result = await _supportApplication.GetAllAsync();
         return Ok(result);
     }
 
@@ -30,8 +31,7 @@ public class SupportController : ControllerBase
     public async Task<ActionResult<SupportViewModel>> Get(long id)
     {
         var details = await _supportApplication.GetDetails(id);
-        if (details == null)
-            return NotFound();
+        if (details == null) return NotFound();
 
         return Ok(details);
     }
@@ -39,12 +39,11 @@ public class SupportController : ControllerBase
     [HttpPut("{id:long}/status")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> ChangeStatus(long id, [FromBody] ChangeSupportStatusCommand command)
+    public async Task<IActionResult> ChangeStatus(long id, [FromBody] EditAdminSupportCommand command)
     {
         command.Id = id;
-        var result = await _supportApplication.ChangeStatusAsync(command);
-        if (!result.IsSuccedded)
-            return BadRequest(result.Message);
+        var result = await _supportApplication.EditAdminTicketAsync(command);
+        if (!result.IsSuccedded) return BadRequest(result.Message);
 
         return Ok(result.Message);
     }
@@ -55,8 +54,7 @@ public class SupportController : ControllerBase
     public async Task<IActionResult> Delete(long id)
     {
         var result = await _supportApplication.DeleteAsync(id);
-        if (!result.IsSuccedded)
-            return BadRequest(result.Message);
+        if (!result.IsSuccedded) return BadRequest(result.Message);
 
         return Ok(result.Message);
     }

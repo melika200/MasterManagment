@@ -15,22 +15,31 @@ public class SupportRepository : RepositoryBase<long, Support>, ISupportReposito
         _context = context;
         _dbSet = _context.Set<Support>();
     }
-
-    public async Task<List<Support>> SearchAsync(string? keyword, string? status, long? accountId)
+    public async Task<List<Support>> GetAllSupport()
     {
-        var query = _dbSet.Include(x => x.Status).AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(keyword))
-            query = query.Where(x => x.FullName.Contains(keyword) || x.Email.Contains(keyword) || x.Subject.Contains(keyword));
-
-        if (!string.IsNullOrWhiteSpace(status))
-            query = query.Where(x => x.Status != null && x.Status.Name == status);
-
-        if (accountId.HasValue)
-            query = query.Where(x => x.AccountId == accountId.Value);
-
-        return await query.OrderByDescending(x => x.CreationDate).ToListAsync();
+        return await _dbSet
+            .Include(x => x.Status)
+            .OrderByDescending(x => x.CreationDate)
+            .ToListAsync();
     }
+
+
+
+    //public async Task<List<Support>> SearchAsync(string? keyword, string? status, long? accountId)
+    //{
+    //    var query = _dbSet.Include(x => x.Status).AsQueryable();
+
+    //    if (!string.IsNullOrWhiteSpace(keyword))
+    //        query = query.Where(x => x.FullName.Contains(keyword) || x.Email.Contains(keyword) || x.Subject.Contains(keyword));
+
+    //    if (!string.IsNullOrWhiteSpace(status))
+    //        query = query.Where(x => x.Status != null && x.Status.Name == status);
+
+    //    if (accountId.HasValue)
+    //        query = query.Where(x => x.AccountId == accountId.Value);
+
+    //    return await query.OrderByDescending(x => x.CreationDate).ToListAsync();
+    //}
 
     public async Task<List<Support>> GetByAccountIdAsync(long accountId)
     {

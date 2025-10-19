@@ -2,9 +2,10 @@
 
 namespace MasterManagment.Application.Contracts.Support;
 
-public class ChangeSupportStatusCommand
+public class EditAdminSupportCommand
 {
     [JsonIgnore]
     public long Id { get; set; }
-    public string Status { get; set; } = string.Empty;
+    public string? ReplyMessage { get; set; }
+    public string? Status { get; set; } 
 }

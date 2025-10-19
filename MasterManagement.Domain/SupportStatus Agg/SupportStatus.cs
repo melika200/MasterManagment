@@ -2,24 +2,16 @@
 
 namespace MasterManagement.Domain.SupportAgg;
 
-public class SupportStatus : ISoftDelete
+public class SupportStatus : Enumeration
 {
-    public int Id { get; private set; }
-    public string Name { get; private set; }
-    public bool IsDeleted { get; set; }
+
+    public SupportStatus(int id, string name) : base(id, name) { }
+  
 
     public ICollection<Support> Supports { get; private set; } = new List<Support>();
 
-    public SupportStatus(int id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
+   
 
-    protected SupportStatus() { }
+    protected SupportStatus() : base() { }
 
-    public void SoftDelete()
-    {
-        IsDeleted = true;
-    }
 }
