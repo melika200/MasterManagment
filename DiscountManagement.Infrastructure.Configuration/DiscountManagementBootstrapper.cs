@@ -13,7 +13,9 @@ public static class DiscountManagmentBootstrapper
 {
     public static void Configure(IServiceCollection services, string connectionString)
     {
+
         services.AddDbContext<DiscountContext>(x => x.UseSqlServer(connectionString));
+
 
 
         //services.AddAutoMapper(typeof(DiscountMappingProfile));
@@ -21,6 +23,8 @@ public static class DiscountManagmentBootstrapper
 
         services.AddTransient<IDiscountApplication, DiscountApplication>();
         services.AddTransient<IDiscountRepository, DiscountRepository>();
+
+
         services.AddTransient<IDiscountUnitOfWork, DiscountUnitOfWork>();
 
 

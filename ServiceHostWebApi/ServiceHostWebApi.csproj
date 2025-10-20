@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AccountManagement.Infrastructure.Configuration\AccountManagement.Infrastructure.Configuration.csproj" />
+    <ProjectReference Include="..\DiscountManagement.Infrastructure.Configuration\DiscountManagement.Infrastructure.Configuration.csproj" />
     <ProjectReference Include="..\MasterManagement.Infrastructure.Configuration\MasterManagement.Infrastructure.Configuration.csproj" />
   </ItemGroup>
 

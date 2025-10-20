@@ -6,6 +6,8 @@ using MasterManagement.Infrastructure.EFCore.Context;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using DiscountManagement.Infrastructure.Configuration;
+using DiscountManagement.Infrastructure.EFCore.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +19,12 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
 
 builder.Services.AddDbContext<MasterContext>(x => x.UseSqlServer(connectionString));
 builder.Services.AddDbContext<AccountContext>(x => x.UseSqlServer(connectionString));
+builder.Services.AddDbContext<DiscountContext>(x => x.UseSqlServer(connectionString));
 
 
 MasterManagementBootstrapper.Configure(builder.Services, connectionString);
 AccountManagementBootstrapper.Configure(builder.Services, connectionString);
+DiscountManagmentBootstrapper.Configure(builder.Services, connectionString);
 FrameworkBootstrapper.Configure(builder.Services, connectionString);
 
 

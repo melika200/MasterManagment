@@ -50,7 +50,7 @@ public class Support : EntityBase, ISoftDelete
 
     public void ChangeStatus(SupportStatus newStatus)
     {
-        //Status = newStatus;
+        Status = newStatus;
         SupportStatusId = newStatus.Id;
     }
 

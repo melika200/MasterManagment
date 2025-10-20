@@ -14,5 +14,6 @@ public class SupportViewModel
     public string Status { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public bool IsReplied { get; set; }
+    public string? ReplyMessage { get; set; }
     public DateTime CreationDate { get; set; }
 }

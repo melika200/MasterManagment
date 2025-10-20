@@ -3,6 +3,8 @@ using System.Text;
 using _01_FrameWork.Infrastructure.Configuration;
 using AccountManagement.Infrastructure.Configuration;
 using AccountManagement.Infrastructure.EFCore.Context;
+using DiscountManagement.Infrastructure.Configuration;
+using DiscountManagement.Infrastructure.EFCore.Context;
 using MasterManagement.Infrastructure.Configuration;
 using MasterManagement.Infrastructure.EFCore.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,10 +21,11 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
 
 builder.Services.AddDbContext<MasterContext>(x => x.UseSqlServer(connectionString));
 builder.Services.AddDbContext<AccountContext>(x => x.UseSqlServer(connectionString));
-
+builder.Services.AddDbContext<DiscountContext>(x => x.UseSqlServer(connectionString));
 
 MasterManagementBootstrapper.Configure(builder.Services, connectionString);
 AccountManagementBootstrapper.Configure(builder.Services, connectionString);
+DiscountManagmentBootstrapper.Configure(builder.Services, connectionString);
 FrameworkBootstrapper.Configure(builder.Services, connectionString);
 
 

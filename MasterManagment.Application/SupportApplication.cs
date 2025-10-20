@@ -87,7 +87,9 @@ public class SupportApplication : ISupportApplication
             Subject = support.Subject,
             Message = support.Message,
             Status = support.Status?.Name ?? string.Empty,
-            CreationDate = support.CreationDate
+            CreationDate = support.CreationDate,
+            IsReplied = support.IsReplied,     
+            ReplyMessage = support.ReplyMessage
         };
     }
 
@@ -104,7 +106,9 @@ public class SupportApplication : ISupportApplication
             Subject = x.Subject,
             Message = x.Message,
             Status = x.Status?.Name ?? string.Empty,
-            CreationDate = x.CreationDate
+            CreationDate = x.CreationDate,
+            IsReplied = x.IsReplied,       
+            ReplyMessage = x.ReplyMessage
         }).ToList();
     }
 

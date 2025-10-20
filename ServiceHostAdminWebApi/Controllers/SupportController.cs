@@ -1,5 +1,4 @@
 ﻿using MasterManagment.Application.Contracts.Support;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostAdminWebApi.Controllers;
