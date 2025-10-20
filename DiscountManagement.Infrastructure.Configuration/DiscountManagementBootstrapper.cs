@@ -24,5 +24,6 @@ public static class DiscountManagmentBootstrapper
         services.AddTransient<IDiscountUnitOfWork, DiscountUnitOfWork>();
 
 
+
     }
 }
