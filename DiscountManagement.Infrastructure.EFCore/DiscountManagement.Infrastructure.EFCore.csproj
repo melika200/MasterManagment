@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiscountManagment.ApplicationContracts\DiscountManagment.ApplicationContracts.csproj" />
-    <ProjectReference Include="..\DiscountManagment.Domain\DiscountManagment.Domain.csproj" />
+    <ProjectReference Include="..\DiscountManagement.Domain\DiscountManagement.Domain.csproj" />
+    <ProjectReference Include="..\DiscountManagment.ApplicationContracts\DiscountManagement.ApplicationContracts.csproj" />
   </ItemGroup>
 
 </Project>

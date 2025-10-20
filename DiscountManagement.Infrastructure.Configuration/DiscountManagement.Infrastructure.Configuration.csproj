@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiscountManagement.Infrastructure.EFCore\DiscountManagement.Infrastructure.EFCore.csproj" />
-    <ProjectReference Include="..\DiscountManagment.Application\DiscountManagment.Application.csproj" />
+    <ProjectReference Include="..\DiscountManagment.Application\DiscountManagement.Application.csproj" />
   </ItemGroup>
 
 </Project>
