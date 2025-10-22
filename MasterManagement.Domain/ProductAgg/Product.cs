@@ -19,6 +19,7 @@ public class Product : EntityBase,ISoftDelete
     public bool IsAvailable { get; private set; }
     public int TotalRatings { get; private set; }
     public double AverageRating { get; private set; }
+    public DateTime CreatedDate { get; private set; }
     public ICollection<Gallery>? Galleries { get; private set; }
     public ICollection<ProductReview>? Reviews { get; private set; } = new List<ProductReview>();
 
@@ -49,6 +50,7 @@ public class Product : EntityBase,ISoftDelete
         IsAvailable = isAvailable;
         TotalRatings = 0;
         AverageRating = 0.0;
+        CreatedDate = DateTime.UtcNow;
         Galleries = new List<Gallery>();
 
     }

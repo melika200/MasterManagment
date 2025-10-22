@@ -1,7 +1,9 @@
-﻿using _01_FrameWork.Application;
+﻿using System.Security.Claims;
+using _01_FrameWork.Application;
 using MasterManagement.Domain.GalleryAgg;
 using MasterManagement.Domain.ProductAgg;
 using MasterManagement.Domain.ProductCategoryAgg;
+using MasterManagement.Domain.ProductReviewAgg;
 using MasterManagment.Application.Contracts.Gallery;
 using MasterManagment.Application.Contracts.Product;
 using MasterManagment.Application.Contracts.UnitOfWork;
@@ -14,17 +16,20 @@ namespace MasterManagment.Application
         private readonly IProductCategoryRepository _categoryRepository;
         private readonly IMasterUnitOfWork _unitOfWork;
         private readonly IGalleryRepository _galleryRepository;
+        private readonly IProductReviewRepository _productReviewRepository;
 
         public ProductApplication(
             IProductRepository productRepository,
             IProductCategoryRepository categoryRepository,
             IMasterUnitOfWork unitOfWork,
-            IGalleryRepository galleryRepository)
+            IGalleryRepository galleryRepository,
+            IProductReviewRepository productReviewRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _unitOfWork = unitOfWork;
             _galleryRepository = galleryRepository;
+            _productReviewRepository = productReviewRepository;
         }
 
         public async Task<OperationResult> CreateAsync(CreateProductCommand command)
@@ -225,11 +230,11 @@ namespace MasterManagment.Application
             if (!string.IsNullOrWhiteSpace(searchModel.Name))
                 query = query.Where(x => x.Name.Contains(searchModel.Name));
 
-            if (searchModel.CategoryId.HasValue)
-                query = query.Where(x => x.CategoryId == searchModel.CategoryId.Value);
+            //if (searchModel.CategoryId.HasValue)
+            //    query = query.Where(x => x.CategoryId == searchModel.CategoryId.Value);
 
-            if (searchModel.IsAvailable.HasValue)
-                query = query.Where(x => x.IsAvailable == searchModel.IsAvailable.Value);
+            //if (searchModel.IsAvailable.HasValue)
+            //    query = query.Where(x => x.IsAvailable == searchModel.IsAvailable.Value);
 
             var result = query.Select(product => new ProductViewModel
             {
@@ -263,6 +268,82 @@ namespace MasterManagment.Application
             return operation.Succedded("محصول با موفقیت حذف شد");
         }
 
-      
+        public async Task<List<ProductViewModel>> GetPopularProducts(int count = 10)
+        {
+            var products = (await _productRepository.GetAllProductsWithCategory())
+                .OrderByDescending(p => p.TotalRatings)
+                .ThenByDescending(p => p.AverageRating)
+                .Take(count)
+                .ToList();
+
+            return products.Select(p => new ProductViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                ImagePath = p.ImagePath,
+                Price = p.Price,
+                CategoryId = p.CategoryId,
+                IsAvailable = p.IsAvailable,
+                TotalRatings = p.TotalRatings,
+                AverageRating = p.AverageRating,
+                CategoryName = p.Category?.Name
+            }).ToList();
+        }
+
+        public async Task<List<ProductViewModel>> GetNewestProducts(int count = 10)
+        {
+            var products = (await _productRepository.GetAllProductsWithCategory())
+                .OrderByDescending(p => p.CreatedDate)
+                .Take(count)
+                .ToList();
+
+            return products.Select(p => new ProductViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                ImagePath = p.ImagePath,
+                Price = p.Price,
+                CategoryId = p.CategoryId,
+                IsAvailable = p.IsAvailable,
+                TotalRatings = p.TotalRatings,
+                AverageRating = p.AverageRating,
+                CategoryName = p.Category?.Name
+            }).ToList();
+        }
+
+        public async Task<OperationResult> RateProduct(long productId, int rating, string? comment, ClaimsPrincipal user)
+        {
+            var operation = new OperationResult();
+
+           
+            var userId = AccountUtils.GetAccountId(user);
+            if (userId == 0)
+                return operation.Failed("کاربر احراز هویت نشده است.");
+
+            string userFullName = user.FindFirst(ClaimTypes.Name)?.Value ?? "ناشناخته";
+            string userEmail = user.FindFirst(ClaimTypes.Email)?.Value ?? "";
+
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product == null)
+                return operation.Failed("محصول یافت نشد");
+
+            var review = new ProductReview(productId, userId, userFullName, userEmail, comment ?? "", rating);
+            await _productReviewRepository.CreateAsync(review);
+
+            var reviews = await _productReviewRepository.GetByProductIdAsync(productId);
+            var totalRatings = reviews.Count;
+            var averageRating = reviews.Average(r => r.Rating);
+
+            product.UpdateRatings(totalRatings, averageRating);
+            await _productRepository.UpdateAsync(product);
+            await _unitOfWork.CommitAsync();
+
+            return operation.Succedded("امتیاز با موفقیت ثبت شد");
+        }
+
+
+
+
+
     }
 }

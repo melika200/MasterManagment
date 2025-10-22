@@ -19,6 +19,8 @@ public class ProductReview : EntityBase, ISoftDelete
 
     public ProductReview(long productId, long accountId, string fullName, string email, string message, int rating)
     {
+        if (rating < 1 || rating > 5)
+            throw new ArgumentOutOfRangeException(nameof(rating), "امتیاز باید بین 1 تا 5 باشد.");
         ProductId = productId;
         AccountId = accountId;
         FullName = fullName;

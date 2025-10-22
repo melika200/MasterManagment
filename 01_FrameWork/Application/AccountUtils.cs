@@ -5,11 +5,17 @@ namespace _01_FrameWork.Application;
 
 public class AccountUtils
 {
+    //public static long GetAccountId(ClaimsPrincipal user)
+    //{
+    //    long accountId = long.TryParse(user.FindFirst("AccountId")?.Value, out long amount) ? amount : 0L;
+    //    return accountId;
+    //}
     public static long GetAccountId(ClaimsPrincipal user)
     {
-        long accountId = long.TryParse(user.FindFirst("AccountId")?.Value, out long amount) ? amount : 0L;
+        long.TryParse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value, out long accountId);
         return accountId;
     }
+
 
     public static string? HashPassword(string? password)
     {

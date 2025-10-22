@@ -135,6 +135,51 @@ public class AccountController : ControllerBase
     }
 
 
+    [HttpPost("refresh-token")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestCommand request)
+    {
+        if (string.IsNullOrWhiteSpace(request.RefreshToken))
+            return BadRequest(new { Error = "توکن رفرش ارسال نشده است." });
+
+        var newTokens = await _userApplication.RefreshTokenAsync(request.RefreshToken);
+
+        if (newTokens == null)
+            return Unauthorized(new { Error = "رفرش‌توکن نامعتبر یا منقضی شده است." });
+
+        return Ok(new
+        {
+            Message = "توکن جدید تولید شد.",
+            Token = newTokens
+        });
+    }
+
+
+    [HttpPost("logout")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> Logout([FromBody] LogoutRequestCommand request)
+    {
+        if (string.IsNullOrWhiteSpace(request.RefreshToken))
+            return BadRequest(new { Error = "رفرش‌توکن ارسال نشده است." });
+
+        var result = await _userApplication.LogoutAsync(request.RefreshToken);
+
+        if (!result)
+            return NotFound(new { Error = "توکن یافت نشد یا قبلاً باطل شده است." });
+
+        return Ok(new { Message = "خروج موفقیت‌آمیز بود و توکن باطل گردید." });
+    }
+
+
+
+
+
 
     //[HttpPost("verify")]
     //[ProducesResponseType(200)]

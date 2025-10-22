@@ -22,10 +22,9 @@ public class SupportApplication : ISupportApplication
     public async Task<OperationResult> CreateAsync(CreateSupportCommand command, long accountId)
     {
         var result = new OperationResult();
-
         var support = new Support(accountId, command.FullName, command.Email, command.PhoneNumber, command.Subject, command.Message);
         //support.ChangeStatus(SupportStatusType.Open);
-        support.ChangeStatus(SupportStatusType.Open);
+        //support.ChangeStatus(SupportStatusType.Open);
 
         await _repository.CreateAsync(support);
         await _unitOfWork.CommitAsync();

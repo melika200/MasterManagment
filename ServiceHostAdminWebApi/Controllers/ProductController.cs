@@ -1,6 +1,5 @@
 ﻿using MasterManagment.Application.Contracts.Gallery;
 using MasterManagment.Application.Contracts.Product;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHostAdminWebApi.Controllers;

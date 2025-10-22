@@ -1,6 +1,7 @@
 ﻿using _01_FrameWork.Application;
 using AccountManagment.Contracts.UnitOfWork;
 using AccountManagment.Contracts.UserContracts;
+using AccountManagment.Domain.RefreshTokenAgg;
 using AccountManagment.Domain.RolesTypesAgg;
 using AccountManagment.Domain.UserAgg;
 using AutoMapper;
@@ -14,13 +15,15 @@ public class UserApplication : IUserApplication
     private readonly IMapper _mapper;
     private readonly IAccountUnitOfWork _uniteOfWork;
     private readonly ILogger<UserApplication> _logger;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-    public UserApplication(IUserRepository userRepository, IMapper mapper, IAccountUnitOfWork uniteOfWork, ILogger<UserApplication> logger)
+    public UserApplication(IUserRepository userRepository, IMapper mapper, IAccountUnitOfWork uniteOfWork, ILogger<UserApplication> logger, IJwtTokenGenerator jwtTokenGenerator)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _uniteOfWork = uniteOfWork;
         _logger = logger;
+        _jwtTokenGenerator = jwtTokenGenerator;
     }
 
     public async Task<OperationResult> ChangePassword(ChangePasswordCommand command)
@@ -275,5 +278,53 @@ public class UserApplication : IUserApplication
             Role = u.Role?.Name
         }).ToList();
     }
+    public async Task<bool> LogoutAsync(string refreshToken)
+    {
+    
+        var stored = await _userRepository.GetByTokenAsync(refreshToken);
+        if (stored == null)
+            return false;
+
+
+        stored.SoftDelete();
+        await _uniteOfWork.CommitAsync();
+
+        return true;
+    }
+
+    public async Task<TokenResultViewModel?> RefreshTokenAsync(string refreshToken)
+    {
+       
+        var storedToken = await _userRepository.GetByTokenAsync(refreshToken);
+        if (storedToken == null || storedToken.ExpiryDate < DateTime.UtcNow)
+            return null;
+
+      
+        var user = await _userRepository.GetUserWithRoleByIdForRefreshTokenAsync(storedToken.UserId);
+        if (user == null)
+            return null;
+
+ 
+        var newTokens = await _jwtTokenGenerator.GenerateTokensAsync(user);
+
+      
+        await _userRepository.RevokeRefreshTokenAsync(storedToken.Token);
+
+  
+        var newRefreshToken = new RefreshToken(newTokens.RefreshToken, DateTime.UtcNow.AddDays(30), user.Id);
+        _userRepository.AddRefreshToken(newRefreshToken);
+
+        await _uniteOfWork.CommitAsync();
+
+        return newTokens;
+    }
+
+
+
+
+
+
+
+
 
 }

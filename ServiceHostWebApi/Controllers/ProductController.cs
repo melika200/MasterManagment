@@ -17,6 +17,7 @@ public class ProductController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
+    [ProducesResponseType(400)]
     public async Task<ActionResult<List<ProductViewModel>>> GetAll([FromQuery] ProductSearchCriteria searchModel)
     {
         var products = await _productApplication.Search(searchModel);
@@ -26,6 +27,7 @@ public class ProductController : ControllerBase
     [HttpGet("{id:long}")]
     [ProducesResponseType(200, Type = typeof(ProductViewModel))]
     [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
     public async Task<ActionResult<ProductViewModel>> GetById(long id)
     {
         var product = await _productApplication.GetDetails(id);
@@ -43,6 +45,45 @@ public class ProductController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("search")]
+    [ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<List<ProductViewModel>>> AdvancedSearch([FromBody] ProductSearchCriteria searchModel)
+    {
+        var products = await _productApplication.Search(searchModel);
+        return Ok(products ?? new List<ProductViewModel>());
+    }
+
+    [HttpPost("{id:long}/rate")]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> RateProduct(long id, [FromBody] RateProductCommand command)
+    {
+        var result = await _productApplication.RateProduct(id, command.Rating, command.Comment, User);
+        if (!result.IsSuccedded)
+            return BadRequest(new { message = result.Message });
+
+        return Ok(new { message = result.Message });
+    }
+
+
+
+    [HttpGet("popular")]
+    [ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<List<ProductViewModel>>> GetPopular()
+    {
+        var products = await _productApplication.GetPopularProducts();
+        return Ok(products);
+    }
+
+    [HttpGet("newest")]
+    [ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<List<ProductViewModel>>> GetNewest()
+    {
+        var products = await _productApplication.GetNewestProducts();
+        return Ok(products);
+    }
 
 
 
@@ -50,58 +91,58 @@ public class ProductController : ControllerBase
 
 }
 
-    //[HttpPost]
-    //[Authorize(Roles = "Admin,Programmer")]
-    //[ProducesResponseType(200)]
-    //[ProducesResponseType(400)]
-    //public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
-    //{
-    //    if (!ModelState.IsValid)
-    //        return BadRequest(ModelState);
+//[HttpPost]
+//[Authorize(Roles = "Admin,Programmer")]
+//[ProducesResponseType(200)]
+//[ProducesResponseType(400)]
+//public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
+//{
+//    if (!ModelState.IsValid)
+//        return BadRequest(ModelState);
 
-    //    var result = await _productApplication.CreateAsync(command);
-    //    if (!result.IsSuccedded)
-    //        return BadRequest(new { message = result.Message });
+//    var result = await _productApplication.CreateAsync(command);
+//    if (!result.IsSuccedded)
+//        return BadRequest(new { message = result.Message });
 
-    //    return Ok(new { message = result.Message });
-    //}
+//    return Ok(new { message = result.Message });
+//}
 
-    //[HttpPut("{id:long}")]
-    //[Authorize(Roles = "Admin,Programmer")]
-    //[ProducesResponseType(204)]
-    //[ProducesResponseType(400)]
-    //public async Task<IActionResult> Edit(long id, [FromBody] EditProductCommand command)
-    //{
-    //    command.Id = id;
+//[HttpPut("{id:long}")]
+//[Authorize(Roles = "Admin,Programmer")]
+//[ProducesResponseType(204)]
+//[ProducesResponseType(400)]
+//public async Task<IActionResult> Edit(long id, [FromBody] EditProductCommand command)
+//{
+//    command.Id = id;
 
-    //    if (!ModelState.IsValid)
-    //        return BadRequest(ModelState);
+//    if (!ModelState.IsValid)
+//        return BadRequest(ModelState);
 
-    //    var result = await _productApplication.Edit(command);
-    //    if (!result.IsSuccedded)
-    //        return BadRequest(new { message = result.Message });
+//    var result = await _productApplication.Edit(command);
+//    if (!result.IsSuccedded)
+//        return BadRequest(new { message = result.Message });
 
-    //    return NoContent();
-    //}
+//    return NoContent();
+//}
 
-    //[HttpDelete("{id:long}")]
-    //[Authorize(Roles = "Admin,Programmer")]
-    //[ProducesResponseType(200)]
-    //[ProducesResponseType(400)]
-    //public async Task<IActionResult> Delete(long id)
-    //{
-    //    var result = await _productApplication.DeleteAsync(id);
-    //    if (!result.IsSuccedded)
-    //        return BadRequest(new { message = result.Message });
+//[HttpDelete("{id:long}")]
+//[Authorize(Roles = "Admin,Programmer")]
+//[ProducesResponseType(200)]
+//[ProducesResponseType(400)]
+//public async Task<IActionResult> Delete(long id)
+//{
+//    var result = await _productApplication.DeleteAsync(id);
+//    if (!result.IsSuccedded)
+//        return BadRequest(new { message = result.Message });
 
-    //    return Ok(new { message = result.Message });
-    //}
+//    return Ok(new { message = result.Message });
+//}
 
-    //[HttpGet("all")]
-    //[Authorize(Roles = "Admin,User,Programmer")]
-    //[ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
-    //public async Task<ActionResult<List<ProductViewModel>>> GetAllProducts()
-    //{
-    //    var result = await _productApplication.GetAllProducts();
-    //    return Ok(result);
-    //}
+//[HttpGet("all")]
+//[Authorize(Roles = "Admin,User,Programmer")]
+//[ProducesResponseType(200, Type = typeof(List<ProductViewModel>))]
+//public async Task<ActionResult<List<ProductViewModel>>> GetAllProducts()
+//{
+//    var result = await _productApplication.GetAllProducts();
+//    return Ok(result);
+//}

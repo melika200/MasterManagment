@@ -20,5 +20,7 @@ public interface IUserApplication
     //bool IsAccountExists(CreateUserCommand command);
     Task<bool> IsExistsBy(string username);
     long GetUserId(string? username);
+    Task<TokenResultViewModel?> RefreshTokenAsync(string refreshToken);
+    Task<bool> LogoutAsync(string refreshToken);
     //List<UserViewModel> GetAccountsByIds(List<long> accountIds);
 }
